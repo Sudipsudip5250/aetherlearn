@@ -1,0 +1,20 @@
+# Local editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Build and dependency artifacts
+node_modules/
+build/
+dist/
+.gradle/
+.cxx/
+
+# Local runtime, cache, and secret files
+.env
+.env.*
+!.env.example
+*.log
+.cache/
