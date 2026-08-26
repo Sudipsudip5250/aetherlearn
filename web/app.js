@@ -151,7 +151,7 @@ function linkTarget(href) {
 
 function renderInline(text) {
   let rendered = escapeHtml(text);
-  rendered = rendered.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, rawHref) => { const target = linkTarget(rawHref); const external = target.external ? ' target="_blank" rel="noreferrer"' : ""; return `<a href="${escapeHtml(target.href)}"${external}>${label}</a>`; });
+  rendered = rendered.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, rawHref) => { const target = linkTarget(rawHref); const external = target.external ? ' target="_blank" rel="noopener noreferrer"' : ""; return `<a href="${escapeHtml(target.href)}"${external}>${label}</a>`; });
   rendered = rendered.replace(/`([^`]+)`/g, "<code>$1</code>");
   rendered = rendered.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   return rendered;
@@ -261,6 +261,13 @@ function readRoute() {
   return { type: "learn" };
 }
 
+function focusRouteHeading(route) {
+  const heading = route.type === "lesson" ? $("#reader-title") : document.querySelector(`[data-section="${route.type}"] h2, #about-view h2`);
+  if (!heading) return;
+  heading.tabIndex = -1;
+  heading.focus({ preventScroll: true });
+}
+
 function renderRoute() {
   const route = readRoute();
   const hero = $(".shell-grid");
@@ -303,7 +310,7 @@ async function cacheCorePack() {
 
 async function loadInitialContent() {
   const cached = await readActivePack();
-  if (cached?.entries?.length === 5) {
+  if (cached?.entries?.length > 0) {
     state.activePack = cached;
     state.lessons = lessonsFromPack(cached);
     setCacheStatus(`Cached ${state.lessons.length} core lessons available offline.`, "ready");
@@ -322,7 +329,7 @@ async function start() {
   setupTheme();
   $("#cache-button").addEventListener("click", cacheCorePack);
   $("#search-input")?.addEventListener("input", (event) => renderSearchResults(event.target.value));
-  window.addEventListener("hashchange", renderRoute);
+  window.addEventListener("hashchange", () => { renderRoute(); requestAnimationFrame(() => focusRouteHeading(readRoute())); });
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch((error) => console.warn("Service worker unavailable", error));
   try {
     state.learning = normalizeLearningState(await readLearningState());

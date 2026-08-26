@@ -1,6 +1,7 @@
 package com.aetherlearn.app.data
 
 import android.content.Context
+import java.io.File
 
 /** Lightweight metadata used by the Learn list. */
 data class ModuleSummary(
@@ -10,11 +11,22 @@ data class ModuleSummary(
     val estimatedMinutes: Int,
 )
 
-class ModuleCatalog(private val context: Context) {
+class ModuleCatalog(
+    private val context: Context,
+    private val store: LocalStore? = null,
+) {
     private val parser = LessonParser(context)
 
-    fun loadLessons(): List<LessonDocument> = MODULE_ASSETS.mapNotNull { assetName ->
-        runCatching { parser.parseAsset(assetName) }.getOrNull()
+    fun loadLessons(): List<LessonDocument> {
+        val bundled = MODULE_ASSETS.mapNotNull { assetName -> runCatching { parser.parseAsset(assetName) }.getOrNull() }
+        val installed = store?.getInstalledPacks().orEmpty().flatMap { pack ->
+            val modulesDirectory = File(pack.installPath, "modules")
+            modulesDirectory.listFiles { file -> file.isFile && file.extension == "md" }
+                ?.sortedBy { it.name }
+                ?.mapNotNull { file -> runCatching { parser.parse(file.readText(Charsets.UTF_8)) }.getOrNull() }
+                .orEmpty()
+        }
+        return (bundled + installed).distinctBy { it.id }
     }
 
     fun loadSummaries(): List<ModuleSummary> = loadLessons().map { lesson ->

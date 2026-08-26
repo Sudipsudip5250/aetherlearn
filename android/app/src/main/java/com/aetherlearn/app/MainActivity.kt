@@ -45,6 +45,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,6 +64,10 @@ import com.aetherlearn.app.data.LocalStore
 import com.aetherlearn.app.data.ModuleCatalog
 import com.aetherlearn.app.data.ModuleProgress
 import com.aetherlearn.app.data.ModuleSummary
+import com.aetherlearn.app.data.NetworkDownloadHandle
+import com.aetherlearn.app.data.NetworkDownloadProgress
+import com.aetherlearn.app.data.NetworkDownloadStatus
+import com.aetherlearn.app.data.NetworkPackInstaller
 import com.aetherlearn.app.data.NoteSummary
 import com.aetherlearn.app.data.PackManager
 import com.aetherlearn.app.data.TermuxBridge
@@ -127,7 +132,8 @@ private fun AppShell(
     onThemeModeChanged: (ThemeMode) -> Unit,
 ) {
     val context = LocalContext.current
-    val lessons = remember { ModuleCatalog(context).loadLessons() }
+    var contentRevision by remember { mutableIntStateOf(0) }
+    val lessons = remember(contentRevision) { ModuleCatalog(context, localStore).loadLessons() }
     val summaries = remember(lessons) {
         lessons.map { lesson ->
             ModuleSummary(lesson.id, lesson.title, lesson.availability, lesson.estimatedMinutes)
@@ -149,6 +155,7 @@ private fun AppShell(
             lessons = lessons,
             themeMode = themeMode,
             onThemeModeChanged = onThemeModeChanged,
+            onContentChanged = { contentRevision++ },
             onBack = { settingsOpen = false },
         )
         return
@@ -857,6 +864,7 @@ private fun SettingsScreen(
     lessons: List<LessonDocument>,
     themeMode: ThemeMode,
     onThemeModeChanged: (ThemeMode) -> Unit,
+    onContentChanged: () -> Unit,
     onBack: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -865,6 +873,14 @@ private fun SettingsScreen(
     var packMessage by remember { mutableStateOf<String?>(null) }
     var exportWarning by rememberSaveable { mutableStateOf<String?>(null) }
     var exportMessage by remember { mutableStateOf<String?>(null) }
+    var networkUrl by rememberSaveable { mutableStateOf("") }
+    var networkProgress by remember { mutableStateOf<NetworkDownloadProgress?>(null) }
+    var networkHandle by remember { mutableStateOf<NetworkDownloadHandle?>(null) }
+    val networkInstaller = remember { NetworkPackInstaller(context.applicationContext, store) }
+    val latestNetworkHandle by rememberUpdatedState(networkHandle)
+    DisposableEffect(Unit) {
+        onDispose { latestNetworkHandle?.cancel() }
+    }
     val exportLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("*/*"),
     ) { uri ->
@@ -926,7 +942,7 @@ private fun SettingsScreen(
             exportMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
             HorizontalDivider()
             Text("Storage & content packs", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
-            Text("Core pack: 5 modules, ${formatBytes(packManager.coreSizeBytes())}, always available offline and protected from deletion.")
+            Text("Core pack: ${ModuleCatalog(context).loadLessons().size} modules, ${formatBytes(packManager.coreSizeBytes())}, always available offline and protected from deletion.")
             Text("Learning data and installed optional packs: approximately ${formatBytes(packManager.learningDataSizeBytes())}.")
             packManager.availablePacks().forEach { available ->
                 OptionalPackCard(
@@ -944,11 +960,75 @@ private fun SettingsScreen(
                     },
                 )
             }
+            Text("Network content pack", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text("Network required · user initiated. Enter an HTTPS URL to an AetherLearn ZIP pack. The core path stays available offline.")
+            OutlinedTextField(
+                value = networkUrl,
+                onValueChange = { networkUrl = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("HTTPS pack URL") },
+                placeholder = { Text("https://example.org/aetherlearn-pack.zip") },
+                singleLine = true,
+                enabled = networkHandle == null,
+            )
+            val transfer = networkProgress
+            if (transfer != null) {
+                Text(transfer.message, style = MaterialTheme.typography.bodySmall)
+                if (transfer.totalBytes > 0L) {
+                    LinearProgressIndicator(
+                        progress = { (transfer.downloadedBytes.toFloat() / transfer.totalBytes.toFloat()).coerceIn(0f, 1f) },
+                        modifier = Modifier.fillMaxWidth().semantics { contentDescription = "Pack download progress" },
+                    )
+                    Text("${formatBytes(transfer.downloadedBytes)} of ${formatBytes(transfer.totalBytes)}", style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                when (transfer?.status) {
+                    NetworkDownloadStatus.DOWNLOADING -> {
+                        Button(onClick = { networkHandle?.pause() }, modifier = Modifier.weight(1f)) { Text("Pause") }
+                        TextButton(onClick = { networkHandle?.cancel(); networkHandle = null }, modifier = Modifier.weight(1f)) { Text("Cancel") }
+                    }
+                    NetworkDownloadStatus.PAUSED -> {
+                        Button(onClick = { networkHandle?.resume() }, modifier = Modifier.weight(1f)) { Text("Resume") }
+                        TextButton(onClick = { networkHandle?.cancel(); networkHandle = null }, modifier = Modifier.weight(1f)) { Text("Cancel") }
+                    }
+                    else -> {
+                        Button(
+                            onClick = {
+                                runCatching { NetworkPackInstaller.validateUrl(networkUrl) }
+                                    .onSuccess {
+                                        networkProgress = NetworkDownloadProgress(NetworkDownloadStatus.DOWNLOADING, it, 0L, 0L, "Preparing download…")
+                                        networkHandle = networkInstaller.start(
+                                            it,
+                                            onProgress = { progress -> networkProgress = progress },
+                                            onComplete = { result ->
+                                                packMessage = result.message
+                                                installedPacks = packManager.installedPacks()
+                                                if (result.success) onContentChanged()
+                                                networkProgress = networkProgress?.copy(
+                                                    status = when {
+                                                        result.cancelled -> NetworkDownloadStatus.CANCELLED
+                                                        result.success -> NetworkDownloadStatus.COMPLETE
+                                                        else -> NetworkDownloadStatus.FAILED
+                                                    },
+                                                    message = result.message,
+                                                )
+                                                networkHandle = null
+                                            },
+                                        )
+                                    }
+                                    .onFailure { failure -> packMessage = failure.message ?: "Enter a valid HTTPS pack URL." }
+                            },
+                            modifier = Modifier.weight(1f),
+                        ) { Text("Download pack") }
+                    }
+                }
+            }
             packMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
             HorizontalDivider()
             Text("Privacy", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
             Text("Progress, quiz attempts, notes, bookmarks, preferences, and pack status are stored in app-private SQLite storage.")
-            Text("No network permission is requested by the core Android app. Optional packs in this M4 foundation are bundled local assets; no network download is implemented.")
+            Text("Network downloads are explicit and limited to the HTTPS URL you provide. The app sends no learning data, credentials, cookies, or analytics.")
         }
     }
 }

@@ -31,6 +31,12 @@ jobs:
       - name: Check web payload mirrors canonical lessons
         run: python scripts/check_web_content.py
 
+      - name: Check Android manifest security boundary
+        run: python scripts/check_android_manifest.py
+
+      - name: Check dependency pinning
+        run: python scripts/check_dependency_pins.py
+
       - name: Check common secret patterns
         run: python scripts/check_secrets.py
 
@@ -40,5 +46,52 @@ jobs:
       - name: Run validator against generated manifest
         run: python scripts/validate_content.py --content-dir content/core --manifest build/core-pack/manifest.json
 
+      - name: Check web syntax and JSON
+        run: |
+          node --check web/app.js
+          node --check web/idb.js
+          node --check web/sw.js
+          python -m json.tool web/content/manifest.json >/dev/null
+          python -m json.tool web/manifest.webmanifest >/dev/null
+
       - name: Run unit tests
         run: python -m unittest discover -s tests -v
+
+      - name: Check whitespace
+        run: git diff --check
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Build, test, and lint Android app
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleDebug assembleRelease testDebugUnitTest lintDebug
+
+      - name: Verify APK checksums
+        run: |
+          mkdir -p build/release
+          sha256sum android/app/build/outputs/apk/debug/app-debug.apk > build/release/app-debug.SHA256SUMS
+          sha256sum android/app/build/outputs/apk/release/app-release-unsigned.apk > build/release/app-release-unsigned.SHA256SUMS
+          python scripts/check_release_artifact.py android/app/build/outputs/apk/debug/app-debug.apk build/release/app-debug.SHA256SUMS
+          python scripts/check_release_artifact.py android/app/build/outputs/apk/release/app-release-unsigned.apk build/release/app-release-unsigned.SHA256SUMS
+
+      - name: Upload APKs and checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: aetherlearn-apks
+          path: |
+            android/app/build/outputs/apk/debug/app-debug.apk
+            android/app/build/outputs/apk/release/app-release-unsigned.apk
+            build/release/*.SHA256SUMS

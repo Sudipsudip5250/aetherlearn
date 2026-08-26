@@ -159,3 +159,10 @@ h1 em { color: #c8bdff; font-style: normal; }
   .progress-summary { grid-template-columns: 1fr; }
   .search-row, .practice-card, .progress-card { align-items: stretch; flex-direction: column; }
 }
+
+button, .open-card, .secondary-button, .primary-button { min-height: 44px; }
+
+@media (forced-colors: active) {
+  .status-dot, .privacy-icon, .termux-note, .feedback, .pill { forced-color-adjust: none; border: 1px solid CanvasText; }
+  button:focus-visible, a:focus-visible { outline: 3px solid Highlight; }
+}

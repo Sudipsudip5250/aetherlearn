@@ -58,8 +58,9 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Implement staging, atomic activation, and last-known-good rollback for local optional packs.
 - [x] Protect the core eleven-module pack and preserve learning data when an optional pack is deleted.
 - [x] Add Settings storage accounting and core/optional-pack status UI.
-- [ ] Implement real network download, pause, resume, and re-download flows; deferred by M4 scope.
-- [ ] **Checkpoint M4:** Device/emulator smoke testing must confirm file-picker export, restart persistence, optional-pack install/delete, rollback behavior, and core-content protection; static build, test, lint, and repository checks pass.
+- [x] Implement real user-initiated HTTPS network download, pause, resume, retry, cancellation, and re-download flows in the Android Settings surface.
+- [x] Stream downloads into app-private partial storage, resume with HTTP Range when supported, reject cleartext/credentialed URLs, cap transfer sizes, validate ZIP paths/manifest/lesson hashes, and activate atomically with last-known-good rollback.
+- [ ] **Checkpoint M4:** Device/emulator smoke testing must confirm file-picker export, restart persistence, optional-pack install/delete, interrupted transfer recovery, rollback behavior, and core-content protection; static build, test, lint, and repository checks pass.
 
 ## M5 — Termux pilot
 
@@ -101,13 +102,13 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 ## M7 — Release hardening
 
 - [ ] Run the Android device matrix, including a low-memory or aggressive-battery device.
-- [ ] Run accessibility checks for text scaling, focus, screen reader labels, contrast, touch targets, and reduced motion.
-- [ ] Run privacy and network inspection to verify no learning data leaves the device.
-- [ ] Run content and safety review for all 20 modules.
-- [ ] Run dependency and release-artifact checks; document limitations.
-- [ ] Prepare release notes, installation instructions, content-pack recovery instructions, and contributor handoff.
-- [ ] Publish checksums and signed release metadata.
-- [ ] **Checkpoint M7:** All release gates in `PLAN.md` pass, or each exception has an owner, rationale, mitigation, and follow-up issue.
+- [x] Implement web accessibility hardening for text scaling/reflow, focus restoration, semantic labels/live regions, touch targets, forced colors, reduced motion, restrictive CSP, and safe external links; manual screen-reader and Android-browser checks remain open.
+- [x] Implement the privacy/network boundary: explicit HTTPS-only pack requests, no cookies or credentials, no learning-data request fields, cleartext denial, no broad external-storage permissions, and no analytics path. Physical network inspection remains open.
+- [ ] Run content and safety review for all 20 modules; only 11 modules are authored so far.
+- [x] Add dependency/build/release-artifact gates, including Android debug/release build, unit tests, lint, manifest boundary checks, and APK SHA-256 sidecars.
+- [x] Prepare release notes, installation instructions, content-pack recovery instructions, and contributor handoff in `docs/M7_RELEASE_NOTES.md` and `docs/NETWORK_PACKS.md`.
+- [ ] Publish signed release metadata; unsigned release artifacts and checksums are verified, but no authorized signing key or public pack host is configured.
+- [ ] **Checkpoint M7:** Static and CI gates pass; device matrix, Android-browser, assistive-technology, full-20-module review, signed metadata, and production distribution gates remain explicitly assigned as release follow-ups.
 
 ## Deferred backlog
 

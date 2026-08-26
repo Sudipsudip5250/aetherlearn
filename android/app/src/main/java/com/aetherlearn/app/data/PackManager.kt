@@ -127,4 +127,8 @@ class PackManager(
     }
 }
 
-data class PackResult(val success: Boolean, val message: String)
+data class PackResult(
+    val success: Boolean,
+    val message: String,
+    val cancelled: Boolean = false,
+)
