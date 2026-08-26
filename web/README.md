@@ -1,6 +1,6 @@
 # AetherLearn web fallback
 
-This directory contains the secondary, client-only M6 web reader. It reuses the twenty validated Markdown lesson files from `content/core/` and does not introduce a second lesson schema. The copied files under `web/content/core/` are the static web payload; `scripts/check_web_content.py` verifies that every copy remains byte-identical to its canonical source.
+This directory contains the secondary, client-only M6 web reader. It reuses the 35 validated Markdown lesson files from `content/core/` and does not introduce a second lesson schema. The copied files under `web/content/core/` are the static web payload; `scripts/check_web_content.py` verifies that every copy remains byte-identical to its canonical source.
 
 ## Serve locally
 
@@ -16,7 +16,7 @@ Then open <http://localhost:4173/>. No build step, package installation, backend
 
 ## Offline use
 
-Open the app while the twenty core lessons are available, then select **Cache core content**. The client downloads the manifest and all twenty Markdown files, validates the manifest-to-lesson IDs and titles, and writes the complete `core` pack to IndexedDB. The web manifest is versioned as `1.2.0` for this curriculum-completion batch.
+Open the app while the 35 current core lessons are available, then select **Cache core content**. The client downloads the manifest and all 35 Markdown files, validates the manifest-to-lesson IDs and titles, and writes the complete `core` pack to IndexedDB. The web manifest is versioned as `1.6.0` for the approved Stage 4 Web/data batch.
 
 Pack replacement uses a staging record and an active record in one read/write transaction. A failed update therefore reports an error while retaining the previous active pack. The visible status reports whether the pack is loaded, updating, cached, or unavailable. The user must explicitly start caching; the client does not silently create a network content subscription.
 
@@ -26,7 +26,7 @@ The service worker caches the static app shell and uses cache-first responses fo
 
 The fallback stores a versioned learning-state record in this browser only. It includes per-lesson progress (`not started`, `in progress`, or `completed`), private notes, bookmarks, and knowledge-check attempt/best-score data. Opening a lesson marks it in progress; completion, note saving, bookmark changes, and quiz attempts are explicit local actions. Search scans the cached lesson titles and bodies in memory, and Practice exposes the `Offline practice` section from every lesson. No learning state is synchronized, uploaded, or shared automatically.
 
-The new batch is immediately usable by both clients because it follows the existing frontmatter and section contract. The native Android catalog now discovers twenty bundled assets. The browser manifest and copied payload cover the same twenty canonical files. Existing progress, notes, bookmarks, and quiz state are keyed by stable lesson ID, so adding modules does not rewrite state for the original five lessons.
+The new batch is immediately usable by both clients because it follows the existing frontmatter and section contract. The native Android catalog now discovers 35 bundled assets. The browser manifest and copied payload cover the same 35 canonical files. Stage 4 is bundled-only and is not implicitly an optional remote-pack authorization. Existing progress, notes, bookmarks, and quiz state are keyed by stable lesson ID, so adding modules does not rewrite state for earlier lessons.
 
 ## Privacy and boundaries
 
@@ -48,6 +48,6 @@ node --check web/idb.js
 node --check web/sw.js
 ```
 
-The browser evidence log is recorded in [`../docs/references/m6_browser_notes.md`](../docs/references/m6_browser_notes.md). The content-batch source note is [`../docs/references/content_batch_2026-08-25.md`](../docs/references/content_batch_2026-08-25.md). M4 network-pack setup and recovery are documented in [`../docs/NETWORK_PACKS.md`](../docs/NETWORK_PACKS.md), and M7 gates and limitations are in [`../docs/M7_RELEASE_NOTES.md`](../docs/M7_RELEASE_NOTES.md).
+The browser evidence log is recorded in [`../docs/references/m6_browser_notes.md`](../docs/references/m6_browser_notes.md); the Stage 4 smoke record is [`../docs/references/stage4_browser_smoke.md`](../docs/references/stage4_browser_smoke.md). The content-batch source note is [`../docs/references/content_batch_2026-08-25.md`](../docs/references/content_batch_2026-08-25.md). M4 network-pack setup and recovery are documented in [`../docs/NETWORK_PACKS.md`](../docs/NETWORK_PACKS.md), and M7 gates and limitations are in [`../docs/M7_RELEASE_NOTES.md`](../docs/M7_RELEASE_NOTES.md).
 
 The core content source remains the repository’s validated Markdown contract in [`../content/README.md`](../content/README.md).

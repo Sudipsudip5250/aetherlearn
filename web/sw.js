@@ -1,4 +1,4 @@
-const CACHE_NAME = "aetherlearn-shell-v6";
+const CACHE_NAME = "aetherlearn-shell-v7";
 const SHELL_ASSETS = [
   "./",
   "./index.html",

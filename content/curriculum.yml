@@ -1,6 +1,6 @@
 schema_version: 2
 curriculum_id: aetherlearn
-curriculum_version: 1.5.0
+curriculum_version: 1.6.0
 mvp_baseline:
   id: mvp-20
   module_count: 20
@@ -83,6 +83,19 @@ stages:
         title: Coordinated vulnerability disclosure
       - id: sec-04-security-organizations-and-roles
         title: Security organizations, roles, and evidence
+  - id: stage-4
+    title: Web and data foundations
+    status: approved
+    module_count: 4
+    modules:
+      - id: web-01-semantic-html-accessibility
+        title: Semantic HTML and accessible structure
+      - id: web-02-css-layout-responsive-design
+        title: CSS layout and responsive presentation
+      - id: web-03-javascript-events-and-state
+        title: JavaScript events and local state
+      - id: web-04-data-modeling-and-json
+        title: Data modeling and JSON fixtures
 modules:
   - id: dl-01-digital-information
     title: How digital devices represent information
@@ -177,3 +190,15 @@ modules:
   - id: sec-04-security-organizations-and-roles
     title: Security organizations, roles, and evidence
     stage: stage-3
+  - id: web-01-semantic-html-accessibility
+    title: Semantic HTML and accessible structure
+    stage: stage-4
+  - id: web-02-css-layout-responsive-design
+    title: CSS layout and responsive presentation
+    stage: stage-4
+  - id: web-03-javascript-events-and-state
+    title: JavaScript events and local state
+    stage: stage-4
+  - id: web-04-data-modeling-and-json
+    title: Data modeling and JSON fixtures
+    stage: stage-4

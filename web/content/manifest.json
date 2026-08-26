@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "pack_id": "core",
-  "pack_version": "1.5.0",
+  "pack_version": "1.6.0",
   "lessons": [
     {
       "id": "dl-01-digital-information",
@@ -157,6 +157,26 @@
       "id": "sec-04-security-organizations-and-roles",
       "title": "Security organizations, roles, and evidence",
       "path": "content/core/sec-04-security-organizations-and-roles.md"
+    },
+    {
+      "id": "web-01-semantic-html-accessibility",
+      "title": "Semantic HTML and accessible structure",
+      "path": "content/core/web-01-semantic-html-accessibility.md"
+    },
+    {
+      "id": "web-02-css-layout-responsive-design",
+      "title": "CSS layout and responsive presentation",
+      "path": "content/core/web-02-css-layout-responsive-design.md"
+    },
+    {
+      "id": "web-03-javascript-events-and-state",
+      "title": "JavaScript events and local state",
+      "path": "content/core/web-03-javascript-events-and-state.md"
+    },
+    {
+      "id": "web-04-data-modeling-and-json",
+      "title": "Data modeling and JSON fixtures",
+      "path": "content/core/web-04-data-modeling-and-json.md"
     }
   ]
 }

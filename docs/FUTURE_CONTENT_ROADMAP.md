@@ -99,13 +99,13 @@ The current research set supports the roadmap with the Computer History Museum l
 
 Before any future strand becomes an authored module, the contributor should submit a scope note identifying the learner outcome, prerequisites, offline/online requirement, risk tier, exercise boundary, source list, accessibility considerations, and maintenance owner. A reviewer should then check technical accuracy, citation support, answerability, reading level, cultural and historical framing, and whether the exercise can be completed without unauthorized access or personal data.
 
-A release candidate should keep unapproved content outside `content/curriculum.yml`. Once a batch is explicitly approved, it must use the versioned registry, existing validator, Android/Web byte-parity process, and human pedagogical/safety review. This preserves the stable `mvp-20` baseline and prevents a roadmap from silently becoming product scope. Stages 1–3 are the recorded exceptions under decisions D-031, D-032, and D-034; Stage 3 also has the safety matrix in `docs/references/stage3_sources.md`.
+A release candidate should keep unapproved content outside `content/curriculum.yml`. Once a batch is explicitly approved, it must use the versioned registry, existing validator, Android/Web byte-parity process, and human pedagogical/safety review. This preserves the stable `mvp-20` baseline and prevents a roadmap from silently becoming product scope. Stages 1–4 are the recorded exceptions under decisions D-031, D-032, D-034, and D-036; Stage 3 also has the safety matrix in `docs/references/stage3_sources.md`, and Stage 4 has the Web/data source matrix in `docs/references/stage4_sources.md`.
 
 ## 5. Recommended order after release gates
 
 The first post-MVP content increment should be a small, non-operational **computing history and systems vocabulary** set. The second should be **software engineering and open-source practice**. The third should be **ethical security, disclosure, and organization literacy**. Historical security case studies and career pathways should follow only after the project has a named human reviewer for source quality, safety framing, and local-law sensitivity.
 
-The immediate content priority is to complete Stage 3’s technical, pedagogical, accessibility, source, and safety review without claiming that repository checks replace human approval. Contributors may begin Stage 4 only after Stage 3’s validation, parity, documentation, commit, and review checkpoint is recorded. The roadmap is successful when each increment remains bounded, source-backed, safety-reviewed, and reversible.
+The immediate content priority is to complete Stage 4’s technical, pedagogical, accessibility, source, and privacy review without claiming that repository checks replace human approval. Stage 4 is authorized and active under D-036; its four lessons must complete validation, parity, documentation, commit, push, and hosted-CI checks before Stage 5 is considered. The roadmap is successful when each increment remains bounded, source-backed, safety-reviewed, and reversible.
 
 ## References
 

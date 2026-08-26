@@ -82,7 +82,7 @@ Begin with [`DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md). The first lau
 
 ## 3. Sample core-pack artifact
 
-The committed sample artifact is [`sample-pack/aetherlearn-core-pack-1.0.0.zip`](sample-pack/aetherlearn-core-pack-1.0.0.zip), with checksum sidecar [`sample-pack/aetherlearn-core-pack-1.0.0.zip.SHA256SUMS`](sample-pack/aetherlearn-core-pack-1.0.0.zip.SHA256SUMS). It contains the 31 current bundled lessons—the original 20-module MVP baseline plus the three approved Stage 1 lessons, four Stage 2 drafts, and four Stage 3 defensive-security drafts—along with a root `manifest.json` and `modules/<filename>` entries.
+The committed sample artifact is [`sample-pack/aetherlearn-core-pack-1.0.0.zip`](sample-pack/aetherlearn-core-pack-1.0.0.zip), with checksum sidecar [`sample-pack/aetherlearn-core-pack-1.0.0.zip.SHA256SUMS`](sample-pack/aetherlearn-core-pack-1.0.0.zip.SHA256SUMS). It contains the 35 current bundled lessons—the original 20-module MVP baseline plus the three approved Stage 1 lessons, four Stage 2 drafts, four Stage 3 defensive-security drafts, and four Stage 4 Web/data drafts—along with a root `manifest.json` and `modules/<filename>` entries.
 
 Regenerate it from source:
 
@@ -142,13 +142,13 @@ The downloader is foreground and user-controlled. It does not create an account,
 
 ## 5. Required human verification
 
-Complete [`DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) in order. It covers fresh install and privacy, navigation and discovery of the 31 current lessons, complete offline lessons, quizzes, progress, notes, bookmarks, force-stop persistence, Markdown/JSON exports, local packs, network-pack controls and interruption recovery, Termux variants, desktop and Android-browser PWA caching, accessibility basics, privacy boundaries, defect recording, and cleanup. The 20-lesson MVP baseline remains a useful comparison point; the three Stage 1, four Stage 2, and four Stage 3 lessons must also be sampled, with the Stage 3 safety boundary reviewed explicitly.
+Complete [`DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) in order. It covers fresh install and privacy, navigation and discovery of the 35 current lessons, complete offline lessons, quizzes, progress, notes, bookmarks, force-stop persistence, Markdown/JSON exports, local packs, network-pack controls and interruption recovery, Termux variants, desktop and Android-browser PWA caching, accessibility basics, privacy boundaries, defect recording, and cleanup. The 20-lesson MVP baseline remains a useful comparison point; the three Stage 1, four Stage 2, four Stage 3, and four Stage 4 lessons must also be sampled, with the Stage 3 safety boundary and Stage 4 offline/privacy/accessibility boundary reviewed explicitly.
 
 Mark unavailable environments **Not tested**. Desktop source checks do not prove Android-device behavior, and a successful build does not prove accessibility, Termux, low-storage, process-death, or interrupted-network behavior.
 
 ## 6. Release decision boundary
 
-The current repository is suitable for controlled human testing. The debug APK is the normal unsigned-by-project test artifact; the release APK is explicitly unsigned and must be signed before it can be installed or distributed. The repository is not production-signed or publicly approved. The release owner must still obtain human approval for all 31 current lessons, including the original 20-module MVP baseline, the three draft Stage 1 lessons, the four draft Stage 2 lessons, and the four draft Stage 3 lessons, complete representative Android/emulator and Termux tests, complete Android-browser and assistive-technology tests, complete the explicit Stage 3 safety review, establish authorized signing and key rotation, verify signed metadata, and approve the distribution and pack-host process.
+The current repository is suitable for controlled human testing. The debug APK is the normal unsigned-by-project test artifact; the release APK is explicitly unsigned and must be signed before it can be installed or distributed. The repository is not production-signed or publicly approved. The release owner must still obtain human approval for all 35 current lessons, including the original 20-module MVP baseline, the three draft Stage 1 lessons, the four draft Stage 2 lessons, the four draft Stage 3 lessons, and the four draft Stage 4 lessons, complete representative Android/emulator and Termux tests, complete Android-browser and assistive-technology tests, complete the explicit Stage 3 safety review and Stage 4 Web/data accessibility/privacy review, establish authorized signing and key rotation, verify signed metadata, and approve the distribution and pack-host process.
 
 Do not commit a keystore, password, signing configuration containing secret values, private certificate material, or personal test data. Follow [`SIGNING.md`](SIGNING.md) for human-operated signing only.
 

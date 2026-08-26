@@ -71,6 +71,10 @@ class ModuleCatalog(
             "sec-02-threat-modeling-defensive-controls.md",
             "sec-03-coordinated-disclosure.md",
             "sec-04-security-organizations-and-roles.md",
+            "web-01-semantic-html-accessibility.md",
+            "web-02-css-layout-responsive-design.md",
+            "web-03-javascript-events-and-state.md",
+            "web-04-data-modeling-and-json.md",
         )
     }
 }
