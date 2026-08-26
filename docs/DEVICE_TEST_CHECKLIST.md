@@ -39,17 +39,17 @@ Prepare two fictional lesson values for testing: `Offline functions` and `Review
 
 **Pass evidence:** privacy wording is visible, no account or network is required for the core path, and the shell opens offline. **Fail or stop:** a login, unexplained permission, automatic upload, or required network appears.
 
-## 3. Android navigation and 23-lesson discovery
+## 3. Android navigation and 27-lesson discovery
 
 1. On the main shell, verify the four bottom destinations: **Learn**, **Practice**, **Search**, and **Progress**. Verify **Settings** is available from the top bar.
-2. Open **Learn**. Confirm that the catalog contains 23 lessons: the stable 20-module MVP baseline plus DL-06, DL-07, and DL-08 in digital literacy.
-3. Confirm that the previously completed content is visible: PY-06, PY-07, AL-01, AL-02, AL-03, AL-04, AL-05, DEV-02, and DEV-03. Also open DL-06, DL-07, and DL-08.
+2. Open **Learn**. Confirm that the catalog contains 27 lessons: the stable 20-module MVP baseline plus the three Stage 1 lessons and DEV-04 through DEV-07 from Stage 2.
+3. Confirm that the previously completed content is visible: PY-06, PY-07, AL-01, AL-02, AL-03, AL-04, AL-05, DEV-02, and DEV-03. Also open DL-06, DL-07, DL-08, DEV-04, DEV-05, DEV-06, and DEV-07.
 4. Confirm that the first five existing modules remain visible and that no duplicate stable IDs appear.
 5. Open **Practice**, **Search**, and **Progress** in turn. Each destination should show a useful screen rather than a placeholder or crash.
 6. Open **Settings** and return with **Back**. Confirm that returning does not reset the selected destination or learning state unexpectedly.
 7. Change the theme to **Light**, **Dark**, and **Follow system** if the controls are available. Confirm that text and controls remain readable in each mode. Restore the preferred mode.
 
-**Pass evidence:** all 23 current lessons are discoverable, the original 20-module baseline remains present, all three Stage 1 lessons open, all destinations open, and no crash or data reset occurs.
+**Pass evidence:** all 27 current lessons are discoverable, the original 20-module baseline remains present, all three Stage 1 and four Stage 2 lessons open, all destinations open, and no crash or data reset occurs.
 
 ## 4. Complete one lesson fully offline
 

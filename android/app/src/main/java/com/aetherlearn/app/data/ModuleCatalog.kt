@@ -63,6 +63,10 @@ class ModuleCatalog(
             "dev-01-terminal-command-line.md",
             "dev-02-git-local-repositories-history.md",
             "dev-03-debugging-error-messages.md",
+            "dev-04-testing-pure-functions.md",
+            "dev-05-code-review-issue-reports.md",
+            "dev-06-dependency-provenance-builds.md",
+            "dev-07-open-source-accessibility.md",
         )
     }
 }

@@ -1,16 +1,16 @@
 # AetherLearn final content consistency review
 
 **Review date:** 2026-08-26
-**Scope:** the stable 20-module `mvp-20` baseline plus the three approved Stage 1 lessons
+**Scope:** the stable 20-module `mvp-20` baseline plus the approved Stage 1 slice and four Stage 2 drafts
 **Review type:** contract, source, safety-boundary, and cross-client consistency review; not a substitute for final human pedagogical or safety approval
 
 ## Outcome
 
-The 23 canonical lessons pass the repository content contract and prerequisite-graph checks. Every module has the required frontmatter, required body sections, at least three numbered knowledge-check prompts with inline answers and explanations, an offline-practice section, accessibility guidance, safety guidance, further reading, and a current change-log entry. All current modules remain within the requested **S0/S1** risk range. The three Stage 1 lessons are explicitly marked `draft` and remain subject to human technical and pedagogical review.
+The 27 canonical lessons pass the repository content contract and prerequisite-graph checks. Every module has the required frontmatter, required body sections, at least three numbered knowledge-check prompts with inline answers and explanations, an offline-practice section, accessibility guidance, safety guidance, further reading, and a current change-log entry. All current modules remain within the requested **S0/S1** risk range. The three Stage 1 and four Stage 2 lessons are explicitly marked `draft` and remain subject to human technical, pedagogical, accessibility, and source review.
 
 One real clarity issue was fixed during this review. DL-04 asked the learner to rank “fictional results” without supplying the results. The practice now includes three concrete fictional results, including a library page, a password-gated unknown page, and an opaque urgent-prize short link. The exercise also retains URL-part labeling and a rule about information never to enter into an unfamiliar page.
 
-The audit heuristic flagged DL-04, PY-02, and DEV-01 because their practice sections were concise. Manual inspection found PY-02 and DEV-01 answerable and aligned with their objectives. DL-04 was strengthened as described above. Stage 1 uses paper or fixed fictional traces rather than live tooling. No module was rejected for a rewrite in this repository consistency pass, but all 23 remain subject to the human teaching-quality and safety review listed in the release gates.
+The audit heuristic flagged DL-04, PY-02, and DEV-01 because their practice sections were concise. Manual inspection found PY-02 and DEV-01 answerable and aligned with their objectives. DL-04 was strengthened as described above. Stage 1 uses paper or fixed fictional traces rather than live tooling. Stage 2 uses fictional test tables, repository forms, provenance records, and accessibility findings; it does not publish changes, install dependencies, or claim standards conformance. No module was rejected for a rewrite in this repository consistency pass, but all 27 remain subject to the human teaching-quality and safety review listed in the release gates.
 
 ## Module review matrix
 
@@ -39,6 +39,10 @@ The audit heuristic flagged DL-04, PY-02, and DEV-01 because their practice sect
 | DEV-01 | Terminal concepts use a fictional tree and read-only local inspection fallback. | termux-optional / S1 | Retain; human review open |
 | DEV-02 | Git working tree, staging area, commits, and history are separated; no publishing is implied. | termux-optional / S1 | Retain; human review open |
 | DEV-03 | Error categories, traceback clues, and minimal reproduction steps are clearly separated. | offline / S0 | Retain; human review open |
+| DEV-04 | Test cases connect inputs to expected results and include boundary and invalid-input examples. | offline / S0 | Draft; technical and pedagogical review open |
+| DEV-05 | Pull-request context and issue-report fields use a fictional repository and respectful, actionable feedback. | offline / S0 | Draft; technical and pedagogical review open |
+| DEV-06 | Checksums, provenance, dependencies, and reproducibility are kept distinct through a fictional manifest. | offline / S1 | Draft; technical and supply-chain review open |
+| DEV-07 | Open-source boundaries and WCAG principles are framed as review vocabulary, not a conformance claim. | offline / S0 | Draft; technical, accessibility, and pedagogical review open |
 
 ## Termux consistency
 
@@ -52,20 +56,20 @@ The following checks were completed for this review:
 
 | Check | Result |
 |---|---|
-| Canonical registry membership and exact titles | 23/23 aligned; original `mvp-20` order and IDs preserved |
-| Required frontmatter and body sections | 23/23 passed |
+| Canonical registry membership and exact titles | 27/27 aligned; original `mvp-20` order and IDs preserved |
+| Required frontmatter and body sections | 27/27 passed |
 | Prerequisite names and ordering | No unknown or forward prerequisite found |
-| Knowledge checks | 23/23 have at least three answer/explanation prompts |
+| Knowledge checks | 27/27 have at least three answer/explanation prompts |
 | Availability and risk scope | All modules are offline or termux-optional; all are S0/S1 |
 | Canonical source validation | Passed `scripts/validate_content.py` with schema-v2 registry |
 | Android content parity | Passed `scripts/check_android_content.py` and direct comparisons |
 | Web content parity | Passed `scripts/check_web_content.py` and direct comparisons |
-| Source record | Stage 1 claims and URLs recorded in `docs/references/stage1_sources.md` |
-| New clarity issue | DL-04 corrected in the prior review; Stage 1 added with no automated contract issue |
+| Source record | Stage 1 and Stage 2 claims and URLs recorded in the staged reference notes |
+| New clarity issue | DL-04 corrected in the prior review; Stage 1 and Stage 2 added with no automated contract issue |
 
 ## Remaining decision
 
-The content is **repository-consistent and client-ready for controlled testing**, but it is not yet human-approved for public release. A reviewer should read all 23 current lessons for age-appropriate pacing, cultural and linguistic clarity, factual accuracy, accessibility of examples, and safety framing, with particular attention to the three Stage 1 drafts and their source wording. Findings should be fixed in place through the current stage process; later stages must not be added until Stage 1 is closed and documented. The release owner should record approval or required rewrites before signing or publicly distributing an artifact.
+The content is **repository-consistent and client-ready for controlled testing**, but it is not yet human-approved for public release. A reviewer should read all 27 current lessons for age-appropriate pacing, cultural and linguistic clarity, factual accuracy, accessibility of examples, and safety framing, with particular attention to the seven post-MVP drafts and their source wording. Findings should be fixed in place through the current stage process; later stages must not be added until Stage 2 is closed and documented. The release owner should record approval or required rewrites before signing or publicly distributing an artifact.
 
 ## References
 

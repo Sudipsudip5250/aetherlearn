@@ -1,25 +1,25 @@
 # Future curriculum implementation plan
 
-**Status:** Stage 1 approved and in execution; later stages remain sequentially gated by completion, review, and validation checkpoints.
+**Status:** Stage 1 automated checkpoint complete; Stage 2 approved for execution; later stages remain sequentially gated by completion, review, and validation checkpoints.
 
 ## Decision boundary
 
 The current AetherLearn MVP remains a validated, frozen 20-module curriculum. The roadmap is not a license to add an encyclopedic catalog. A future implementation must begin with an explicit decision-log entry that names the approved batch, changes the curriculum scope intentionally, identifies maintainers and reviewers, and accepts the additional Android/Web parity and long-term source-maintenance burden.
 
-The user-approved Stage 1 slice is now intentionally represented in `content/curriculum.yml`, `content/core/`, Android assets, and the Web payload after the registry-policy change. All later stages remain planning-only until their own exact module list is recorded in `docs/PLAN.md` and their prior stage has passed its checkpoint.
+The user-approved Stage 1 slice is represented in `content/curriculum.yml`, `content/core/`, Android assets, and the Web payload. Stage 1 passed its automated validator, client-parity, browser-smoke, deterministic-pack, and hosted-CI checkpoint. Stage 2 now has its own exact module list and source matrix; Stages 3–5 remain planning-only until their own exact lists are recorded and their prior stages pass all required checkpoints.
 
 ## Recommended staged implementation
 
 | Stage | Proposed scope | Suggested size | Why this order | Required reviewers | Current status |
 |---|---|---:|---|---|---|
 | 0 | Release the current 20-module MVP and complete device, accessibility, pedagogical, and safety gates | 0 new modules | Establish a trustworthy baseline before expanding product scope | Release owner, device tester, pedagogical reviewer, safety reviewer | Baseline complete; human release gates remain |
-| 1 | Computing history and systems vocabulary | 3 lessons | Extends digital literacy without requiring risky tooling or external services | Technical and pedagogical reviewers | Approved and executing |
-| 2 | Software engineering and open-source practice | 3–4 lessons | Builds directly on Git and debugging already taught | Technical, pedagogical, and accessibility reviewers | Gated pending Stage 1 checkpoint |
+| 1 | Computing history and systems vocabulary | 3 lessons | Extends digital literacy without requiring risky tooling or external services | Technical and pedagogical reviewers | Automated checkpoint complete; human review open |
+| 2 | Software engineering and open-source practice | 4 lessons | Builds directly on Git and debugging already taught | Technical, pedagogical, accessibility, and supply-chain reviewers | Approved and executing |
 | 3 | Ethical security, disclosure, and organization literacy | 3–4 lessons | Adds security context only after the safety governance and source process are exercised | Technical, pedagogical, safety, and source reviewers | Gated pending Stage 2 checkpoint |
 | 4 | Web/data foundations and local-only application practice | 3–5 lessons | Adds browser and data concepts with static/local fixtures | Technical, pedagogical, accessibility, and privacy reviewers | Gated pending Stage 3 checkpoint |
 | 5 | Historical security case studies and career orientation | 2–4 lessons | Depends on stable source review, careful framing, and a named maintainer | Historical/source, pedagogical, safety, and accessibility reviewers | Gated pending Stage 4 checkpoint |
 
-The table is a delivery sequence, not blanket approval of new modules. Stage 1 is the sole approved post-MVP slice at this checkpoint; Stages 2–5 begin only after the previous stage is complete, validated, reviewed, committed, and documented.
+The table is a delivery sequence, not blanket approval of new modules. Stage 2 is the active approved post-MVP slice at this checkpoint; Stages 3–5 begin only after the previous stage is complete, validated, reviewed, committed, and documented.
 
 ## Stage 1: computing history and systems vocabulary
 
@@ -33,7 +33,14 @@ All three lessons are offline, use bounded synthetic examples, and are currently
 
 ## Stage 2: software engineering and open source
 
-Candidate lessons cover test cases for pure functions, readable interfaces and error handling, code review and issue reports, dependency provenance and reproducible builds, versioning and release notes, accessibility acceptance criteria, and open-source governance. Exercises should use fixture repositories and synthetic files. They must not require publishing personal information, copying secrets, or connecting to a third-party account.
+The approved Stage 2 slice is:
+
+1. **`dev-04-testing-pure-functions` — Testing small programs with examples and expected results.** Design deterministic test cases, boundary examples, and invalid-input rules on paper.
+2. **`dev-05-code-review-issue-reports` — Code review and useful issue reports.** Use fictional repository context to practice reproducible issue reports and respectful review comments.
+3. **`dev-06-dependency-provenance-builds` — Dependencies, provenance, and reproducible builds.** Distinguish checksums, provenance, resolved dependencies, and repeatability using a fictional manifest.
+4. **`dev-07-open-source-accessibility` — Open-source contribution and accessibility review.** Use project boundaries and WCAG 2.2 principles to draft small, testable acceptance checks.
+
+All four lessons are offline and use synthetic fixtures. DEV-06 is S1 because supply-chain evidence can be misunderstood; it does not authorize installation, execution, or trust in an artifact. No lesson requires publishing personal information, copying secrets, or connecting to a third-party account.
 
 ## Stage 3: ethics, security, and organizations
 

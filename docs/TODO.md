@@ -39,13 +39,13 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 
 ## M3 — Offline learning loop
 
-- [x] Load and parse the eleven bundled core lesson assets offline.
+- [x] Load and parse all current bundled core lesson assets offline; the catalog now contains 27 lessons.
 - [x] Render title, objectives, prerequisites, availability, explanation, worked example, common mistakes, offline practice, knowledge check, project, accessibility, safety, further reading, and change log sections.
 - [x] Implement versioned SQLite tables for module progress, quiz attempts, notes, and bookmarks without breaking M2 metadata.
 - [x] Implement not-started, in-progress, and completed states with Learn and Progress indicators.
 - [x] Implement knowledge checks with answer feedback, explanations, retry behavior, attempt counts, and best scores.
 - [x] Implement private local notes and lesson bookmarks, surfaced in Progress.
-- [x] Implement offline title/body search over all eleven lessons.
+- [x] Implement offline title/body search over all 27 current lessons.
 - [x] Implement a simple offline Practice tab listing each lesson’s exercise.
 - [ ] **Checkpoint M3:** Device/emulator smoke testing must confirm the complete offline journey, persistence after restart, and accessibility behavior; static build, test, lint, and repository checks pass.
 
@@ -79,12 +79,12 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 ## M6 — Web/PWA fallback
 
 - [x] Build the initial static web shell under `web/` with responsive, keyboard-accessible HTML/CSS/JavaScript.
-- [x] Reuse the eleven canonical Markdown lessons through `web/content/manifest.json` and the shared frontmatter/section parser; `scripts/check_web_content.py` prevents payload drift.
+- [x] Reuse all 27 canonical Markdown lessons through `web/content/manifest.json` and the shared frontmatter/section parser; `scripts/check_web_content.py` prevents payload drift.
 - [x] Add the initial lesson list and full reader route with objectives, metadata, sections, safe inline Markdown rendering, and external-link handling.
 - [x] Add a clear privacy note and message that full native Termux integration is Android-only in the MVP.
 - [x] Add service-worker caching for the app shell and explicit IndexedDB storage for cached content packs; updates stage before activating the new pack.
 - [x] Implement offline lesson reading, one practice flow, and local-only progress/notes/bookmarks in the browser.
-- [x] Implement simple local search over the eleven modules.
+- [x] Implement simple local search over the 27 current modules.
 - [x] Test cached use in a Chromium desktop browser with the local server stopped: catalog, reader, practice, search, progress, quiz, note, bookmark, completion, and reload persistence all worked offline.
 - [ ] Repeat the cached offline smoke test in an Android browser; no Android browser or device is attached to this environment.
 - [x] **Checkpoint M6:** After explicitly caching the core pack, core reading and practice remained usable offline in the verified desktop browser; the Android-browser runtime evidence gate remains open.
@@ -100,20 +100,25 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Synchronize all twenty canonical Markdown lessons into Android assets and the web payload; preserve exact byte-parity checks.
 - [x] Add only fixed, local-only Termux wrappers for PY-06, PY-07, and DEV-02; retain written fallbacks and learner-confirmed completion.
 - [x] **Checkpoint content expansion batch 2:** all twenty frozen MVP modules now exist and validate in the canonical source tree and both client payloads.
-- [ ] Deferred: post-MVP tracks remain outside the validator-backed 20-module registry and are not authored.
+- [x] Stage 1: add and validate `dl-06`, `dl-07`, and `dl-08`, synchronize Android/Web payloads, and preserve the stable `mvp-20` baseline.
+- [x] Stage 1: record the source matrix, update schema-v2 registry governance, run parity and hosted Quality checks, and push commit `ed18406`.
+- [x] Record the exact Stage 2 scope and source matrix for `dev-04` through `dev-07` in decision D-032 and `docs/references/stage2_sources.md`.
+- [x] Draft and register the four Stage 2 lessons; initial canonical validation and Android/Web parity pass.
+- [ ] Complete Stage 2 full static/pack/Android-CI checkpoint, content-review update, commit/push, and human technical/pedagogical/accessibility/supply-chain review.
+- [ ] Keep Stages 3–5 gated until the preceding stage is closed with its own decision, source review, safety review, parity, validation, and checkpoint evidence.
 
 ## M7 — Release hardening
 
 - [ ] Run the Android device matrix, including a low-memory or aggressive-battery device; use [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) and record each result.
-- [x] Complete the repository content-consistency pass for all 20 modules; record the DL-04 practice clarification and audit results in [`docs/CONTENT_REVIEW.md`](CONTENT_REVIEW.md).
+- [x] Complete the repository content-consistency pass for the current 27 lessons; record the DL-04 clarification, Stage 1 source review, and Stage 2 draft audit in [`docs/CONTENT_REVIEW.md`](CONTENT_REVIEW.md).
 - [x] Implement web accessibility hardening for text scaling/reflow, focus restoration, semantic labels/live regions, touch targets, forced colors, reduced motion, restrictive CSP, and safe external links; manual screen-reader and Android-browser checks remain open.
 - [x] Implement the privacy/network boundary: explicit HTTPS-only pack requests, no cookies or credentials, no learning-data request fields, cleartext denial, no broad external-storage permissions, and no analytics path. Physical network inspection remains open.
-- [ ] Run final pedagogical and safety review for all 20 authored modules; the consistency audit and automated contract/S0/S1 checks pass, but human review remains open.
+- [ ] Run final pedagogical and safety review for all 27 authored modules; the consistency audit and automated contract/S0/S1 checks pass, but human review remains open.
 - [x] Create the non-expert Android, Android-browser, desktop-browser, Termux, network-pack, persistence, export, and accessibility procedure in [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md).
 - [x] Add dependency/build/release-artifact gates, including Android debug/release build, unit tests, lint, manifest boundary checks, and APK SHA-256 sidecars.
 - [x] Prepare release notes, installation instructions, content-pack recovery instructions, and contributor handoff in `docs/M7_RELEASE_NOTES.md` and `docs/NETWORK_PACKS.md`.
 - [x] Create the human tester handoff in [`docs/RELEASE_HANDOFF.md`](RELEASE_HANDOFF.md), including local/CI APK acquisition, ADB/file-transfer installation, safe unknown-source handling, sample-pack hosting limits, and exact network-pack controls.
-- [x] Generate and checksum the deterministic 20-module sample core ZIP at `docs/sample-pack/`; document that its protected `pack_id: core` is suitable for transport/rejection testing, not optional-pack activation.
+- [x] Generate and checksum the deterministic 27-lesson sample core ZIP at `docs/sample-pack/`; document that its protected `pack_id: core` is suitable for transport/rejection testing, not optional-pack activation.
 - [x] Create the human-operated signing guide in [`docs/SIGNING.md`](SIGNING.md) without creating or storing a keystore, password, or private key.
 - [ ] Publish signed release metadata; unsigned release artifacts and checksums are verified, but no authorized signing key or public pack host is configured.
 - [ ] **Checkpoint M7:** Static and CI gates pass; the exact remaining human-only and operational gates are the device/emulator matrix, Android-browser matrix, manual assistive-technology review, final pedagogical/safety approval, authorized network inspection for the pack path, authorized signing and signed metadata, and production distribution/pack-host setup. Use [`docs/RELEASE_HANDOFF.md`](RELEASE_HANDOFF.md) and [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) as the required handoff path.
@@ -130,9 +135,10 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Retain substantive historical review and evidence notes under `docs/references/` because they support architectural decisions, browser/build evidence, or milestone recovery.
 - [x] Add [`docs/FUTURE_CONTENT_ROADMAP.md`](FUTURE_CONTENT_ROADMAP.md) with source-backed planning for historical languages, systems, software engineering, ethical security, organizations, and career orientation.
 - [x] Add [`docs/FUTURE_IMPLEMENTATION_PLAN.md`](FUTURE_IMPLEMENTATION_PLAN.md) with staged batches, acceptance criteria, source-maintenance rules, and safety boundaries.
-- [x] Keep the roadmap and implementation plan outside `content/curriculum.yml`; neither expands the frozen 20-module MVP or changes Android/Web payloads.
+- [x] Keep the roadmap and implementation plan as governance documents while allowing only decision-approved stage IDs into `content/curriculum.yml`; the original frozen 20-module MVP remains immutable.
 - [x] Record the user-approved Stage 1 transition in decision D-031 with the exact three-lesson scope, schema-v2 registry policy, S0 safety boundary, source requirements, and sequential later-stage gate.
-- [ ] Complete Stage 1 technical/pedagogical review, client parity, full validation, and commit checkpoint for `dl-06`, `dl-07`, and `dl-08`.
+- [x] Complete Stage 1 implementation, client parity, full automated validation, commit, push, and hosted Quality checkpoint for `dl-06`, `dl-07`, and `dl-08`; human pedagogical/safety review remains open.
+- [x] Begin Stage 2 only after the Stage 1 checkpoint, with its exact four-lesson scope and source matrix recorded in D-032.
 - [ ] Approve each later stage only after the preceding stage is validated, reviewed, documented, committed, and pushed; do not treat the user’s sequential authorization as a waiver of per-stage safety or release gates.
 
 ## Deferred backlog
