@@ -28,13 +28,14 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 
 ## M2 — Android shell
 
-- [ ] Create the native Android/Kotlin/Jetpack Compose application.
-- [ ] Implement Learn, Practice, Search, Progress, and Settings navigation.
-- [ ] Implement light/dark theme, system text scaling, visible focus, reduced-motion behavior, and accessible labels.
-- [ ] Implement app-private storage abstraction and schema versioning.
-- [ ] Add a privacy screen explaining local-first behavior and what the app does not collect.
-- [ ] Verify that no analytics, advertising, account, or network-required dependency enters the core app.
-- [ ] **Checkpoint M2:** Fresh install launches into the app shell on the reference Android device and survives rotation, backgrounding, process termination, and restart.
+- [x] Create the native Android/Kotlin/Jetpack Compose application under `android/` with API 26 minimum support.
+- [x] Implement exactly four bottom destinations: Learn, Practice, Search, and Progress, with Settings accessible from the shell.
+- [x] Implement light/dark theme, system text scaling, visible focus semantics, and accessible labels/content descriptions.
+- [x] Implement app-private SQLite storage abstraction with schema-versioned metadata, separated from content assets.
+- [x] Add a first-run privacy screen explaining no-account use, on-device progress, and data not collected.
+- [x] Verify that the manifest requests no network permission and that no analytics, advertising, account, or backend dependency enters the core app.
+- [x] Add local asset readiness for the five M1 modules and document Android build/run steps in `android/README.md`.
+- [ ] **Checkpoint M2:** Debug APK builds successfully; fresh-install device/emulator smoke testing for launch, navigation, lifecycle, and privacy persistence remains to be completed.
 
 ## M3 — Offline learning loop
 

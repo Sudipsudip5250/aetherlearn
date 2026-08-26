@@ -23,7 +23,9 @@ The project is delivered in vertical slices. Each milestone must produce somethi
 
 ## Current status — 2026-08-24
 
-M0 is complete. The repository has a root governance surface, documentation under `docs/`, references under `docs/references/`, an MIT license, contribution and security policies, community templates, and a GitHub Actions quality workflow. M1 is complete for the initial slice: the canonical 20-module registry, lesson contract, validator, deterministic pack builder, five representative lessons, and focused unit tests are present. M2 remains the next implementation milestone and is intentionally not started in this task.
+M0 is complete. The repository has a root governance surface, documentation under `docs/`, references under `docs/references/`, an MIT license, contribution and security policies, community templates, and a GitHub Actions quality workflow. M1 is complete for the initial slice: the canonical 20-module registry, lesson contract, validator, deterministic pack builder, five representative lessons, and focused unit tests are present.
+
+M2 is implemented as a native Android shell under `android/`. The project uses Kotlin, Jetpack Compose, Material 3, AGP 9.2.0, Gradle 9.4.1, Kotlin 2.3.21, Compose BOM 2026.08.00, compile/target SDK 37, and min SDK 26. It includes four bottom destinations, Settings, theme override, first-run privacy disclosure, schema-versioned SQLite metadata, and local assets for the five sample modules. `assembleDebug`, `test`, and `lintDebug` all pass in the configured SDK environment. The generated APK is 12 MB with SHA-256 `f6e1f83a0359056d589caa734038216c1824b77dd4e6c4a5550058b50be9e9f6`. No Android device or emulator is attached to this sandbox, so install and runtime smoke testing remains the final M2 gate.
 
 ## Suggested sequencing
 
@@ -69,6 +71,9 @@ The first implementation slice should create the repository, license, content sc
 | D-008 | 2026-08-24 | Encrypted portable backup is post-MVP | Device-bound key storage alone does not solve cross-device recovery | Key ownership, recovery, password handling, and export tests are specified |
 | D-009 | 2026-08-24 | Keep governance documents in `docs/`, implementation under `content/` and `scripts/`, and repository entry points in the root | Separates stable project guidance from executable/content assets and keeps future app code discoverable | A future app scaffold requires a revised top-level layout |
 | D-010 | 2026-08-24 | Validate prerequisites against a canonical 20-module registry, even when only five modules are authored | The sample pack must remain small without treating approved curriculum prerequisites as invalid | Curriculum scope or stable IDs change through an approved decision record |
+| D-011 | 2026-08-24 | Start M2 with a native Android shell rather than a cross-platform framework | Direct control over Android lifecycle, private storage, Compose UI, and future Termux intents; iOS is deferred | iOS becomes a release-blocking requirement or Android implementation proves unmaintainable |
+| D-012 | 2026-08-24 | Use AGP 9.2.0 with built-in Kotlin support and pin Gradle 9.4.1, Kotlin 2.3.21, Compose BOM 2026.08.00, compile/target SDK 37, and min SDK 26 | Matches the current Android documentation reviewed for this M2 build and avoids obsolete Kotlin plugin configuration | Official compatibility guidance changes or a dependency update is deliberately approved |
+| D-013 | 2026-08-24 | Keep M2 storage limited to app metadata and first-run/theme state; defer learning tables to M3 | Preserves a small, testable local boundary while making schema versioning ready for progress, notes, bookmarks, and scores | M3 storage schema is approved |
 
 ## Decision ownership
 
@@ -76,4 +81,4 @@ The project maintainer owns product-scope decisions. A designated Android mainta
 
 ## References
 
-The architecture decision is supported by Android’s documentation on intents and deep links and by the Termux RUN_COMMAND integration documentation. See the reference list in [`ARCHITECTURE.md`](ARCHITECTURE.md).
+The architecture decision is supported by Android’s documentation on intents and deep links and by the Termux RUN_COMMAND integration documentation. See the reference list in [`ARCHITECTURE.md`](ARCHITECTURE.md). The M2 build-tool findings are recorded in [`references/android_m2_build_notes.md`](references/android_m2_build_notes.md).

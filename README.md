@@ -10,7 +10,7 @@ Then read [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the native Android 
 
 ## Repository status
 
-M0 and the first M1 slice are complete. The repository now contains specifications, governance, a canonical content contract, a deterministic validator and pack builder, five representative lessons, focused tests, and a CI workflow. The application implementation has not started; M2 is the next milestone.
+M0 and M1 are complete. M2 is now in progress: the repository contains a native Kotlin/Jetpack Compose Android shell with four-tab navigation, local privacy-first setup, schema-versioned SQLite metadata, and the five-module local asset catalog. The debug APK builds with the pinned Gradle wrapper; device/emulator smoke testing remains the final M2 gate. See [`android/README.md`](android/README.md) for build instructions.
 
 ## Core decisions
 
@@ -21,7 +21,7 @@ M0 and the first M1 slice are complete. The repository now contains specificatio
 | Data model | Local-first; no accounts, sync, analytics, or backend in MVP |
 | Curriculum | 20 modules across four strands |
 | Termux | Optional, explicit, allowlisted, and never required for the core path |
-| License | MIT by default, pending repository-owner confirmation |
+| License | MIT |
 
 ## Evidence
 

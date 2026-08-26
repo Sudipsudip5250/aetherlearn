@@ -1,0 +1,2 @@
+# Keep the generated Windows wrapper’s CRLF format intact and out of text whitespace checks.
+gradlew.bat -text

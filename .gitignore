@@ -11,6 +11,7 @@ build/
 dist/
 .gradle/
 .cxx/
+android/local.properties
 
 # Local runtime, cache, and secret files
 __pycache__/
