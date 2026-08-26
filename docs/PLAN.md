@@ -46,6 +46,8 @@ The final repository content-consistency review is recorded in [`docs/CONTENT_RE
 
 M0 and M1 establish governance and content contracts before application work. M2 and M3 build the smallest useful product. M4 adds portability and safe updates. M5 proves the differentiator without allowing Termux to become a dependency. M6 provides secondary web access. M7 is a release gate, not an optional cleanup phase.
 
+The Android maintainability refactor is complete as a source-organization change. `MainActivity.kt` now retains only the activity, first-run root, navigation state, and AppShell; focused files own Learn, Practice, Search, Progress, Settings, lesson reading, the Termux surface, and the privacy welcome screen. Existing composable bodies were checked for source equivalence, with only required cross-file visibility and import changes. Android unit tests, debug compilation, and lint passed after the split. No persistence schema, callback contract, privacy boundary, offline path, Termux command surface, network-pack behavior, or curriculum scope changed. Device/emulator, Android-browser, assistive-technology, signing, and public-distribution gates remain unchanged.
+
 ## Dependencies
 
 The Android client depends on the content-pack schema and validation output. Search depends on stable module IDs and generated searchable text. Termux depends on a native Android integration layer, a versioned exercise-wrapper contract, and safety review. Optional pack updates depend on manifest validation and last-known-good rollback. The PWA depends on the same content source but not on native Termux capabilities.

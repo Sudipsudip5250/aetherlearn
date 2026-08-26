@@ -115,6 +115,12 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [ ] Publish signed release metadata; unsigned release artifacts and checksums are verified, but no authorized signing key or public pack host is configured.
 - [ ] **Checkpoint M7:** Static and CI gates pass; the exact remaining human-only and operational gates are the device/emulator matrix, Android-browser matrix, manual assistive-technology review, final pedagogical/safety approval, authorized signing and signed metadata, authorized network inspection for the pack path, and production distribution/pack-host setup.
 
+## Android maintainability refactor
+
+- [x] Split the Android UI into focused composable files for Learn, Practice, Search, Progress, Settings, lesson reading, Termux, and first-run privacy while retaining AppShell state ownership.
+- [x] Preserve existing persistence, callback, privacy, offline, export, pack, and Termux behavior; source-equivalence checks confirm the pre-refactor UI bodies remain present.
+- [x] Verify the refactor with Android JVM unit tests, debug compilation, and lint; no new feature or curriculum scope was added.
+
 ## Deferred backlog
 
 - [ ] Portable encrypted backup with tested key ownership and recovery.
