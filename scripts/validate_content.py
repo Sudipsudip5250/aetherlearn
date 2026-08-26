@@ -54,6 +54,31 @@ RISK_TIERS = {"S0", "S1", "S2"}
 STRANDS = {"digital-literacy", "python-fundamentals", "algorithms", "developer-foundations"}
 LEVELS = {"beginner", "intermediate"}
 REVIEW_STATUSES = {"draft", "in-review", "released", "needs-update", "deprecated"}
+REGISTRY_SCHEMA_VERSION = 2
+REGISTRY_STAGE_STATUSES = {"approved", "draft", "in-review", "released", "deprecated"}
+MVP_BASELINE_ID = "mvp-20"
+MVP_BASELINE_IDS = (
+    "dl-01-digital-information",
+    "dl-02-files-folders-storage-backups",
+    "dl-03-android-settings-permissions-apps",
+    "dl-04-internet-browsers-urls-search",
+    "dl-05-privacy-passwords-phishing",
+    "py-01-problems-algorithms-instructions",
+    "py-02-python-setup-expressions-values",
+    "py-03-variables-types-input-output",
+    "py-04-conditions-boolean-logic",
+    "py-05-loops-repetition-tracing",
+    "py-06-functions-scope-reusable-code",
+    "py-07-lists-dictionaries-strings-data",
+    "al-01-data-structures",
+    "al-02-arrays-lists-stacks-queues",
+    "al-03-searching-sorting",
+    "al-04-complexity-growth",
+    "al-05-recursion-trees-graphs",
+    "dev-01-terminal-command-line",
+    "dev-02-git-local-repositories-history",
+    "dev-03-debugging-error-messages",
+)
 ID_PATTERN = re.compile(r"^(dl|py|al|dev)-\d{2}(?:-[a-z0-9]+)+$")
 SEMVER_PATTERN = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
 LINK_PATTERN = re.compile(r"!?(?:\[[^\]]*\])\(([^)]+)\)")
@@ -264,11 +289,72 @@ def load_curriculum_registry(repo_root: Path) -> tuple[set[str], list[str]]:
         data = yaml.safe_load(registry_path.read_text(encoding="utf-8")) or {}
     except (OSError, yaml.YAMLError) as exc:
         return set(), [f"{registry_path}: cannot read curriculum registry: {exc}"]
-    modules = data.get("modules") if isinstance(data, dict) else None
-    if not isinstance(modules, list):
-        return set(), [f"{registry_path}: modules must be a list"]
-    ids: set[str] = set()
+    if not isinstance(data, dict):
+        return set(), [f"{registry_path}: registry must be a YAML mapping"]
+
     errors: list[str] = []
+    if data.get("schema_version") != REGISTRY_SCHEMA_VERSION:
+        errors.append(
+            f"{registry_path}: schema_version must be {REGISTRY_SCHEMA_VERSION} for the versioned post-MVP registry"
+        )
+    if not is_nonempty_string(data.get("curriculum_id")):
+        errors.append(f"{registry_path}: curriculum_id must be a non-empty string")
+    if not SEMVER_PATTERN.fullmatch(str(data.get("curriculum_version", ""))):
+        errors.append(f"{registry_path}: curriculum_version must be semantic-version shaped")
+
+    baseline = data.get("mvp_baseline")
+    baseline_modules = baseline.get("modules") if isinstance(baseline, dict) else None
+    if not isinstance(baseline, dict) or baseline.get("id") != MVP_BASELINE_ID:
+        errors.append(f"{registry_path}: mvp_baseline.id must remain {MVP_BASELINE_ID}")
+    if not isinstance(baseline, dict) or baseline.get("module_count") != len(MVP_BASELINE_IDS):
+        errors.append(f"{registry_path}: mvp_baseline.module_count must remain {len(MVP_BASELINE_IDS)}")
+    baseline_ids: list[str] = []
+    if not isinstance(baseline_modules, list):
+        errors.append(f"{registry_path}: mvp_baseline.modules must be a list")
+    else:
+        for item in baseline_modules:
+            if isinstance(item, dict) and is_nonempty_string(item.get("id")):
+                baseline_ids.append(str(item["id"]))
+            else:
+                errors.append(f"{registry_path}: every MVP baseline module needs a non-empty id")
+        if tuple(baseline_ids) != MVP_BASELINE_IDS:
+            errors.append(
+                f"{registry_path}: mvp_baseline must preserve the exact stable {MVP_BASELINE_ID} module order and IDs"
+            )
+
+    stages = data.get("stages")
+    stage_by_id: dict[str, dict[str, Any]] = {}
+    if not isinstance(stages, list):
+        errors.append(f"{registry_path}: stages must be a list")
+    else:
+        for stage in stages:
+            if not isinstance(stage, dict) or not is_nonempty_string(stage.get("id")):
+                errors.append(f"{registry_path}: each stage needs a non-empty id")
+                continue
+            stage_id = str(stage["id"])
+            if stage_id in stage_by_id:
+                errors.append(f"{registry_path}: duplicate curriculum stage ID: {stage_id}")
+                continue
+            stage_by_id[stage_id] = stage
+            if not re.fullmatch(r"stage-\d+", stage_id):
+                errors.append(f"{registry_path}: invalid curriculum stage ID: {stage_id}")
+            if not is_nonempty_string(stage.get("title")):
+                errors.append(f"{registry_path}: stage {stage_id} needs a non-empty title")
+            if stage.get("status") not in REGISTRY_STAGE_STATUSES:
+                errors.append(f"{registry_path}: stage {stage_id} has an invalid status")
+            stage_modules = stage.get("modules")
+            if not isinstance(stage_modules, list):
+                errors.append(f"{registry_path}: stage {stage_id}.modules must be a list")
+            elif stage.get("module_count") != len(stage_modules):
+                errors.append(f"{registry_path}: stage {stage_id}.module_count does not match its modules")
+
+    modules = data.get("modules")
+    if not isinstance(modules, list):
+        errors.append(f"{registry_path}: modules must be a list")
+        return set(), errors
+
+    ids: set[str] = set()
+    module_stage: dict[str, str] = {}
     for item in modules:
         if not isinstance(item, dict) or not is_nonempty_string(item.get("id")):
             errors.append(f"{registry_path}: each module needs a non-empty id")
@@ -279,8 +365,44 @@ def load_curriculum_registry(repo_root: Path) -> tuple[set[str], list[str]]:
         ids.add(module_id)
         if not ID_PATTERN.fullmatch(module_id):
             errors.append(f"{registry_path}: invalid curriculum module ID: {module_id}")
-    if len(ids) != 20:
-        errors.append(f"{registry_path}: MVP registry must contain exactly 20 module IDs, found {len(ids)}")
+        if not is_nonempty_string(item.get("title")):
+            errors.append(f"{registry_path}: module {module_id} needs a non-empty title")
+        stage_id = item.get("stage")
+        if stage_id == "mvp":
+            if module_id not in MVP_BASELINE_IDS:
+                errors.append(f"{registry_path}: non-baseline module cannot use stage mvp: {module_id}")
+        elif is_nonempty_string(stage_id):
+            module_stage[module_id] = str(stage_id)
+            stage = stage_by_id.get(str(stage_id))
+            if stage is None:
+                errors.append(f"{registry_path}: module {module_id} references unknown stage: {stage_id}")
+            elif stage.get("status") != "approved":
+                errors.append(f"{registry_path}: module {module_id} is listed under a non-approved stage: {stage_id}")
+        else:
+            errors.append(f"{registry_path}: module {module_id} needs stage mvp or an approved stage ID")
+
+    baseline_in_registry = tuple(
+        item.get("id") for item in modules
+        if isinstance(item, dict) and item.get("id") in MVP_BASELINE_IDS
+    )
+    if baseline_in_registry != MVP_BASELINE_IDS:
+        errors.append(f"{registry_path}: the stable {MVP_BASELINE_ID} modules must retain their exact relative order")
+    if set(ids) & set(MVP_BASELINE_IDS) != set(MVP_BASELINE_IDS):
+        errors.append(f"{registry_path}: all stable {MVP_BASELINE_ID} modules must remain present")
+
+    for stage_id, stage in stage_by_id.items():
+        stage_modules = stage.get("modules", [])
+        if not isinstance(stage_modules, list):
+            continue
+        for item in stage_modules:
+            if not isinstance(item, dict) or not is_nonempty_string(item.get("id")):
+                continue
+            module_id = str(item["id"])
+            if module_id not in ids:
+                errors.append(f"{registry_path}: approved stage module is missing from modules: {module_id}")
+            if module_stage.get(module_id) != stage_id:
+                errors.append(f"{registry_path}: module {module_id} has inconsistent stage metadata")
+
     return ids, errors
 
 

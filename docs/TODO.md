@@ -131,7 +131,9 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Add [`docs/FUTURE_CONTENT_ROADMAP.md`](FUTURE_CONTENT_ROADMAP.md) with source-backed planning for historical languages, systems, software engineering, ethical security, organizations, and career orientation.
 - [x] Add [`docs/FUTURE_IMPLEMENTATION_PLAN.md`](FUTURE_IMPLEMENTATION_PLAN.md) with staged batches, acceptance criteria, source-maintenance rules, and safety boundaries.
 - [x] Keep the roadmap and implementation plan outside `content/curriculum.yml`; neither expands the frozen 20-module MVP or changes Android/Web payloads.
-- [ ] Approve any future curriculum change through a new decision-log entry, exact lesson list, human technical/pedagogical/safety review, and the existing validator/parity process.
+- [x] Record the user-approved Stage 1 transition in decision D-031 with the exact three-lesson scope, schema-v2 registry policy, S0 safety boundary, source requirements, and sequential later-stage gate.
+- [ ] Complete Stage 1 technical/pedagogical review, client parity, full validation, and commit checkpoint for `dl-06`, `dl-07`, and `dl-08`.
+- [ ] Approve each later stage only after the preceding stage is validated, reviewed, documented, committed, and pushed; do not treat the user’s sequential authorization as a waiver of per-stage safety or release gates.
 
 ## Deferred backlog
 

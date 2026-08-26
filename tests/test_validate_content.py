@@ -4,6 +4,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import yaml
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from validate_content import (  # noqa: E402
@@ -79,7 +81,50 @@ class ValidateContentTests(unittest.TestCase):
             all_errors.extend(validate_lesson(lesson, content_root, repo_root))
         all_errors.extend(validate_graph(lessons, known_ids))
         self.assertEqual(all_errors, [])
-        self.assertEqual(len(lessons), 20)
+        self.assertEqual(len(lessons), 23)
+        self.assertEqual(len(known_ids), 23)
+        self.assertTrue({lesson.module_id for lesson in lessons}.issuperset({
+            "dl-01-digital-information",
+            "dl-05-privacy-passwords-phishing",
+            "dl-06-computing-language-history",
+            "dl-07-how-programs-run",
+            "dl-08-networks-web-concepts",
+        }))
+
+    def test_registry_rejects_changed_mvp_baseline(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "content").mkdir()
+            registry = {
+                "schema_version": 2,
+                "curriculum_id": "aetherlearn",
+                "curriculum_version": "1.3.0",
+                "mvp_baseline": {"id": "mvp-20", "module_count": 19, "modules": []},
+                "stages": [],
+                "modules": [],
+            }
+            (root / "content" / "curriculum.yml").write_text(yaml.safe_dump(registry), encoding="utf-8")
+            _, errors = load_curriculum_registry(root)
+            self.assertTrue(any("mvp_baseline.module_count must remain 20" in error for error in errors))
+            self.assertTrue(any("mvp_baseline must preserve" in error for error in errors))
+
+    def test_registry_rejects_unapproved_stage_module(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "content").mkdir()
+            baseline = [{"id": f"dl-{index:02d}-placeholder", "title": "Placeholder"} for index in range(1, 21)]
+            # Keep the fixture focused on stage validation; the baseline itself is intentionally invalid and must be reported too.
+            registry = {
+                "schema_version": 2,
+                "curriculum_id": "aetherlearn",
+                "curriculum_version": "1.3.0",
+                "mvp_baseline": {"id": "mvp-20", "module_count": 20, "modules": baseline},
+                "stages": [{"id": "stage-1", "title": "Stage 1", "status": "draft", "module_count": 1, "modules": [{"id": "dl-06-example", "title": "Example"}]}],
+                "modules": [{"id": "dl-06-example", "title": "Example", "stage": "stage-1"}],
+            }
+            (root / "content" / "curriculum.yml").write_text(yaml.safe_dump(registry), encoding="utf-8")
+            _, errors = load_curriculum_registry(root)
+            self.assertTrue(any("non-approved stage" in error for error in errors))
 
     def test_unknown_prerequisite_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:

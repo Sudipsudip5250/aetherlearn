@@ -1,37 +1,35 @@
 # Future curriculum implementation plan
 
-**Status:** proposal for explicit approval; no current MVP registry or client payload changes.
+**Status:** Stage 1 approved and in execution; later stages remain sequentially gated by completion, review, and validation checkpoints.
 
 ## Decision boundary
 
 The current AetherLearn MVP remains a validated, frozen 20-module curriculum. The roadmap is not a license to add an encyclopedic catalog. A future implementation must begin with an explicit decision-log entry that names the approved batch, changes the curriculum scope intentionally, identifies maintainers and reviewers, and accepts the additional Android/Web parity and long-term source-maintenance burden.
 
-Until that decision is approved, future material belongs in this plan and not in `content/curriculum.yml`, `content/core/`, Android assets, Web payloads, or the released pack.
+The user-approved Stage 1 slice is now intentionally represented in `content/curriculum.yml`, `content/core/`, Android assets, and the Web payload after the registry-policy change. All later stages remain planning-only until their own exact module list is recorded in `docs/PLAN.md` and their prior stage has passed its checkpoint.
 
 ## Recommended staged implementation
 
-| Stage | Proposed scope | Suggested size | Why this order | Required reviewers |
-|---|---|---:|---|---|
-| 0 | Release the current 20-module MVP and complete device, accessibility, pedagogical, and safety gates | 0 new modules | Establish a trustworthy baseline before expanding product scope | Release owner, device tester, pedagogical reviewer, safety reviewer |
-| 1 | Computing history and systems vocabulary | 3–5 lessons | Extends digital literacy without requiring risky tooling or external services | Technical and pedagogical reviewers |
-| 2 | Software engineering and open-source practice | 3–4 lessons | Builds directly on Git and debugging already taught | Technical, pedagogical, and accessibility reviewers |
-| 3 | Ethical security, disclosure, and organization literacy | 3–4 lessons | Adds security context only after the safety governance and source process are exercised | Technical, pedagogical, safety, and source reviewers |
-| 4 | Web/data foundations and local-only application practice | 3–5 lessons | Adds browser and data concepts with static/local fixtures | Technical, pedagogical, accessibility, and privacy reviewers |
-| 5 | Historical security case studies and career orientation | 2–4 lessons | Depends on stable source review, careful framing, and a named maintainer | Historical/source, pedagogical, safety, and accessibility reviewers |
+| Stage | Proposed scope | Suggested size | Why this order | Required reviewers | Current status |
+|---|---|---:|---|---|---|
+| 0 | Release the current 20-module MVP and complete device, accessibility, pedagogical, and safety gates | 0 new modules | Establish a trustworthy baseline before expanding product scope | Release owner, device tester, pedagogical reviewer, safety reviewer | Baseline complete; human release gates remain |
+| 1 | Computing history and systems vocabulary | 3 lessons | Extends digital literacy without requiring risky tooling or external services | Technical and pedagogical reviewers | Approved and executing |
+| 2 | Software engineering and open-source practice | 3–4 lessons | Builds directly on Git and debugging already taught | Technical, pedagogical, and accessibility reviewers | Gated pending Stage 1 checkpoint |
+| 3 | Ethical security, disclosure, and organization literacy | 3–4 lessons | Adds security context only after the safety governance and source process are exercised | Technical, pedagogical, safety, and source reviewers | Gated pending Stage 2 checkpoint |
+| 4 | Web/data foundations and local-only application practice | 3–5 lessons | Adds browser and data concepts with static/local fixtures | Technical, pedagogical, accessibility, and privacy reviewers | Gated pending Stage 3 checkpoint |
+| 5 | Historical security case studies and career orientation | 2–4 lessons | Depends on stable source review, careful framing, and a named maintainer | Historical/source, pedagogical, safety, and accessibility reviewers | Gated pending Stage 4 checkpoint |
 
-The table is a delivery sequence, not an approval of new modules. The first implementation slice should be Stage 1 only, after the current release gates are accepted.
+The table is a delivery sequence, not blanket approval of new modules. Stage 1 is the sole approved post-MVP slice at this checkpoint; Stages 2–5 begin only after the previous stage is complete, validated, reviewed, committed, and documented.
 
 ## Stage 1: computing history and systems vocabulary
 
-A recommended first slice is:
+The approved Stage 1 slice is:
 
-1. **How programming languages reflect constraints.** Compare machine-level instructions, compiled languages, interpreted languages, and declarative languages using a tiny counting task. No compiler installation is required.
-2. **Language history through representative ideas.** Use sourced, high-level examples of FORTRAN, COBOL, BASIC, Pascal, C, Lisp, Smalltalk, SQL, and shell composition. Focus on problem domains, data models, portability, readability, and maintenance rather than date memorization.
-3. **How a computer runs a program.** Introduce source text, translation, process, memory, files, and errors using diagrams and fixed local examples.
-4. **Networks and the Web as concepts.** Introduce DNS, HTTP, browsers, caching, and client/server boundaries using written traces or a loopback-only fixture.
-5. **Data storage and representation.** Connect files, structured data, serialization, and databases through a small synthetic dataset and paper or local parsing exercise.
+1. **`dl-06-computing-language-history` — How programming languages reflect constraints.** Compare language design choices, historical problem domains, and high-level compiled/interpreted/declarative vocabulary without requiring a compiler installation.
+2. **`dl-07-how-programs-run` — How a computer runs a program.** Introduce source text, translation, processes, files, and error stages through fixed local traces.
+3. **`dl-08-networks-web-concepts` — Networks and the Web: requests, responses, and resources.** Introduce client/server, HTTP messages, resources, and caching through a fictional written trace.
 
-A smaller three-lesson release can combine the language-history topics, systems execution model, and Web/data vocabulary. The first lesson should remain S0; local-only systems exercises should remain S1 unless a reviewer documents a higher risk.
+All three lessons are offline, use bounded synthetic examples, and are currently marked S0. The remaining Stage 1 ideas—DNS depth and data storage/serialization—are deferred until a later stage decision because the approved slice must remain small and coherent.
 
 ## Stage 2: software engineering and open source
 
@@ -96,6 +94,6 @@ A Termux-optional lesson additionally requires a fixed wrapper ID, immutable exe
 | Accessibility | Text scaling, labels, keyboard/focus behavior, non-color cues, and manual assistive-technology checks are recorded |
 | Operations | Build artifacts, checksums, rollback, and release notes identify the exact commit and content version |
 
-## Recommended next action
+## Current action and later gate
 
-Do not start broad future authoring immediately. First complete the current 20-module release gates. Then approve **Stage 1**, preferably as a three-lesson history/systems slice, with one technical reviewer, one pedagogical reviewer, and an explicit decision-log entry. If that slice is accepted, author and validate one lesson at a time before changing the registry.
+Stage 1 is approved by the user and is being authored one lesson at a time under the exact three-module scope above. After its automated, parity, and human-review checkpoint is recorded, the next stage may be proposed and implemented using the same source, safety, registry, client, and release process. Approval to continue later does not waive those per-stage gates.

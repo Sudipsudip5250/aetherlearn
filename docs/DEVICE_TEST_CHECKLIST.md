@@ -39,17 +39,17 @@ Prepare two fictional lesson values for testing: `Offline functions` and `Review
 
 **Pass evidence:** privacy wording is visible, no account or network is required for the core path, and the shell opens offline. **Fail or stop:** a login, unexplained permission, automatic upload, or required network appears.
 
-## 3. Android navigation and 20-module discovery
+## 3. Android navigation and 23-lesson discovery
 
 1. On the main shell, verify the four bottom destinations: **Learn**, **Practice**, **Search**, and **Progress**. Verify **Settings** is available from the top bar.
-2. Open **Learn**. Confirm that the catalog contains 20 lessons in the expected four strands: digital literacy, Python fundamentals, algorithms, and developer foundations.
-3. Confirm that the newly completed content is visible: PY-06, PY-07, AL-01, AL-02, AL-03, AL-04, AL-05, DEV-02, and DEV-03.
+2. Open **Learn**. Confirm that the catalog contains 23 lessons: the stable 20-module MVP baseline plus DL-06, DL-07, and DL-08 in digital literacy.
+3. Confirm that the previously completed content is visible: PY-06, PY-07, AL-01, AL-02, AL-03, AL-04, AL-05, DEV-02, and DEV-03. Also open DL-06, DL-07, and DL-08.
 4. Confirm that the first five existing modules remain visible and that no duplicate stable IDs appear.
 5. Open **Practice**, **Search**, and **Progress** in turn. Each destination should show a useful screen rather than a placeholder or crash.
 6. Open **Settings** and return with **Back**. Confirm that returning does not reset the selected destination or learning state unexpectedly.
 7. Change the theme to **Light**, **Dark**, and **Follow system** if the controls are available. Confirm that text and controls remain readable in each mode. Restore the preferred mode.
 
-**Pass evidence:** all 20 modules are discoverable, all destinations open, and no crash or data reset occurs.
+**Pass evidence:** all 23 current lessons are discoverable, the original 20-module baseline remains present, all three Stage 1 lessons open, all destinations open, and no crash or data reset occurs.
 
 ## 4. Complete one lesson fully offline
 
@@ -116,7 +116,7 @@ Run this section only if the build includes an available local optional pack. Th
 1. In **Settings**, open **Storage & content packs**.
 2. Record the core module count and confirm that the core pack is marked always available offline and protected from deletion.
 3. For a listed optional pack, tap **Install local pack**. Confirm that the UI reports installation and that the pack’s lessons become discoverable.
-4. Open one optional-pack lesson and confirm that it parses using the shared reader without changing the original 20 core lessons.
+4. Open one optional-pack lesson and confirm that it parses using the shared reader without changing the original 20 bundled MVP lessons or the three bundled Stage 1 lessons.
 5. Verify that existing progress, notes, bookmarks, and quiz attempts for core lessons remain.
 6. Tap **Delete optional pack**. Confirm that only the optional content is removed, while the core pack and all learning data remain.
 7. If installation fails, confirm that the prior valid content remains available and that the error is understandable.
@@ -190,10 +190,10 @@ The actual Termux package, permission, service, and Android-version matrix remai
 Use a desktop browser that supports service workers and IndexedDB over an HTTP(S) origin. A local development server is sufficient for a controlled test.
 
 1. Serve the `web/` directory using the repository instructions, or open the authorized deployed test origin.
-2. Open the Web client and confirm that it presents **twenty core modules** and the message that Termux is Android-only.
+2. Open the Web client and confirm that it presents **23 current lessons** and the message that Termux is Android-only. The original 20-module MVP baseline remains part of the catalog.
 3. Open **Search**, **Practice**, and **Progress**. Confirm that they work without an account.
-4. Select **Cache core content**. Confirm a status such as `Cached 20 core lessons in this browser.` and `20 modules · cached core pack`.
-5. Open PY-06, AL-03, and DEV-03 from the cached catalog. Confirm the full reader and quiz controls render.
+4. Select **Cache core content**. Confirm a status such as `Cached 23 core lessons in this browser.` and `23 modules · cached core pack`.
+5. Open DL-06, DL-07, DL-08, PY-06, AL-03, and DEV-03 from the cached catalog. Confirm the full reader and quiz controls render. Sample at least one original MVP lesson and all three Stage 1 lessons.
 6. Add a fictional note, bookmark, quiz attempt, and completion state in the browser.
 7. Disable the network using the browser’s offline mode or operating-system network controls. Reload the application and reopen the cached lessons and local state.
 8. Confirm that the old state remains local and that the cache failure state does not replace a previous valid cache.
@@ -206,8 +206,8 @@ The Web fallback does not expose the Android network-pack URL field or a Termux 
 Run this section on an Android phone browser if available. It is separate from the native app.
 
 1. Open the authorized Web/PWA origin in the Android browser.
-2. Confirm the page displays twenty modules, readable navigation, the local privacy note, and the Android-only Termux message.
-3. Cache the core content and confirm the twenty-lesson cache status.
+2. Confirm the page displays 23 current lessons, readable navigation, the local privacy note, and the Android-only Termux message. The original MVP baseline remains identifiable in project documentation.
+3. Cache the core content and confirm the 23-lesson cache status.
 4. Open and complete a short lesson, add a fictional note/bookmark, and reload.
 5. Enable airplane mode or browser offline mode. Reload and reopen the cached lesson, search, practice, and progress routes.
 6. Check for horizontal scrolling, clipped controls, blocked keyboard focus, unreadable code, and inputs hidden below the viewport.

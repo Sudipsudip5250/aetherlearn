@@ -274,7 +274,7 @@ class NetworkPackInstaller(
                     val expectedHash = entry.optString("sha256")
                     require(LESSON_ID_PATTERN.matches(id)) { "The pack contains an invalid lesson ID." }
                     require(packIds.add(id)) { "The pack contains a duplicate lesson ID." }
-                    require(id in APPROVED_CURRICULUM_IDS) { "Lesson $id is outside the frozen MVP curriculum." }
+                    require(id in REMOTE_PACK_CURRICULUM_IDS) { "Lesson $id is outside the approved remote-pack curriculum allowlist." }
                     require(!coreIds.contains(id)) { "Optional pack lesson $id would replace core content." }
                     require(packPaths.add(archivePath)) { "The pack contains a duplicate module path." }
                     require(SAFE_MODULE_FILENAME_PATTERN.matches(path)) { "The pack contains an unsafe module path." }
@@ -368,7 +368,9 @@ class NetworkPackInstaller(
         private val ALLOWED_AVAILABILITY = setOf("offline", "offline-pack", "termux-optional", "network-optional")
         private val ALLOWED_RISK_TIERS = setOf("S0", "S1")
         private val REQUIRED_SECTIONS = setOf("Objectives", "Prerequisites", "Availability", "Explanation", "Worked example", "Common mistakes", "Offline practice", "Knowledge check", "Project or application", "Accessibility notes", "Safety and responsible use", "Further reading", "Change log")
-        private val APPROVED_CURRICULUM_IDS = setOf(
+        // Deliberately independent from the expanded bundled registry. New lessons remain bundled-only
+        // until a separate remote-pack review approves their distribution policy.
+        private val REMOTE_PACK_CURRICULUM_IDS = setOf(
             "dl-01-digital-information", "dl-02-files-folders-storage-backups", "dl-03-android-settings-permissions-apps", "dl-04-internet-browsers-urls-search", "dl-05-privacy-passwords-phishing",
             "py-01-problems-algorithms-instructions", "py-02-python-setup-expressions-values", "py-03-variables-types-input-output", "py-04-conditions-boolean-logic", "py-05-loops-repetition-tracing", "py-06-functions-scope-reusable-code", "py-07-lists-dictionaries-strings-data",
             "al-01-data-structures", "al-02-arrays-lists-stacks-queues", "al-03-searching-sorting", "al-04-complexity-growth", "al-05-recursion-trees-graphs",
@@ -387,7 +389,7 @@ class NetworkPackInstaller(
 
         fun isSafeModulePath(path: String): Boolean = SAFE_MODULE_FILENAME_PATTERN.matches(path)
 
-        fun isApprovedCurriculumId(id: String): Boolean = id in APPROVED_CURRICULUM_IDS
+        fun isApprovedCurriculumId(id: String): Boolean = id in REMOTE_PACK_CURRICULUM_IDS
     }
 }
 

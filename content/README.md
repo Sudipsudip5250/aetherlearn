@@ -1,6 +1,6 @@
 # M1 Content Contract
 
-Lessons in `content/core/` are Markdown files with a YAML frontmatter block delimited by `---`. The validator in `scripts/validate_content.py` is the source of truth for structural checks; this document explains the contract for authors.
+Lessons in `content/core/` are Markdown files with a YAML frontmatter block delimited by `---`. The validator in `scripts/validate_content.py` is the source of truth for structural checks; this document explains the contract for authors. The canonical registry uses schema version 2: the original `mvp-20` IDs are immutable, and post-MVP lessons must belong to an explicitly approved stage before they enter a client payload.
 
 ## Required frontmatter
 
@@ -25,7 +25,7 @@ last_reviewed: 2026-08-24
 
 The required fields are `id`, `title`, `strand`, `level`, `version`, `prerequisites`, `estimated_minutes`, `availability`, `risk_tier`, `core_asset_bytes`, `optional_asset_bytes`, `objectives`, `review_status`, and `last_reviewed`.
 
-`id` is lowercase kebab-case, begins with the curriculum prefix such as `dl-01`, `py-02`, or `dev-01`, and is stable after release. `title` is non-empty. `strand` is one of `digital-literacy`, `python-fundamentals`, `algorithms`, or `developer-foundations` for the MVP. `level` is one of `beginner` or `intermediate`. `version` and `last_reviewed` use the ISO-compatible formats accepted by the validator. `prerequisites` is a list of stable module IDs or an empty list. `estimated_minutes` is a positive integer.
+`id` is lowercase kebab-case, begins with the curriculum prefix such as `dl-01`, `py-02`, or `dev-01`, and is stable after release. `title` is non-empty. `strand` is one of `digital-literacy`, `python-fundamentals`, `algorithms`, or `developer-foundations`; a post-MVP lesson must still use an existing strand unless a separate registry decision expands the strand vocabulary. `level` is one of `beginner` or `intermediate`. `version` and `last_reviewed` use the ISO-compatible formats accepted by the validator. `prerequisites` is a list of stable module IDs or an empty list. `estimated_minutes` is a positive integer.
 
 `availability` must be `offline`, `offline-pack`, `termux-optional`, or `network-optional`. `risk_tier` must be `S0`, `S1`, or `S2` for the MVP; higher tiers are rejected. Asset sizes are non-negative integers and are declared in bytes. `objectives` contains at least two non-empty learner-centered statements. `review_status` is `draft`, `in-review`, `released`, `needs-update`, or `deprecated`.
 

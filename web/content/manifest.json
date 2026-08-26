@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "pack_id": "core",
-  "pack_version": "1.2.0",
+  "pack_version": "1.3.0",
   "lessons": [
     {
       "id": "dl-01-digital-information",
@@ -27,6 +27,21 @@
       "id": "dl-05-privacy-passwords-phishing",
       "title": "Privacy, passwords, phishing awareness, and safe updates",
       "path": "content/core/dl-05-privacy-passwords-phishing.md"
+    },
+    {
+      "id": "dl-06-computing-language-history",
+      "title": "How programming languages reflect constraints",
+      "path": "content/core/dl-06-computing-language-history.md"
+    },
+    {
+      "id": "dl-07-how-programs-run",
+      "title": "How a computer runs a program",
+      "path": "content/core/dl-07-how-programs-run.md"
+    },
+    {
+      "id": "dl-08-networks-web-concepts",
+      "title": "Networks and the Web: requests, responses, and resources",
+      "path": "content/core/dl-08-networks-web-concepts.md"
     },
     {
       "id": "py-01-problems-algorithms-instructions",

@@ -2,11 +2,11 @@
 
 ## Curriculum decision
 
-The MVP contains **four strands and 20 modules**. It is designed to take a motivated beginner from phone and digital foundations through Python, basic algorithms, and developer workflow. The curriculum is deliberately narrow enough to author, review, test, translate later, and complete on a phone.
+The original MVP contains **four strands and 20 modules**. It is designed to take a motivated beginner from phone and digital foundations through Python, basic algorithms, and developer workflow. That `mvp-20` baseline remains stable for learner progress and historical release comparison. The approved post-MVP Stage 1 adds three offline digital-literacy lessons without renumbering or replacing any MVP module.
 
 The order is recommended rather than compulsory. Prerequisites are explicit, and the learner can choose a diagnostic starting point. Every module is available as offline text and lightweight assets. Only selected practical modules offer an optional Termux exercise.
 
-Content expansion batch 1 added DL-02, DL-03, DL-04, PY-03, PY-04, and PY-05. Content expansion batch 2 added PY-06, PY-07, AL-01 through AL-05, DEV-02, and DEV-03. The canonical registry remains the authority for the frozen MVP scope, and all twenty approved modules are now authored and synchronized to both clients. Device/emulator runtime evidence and final pedagogical/safety review remain separate open release gates.
+Content expansion batch 1 added DL-02, DL-03, DL-04, PY-03, PY-04, and PY-05. Content expansion batch 2 added PY-06, PY-07, AL-01 through AL-05, DEV-02, and DEV-03. Those 20 modules remain the complete `mvp-20` baseline. The user-approved Stage 1 adds DL-06, DL-07, and DL-08, bringing the current canonical post-MVP registry to 23 lessons. Stage 1 remains draft pending final human technical/pedagogical review; device/emulator runtime evidence and release gates remain separate open requirements.
 
 ## Availability labels
 
@@ -26,6 +26,11 @@ Content expansion batch 1 added DL-02, DL-03, DL-04, PY-03, PY-04, and PY-05. Co
 | DL-03 | Android phone settings, permissions, and apps | None | 35 min | `offline` |
 | DL-04 | Internet basics, browsers, URLs, and search | DL-01 | 45 min | `offline` |
 | DL-05 | Privacy, passwords, phishing awareness, and safe updates | DL-03, DL-04 | 50 min | `offline` |
+| DL-06 | How programming languages reflect constraints | DL-01 | 50 min | `offline` |
+| DL-07 | How a computer runs a program | DL-01, PY-01 | 55 min | `offline` |
+| DL-08 | Networks and the Web: requests, responses, and resources | DL-01, DL-04 | 55 min | `offline` |
+
+DL-06 through DL-08 are the approved Stage 1 history/systems slice. They use high-level historical and protocol vocabulary, fixed fictional traces, and paper or local-text practice; they do not require a compiler, network, Termux, or external account.
 
 These modules establish the practical vocabulary needed for later programming and terminal work. They include device-safe exercises such as identifying file types, inspecting permission categories using fictional examples, and recognizing suspicious messages without asking the learner to interact with real malicious content.
 
@@ -63,7 +68,7 @@ This strand focuses on intuition, tracing, visual explanations, and small proble
 | DEV-02 | Git concepts, local repositories, and useful history | DEV-01 | 70 min | `termux-optional` |
 | DEV-03 | Debugging, error messages, and minimal reproduction | PY-06 | 65 min | `offline` |
 
-The effective MVP registry currently ends this strand at DEV-03. The earlier DEV-04 web-page module and DEV-05 local-publishing project are deferred from the frozen 20-module scope until a future curriculum decision. Any future addition must first update `content/curriculum.yml`, the validator-backed registry, and the clients together.
+The `mvp-20` registry ends this strand at DEV-03. The earlier DEV-04 web-page module and DEV-05 local-publishing project remain deferred. Post-MVP additions are recorded in the versioned `content/curriculum.yml` registry only after an explicit stage decision, source and safety review, and synchronized validator/client updates.
 
 ## MVP assessment model
 
@@ -106,4 +111,4 @@ Community contributions use pull requests and cannot publish directly to the app
 
 ## Post-MVP curriculum parking lot
 
-Later releases may add computer architecture, operating systems, networks, databases, software engineering, distributed systems, cybersecurity foundations, cryptography, AI and machine learning, computer graphics, embedded systems, robotics, quantum computing, formal methods, scientific computing, and domain-specific tracks. Offensive-security labs, model-behavior research, anonymity networks, and other dual-use material require the governance described in [`SAFETY.md`](SAFETY.md) before they are scheduled.
+Stage 1 currently covers the first approved history/systems slice: DL-06, DL-07, and DL-08. Later releases may add computer architecture, operating systems, networks, databases, software engineering, distributed systems, cybersecurity foundations, cryptography, AI and machine learning, computer graphics, embedded systems, robotics, quantum computing, formal methods, scientific computing, and domain-specific tracks. Each later stage remains gated by the preceding stage’s validation and review checkpoint. Offensive-security labs, model-behavior research, anonymity networks, and other dual-use material require the governance described in [`SAFETY.md`](SAFETY.md) before they are scheduled.

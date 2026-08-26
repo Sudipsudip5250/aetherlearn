@@ -8,6 +8,8 @@ import re
 import sys
 from pathlib import Path
 
+import yaml
+
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT / "content" / "core"
 WEB_DIR = ROOT / "web"
@@ -17,14 +19,13 @@ def frontmatter(path: Path) -> dict[str, str]:
     match = re.match(r"^---\s*\n([\s\S]*?)\n---\s*\n", text)
     if not match:
         raise ValueError(f"{path}: missing frontmatter")
-    fields: dict[str, str] = {}
-    for line in match.group(1).splitlines():
-        match = re.match(r"^(id|title):\s*(.+)$", line)
-        if match:
-            fields[match.group(1)] = match.group(2).strip()
-    if set(fields) != {"id", "title"}:
-        raise ValueError(f"{path}: frontmatter needs id and title")
-    return fields
+    try:
+        fields = yaml.safe_load(match.group(1)) or {}
+    except yaml.YAMLError as exc:
+        raise ValueError(f"{path}: invalid frontmatter: {exc}") from exc
+    if not isinstance(fields, dict) or not isinstance(fields.get("id"), str) or not isinstance(fields.get("title"), str):
+        raise ValueError(f"{path}: frontmatter needs string id and title")
+    return {"id": fields["id"], "title": fields["title"]}
 
 
 def main() -> int:

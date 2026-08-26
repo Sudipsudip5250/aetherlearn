@@ -32,8 +32,10 @@ class NetworkPackInstallerTest {
     }
 
     @Test
-    fun followsCanonicalFrozenCurriculumIds() {
+    fun followsCanonicalRemotePackCurriculumIds() {
         assertTrue(NetworkPackInstaller.isApprovedCurriculumId("dev-03-debugging-error-messages"))
         assertFalse(NetworkPackInstaller.isApprovedCurriculumId("dev-03-debugging-errors-reproduction"))
+        assertFalse(NetworkPackInstaller.isApprovedCurriculumId("dl-06-computing-language-history"))
+        assertFalse(NetworkPackInstaller.isApprovedCurriculumId("dl-08-networks-web-concepts"))
     }
 }
