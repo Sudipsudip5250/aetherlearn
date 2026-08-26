@@ -75,6 +75,8 @@ class ModuleCatalog(
             "web-02-css-layout-responsive-design.md",
             "web-03-javascript-events-and-state.md",
             "web-04-data-modeling-and-json.md",
+            "sec-05-morris-worm-history-and-response.md",
+            "sec-06-cybersecurity-career-role-families.md",
         )
     }
 }

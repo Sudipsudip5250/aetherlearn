@@ -1,16 +1,16 @@
 # AetherLearn final content consistency review
 
 **Review date:** 2026-08-26
-**Scope:** the stable 20-module `mvp-20` baseline plus the approved Stage 1 and Stage 2 slices, four Stage 3 defensive-security drafts, and four Stage 4 Web/data drafts
+**Scope:** the stable 20-module `mvp-20` baseline plus the approved Stage 1 and Stage 2 slices, four Stage 3 defensive-security drafts, four Stage 4 Web/data drafts, and two Stage 5 historical-security/career drafts
 **Review type:** contract, source, safety-boundary, and cross-client consistency review; not a substitute for final human pedagogical or safety approval
 
 ## Outcome
 
-The 35 canonical lessons pass the repository content contract and prerequisite-graph checks. Every module has the required frontmatter, required body sections, at least three numbered knowledge-check prompts with inline answers and explanations, an offline-practice section, accessibility guidance, safety guidance, further reading, and a current change-log entry. All current modules remain within the requested **S0/S1** risk range. The three Stage 1, four Stage 2, four Stage 3, and four Stage 4 lessons are explicitly marked `draft` and remain subject to human technical, pedagogical, accessibility, source, and safety review.
+The 37 canonical lessons pass the repository content contract and prerequisite-graph checks. Every module has the required frontmatter, required body sections, at least three numbered knowledge-check prompts with inline answers and explanations, an offline-practice section, accessibility guidance, safety guidance, further reading, and a current change-log entry. All current modules remain within the requested **S0/S1** risk range. The three Stage 1, four Stage 2, four Stage 3, four Stage 4, and two Stage 5 lessons are explicitly marked `draft` and remain subject to human technical, pedagogical, accessibility, source, and safety review.
 
 One real clarity issue was fixed during this review. DL-04 asked the learner to rank “fictional results” without supplying the results. The practice now includes three concrete fictional results, including a library page, a password-gated unknown page, and an opaque urgent-prize short link. The exercise also retains URL-part labeling and a rule about information never to enter into an unfamiliar page.
 
-The audit heuristic flagged DL-04, PY-02, and DEV-01 because their practice sections were concise. Manual inspection found PY-02 and DEV-01 answerable and aligned with their objectives. DL-04 was strengthened as described above. Stage 1 uses paper or fixed fictional traces rather than live tooling. Stage 2 uses fictional test tables, repository forms, provenance records, and accessibility findings; it does not publish changes, install dependencies, or claim standards conformance. Stage 3 uses only fictional decision cards, local system models, redacted disclosure forms, and organization/source-selection worksheets; it does not contact targets, scan systems, handle credentials, publish reports, or provide operational attack detail. Stage 4 uses static fictional markup, layout cards, paper-only event/state traces, and JSON fixtures; it does not require network requests, third-party scripts, arbitrary execution, or real data. No module was rejected for a rewrite in this repository consistency pass, but all 35 remain subject to the human teaching-quality, accessibility, source, and safety review listed in the release gates.
+The audit heuristic flagged DL-04, PY-02, and DEV-01 because their practice sections were concise. Manual inspection found PY-02 and DEV-01 answerable and aligned with their objectives. DL-04 was strengthened as described above. Stage 1 uses paper or fixed fictional traces rather than live tooling. Stage 2 uses fictional test tables, repository forms, provenance records, and accessibility findings; it does not publish changes, install dependencies, or claim standards conformance. Stage 3 uses only fictional decision cards, local system models, redacted disclosure forms, and organization/source-selection worksheets; it does not contact targets, scan systems, handle credentials, publish reports, or provide operational attack detail. Stage 4 uses static fictional markup, layout cards, paper-only event/state traces, and JSON fixtures; it does not require network requests, third-party scripts, arbitrary execution, or real data. Stage 5 uses a high-level, source-backed Morris worm history case study and a NIST NICE role-orientation worksheet; it does not reproduce operational details, glorify an actor, promise employment, or use real personal/career data. No module was rejected for a rewrite in this repository consistency pass, but all 37 remain subject to the human teaching-quality, accessibility, source, safety, privacy, and historical/cultural review listed in the release gates.
 
 ## Module review matrix
 
@@ -51,6 +51,8 @@ The audit heuristic flagged DL-04, PY-02, and DEV-01 because their practice sect
 | WEB-02 | CSS box-model and responsive-layout concepts use fixed local cards without a live browser exercise. | offline / S0 | Draft; technical, accessibility, and pedagogical review open |
 | WEB-03 | Event/state vocabulary is taught through paper traces; arbitrary JavaScript execution and network access are excluded. | offline / S1 | Draft; technical, accessibility, privacy, and pedagogical review open |
 | WEB-04 | JSON types, fixture validation, and privacy boundaries are taught with fictional local data; syntax is not treated as application validation. | offline / S1 | Draft; technical, accessibility, privacy, and pedagogical review open |
+| SEC-05 | Morris worm history is framed through impact, affected stakeholders, institutional response, ethics, and accountability using multiple retrospective sources; operational detail and glorification are excluded. | offline / S0 | Draft; historical, source, safety, cultural, and pedagogical review open |
+| SEC-06 | NICE role lenses connect fictional tasks to skills and local learning evidence without employment, salary, legal, or regional-portability claims. | offline / S0 | Draft; source, accessibility, career-framing, privacy, and pedagogical review open |
 
 ## Termux consistency
 
@@ -64,21 +66,21 @@ The following checks were completed for this review:
 
 | Check | Result |
 |---|---|
-| Canonical registry membership and exact titles | 35/35 aligned; original `mvp-20` order and IDs preserved |
-| Required frontmatter and body sections | 35/35 passed |
+| Canonical registry membership and exact titles | 37/37 aligned; original `mvp-20` order and IDs preserved |
+| Required frontmatter and body sections | 37/37 passed |
 | Prerequisite names and ordering | No unknown or forward prerequisite found |
-| Knowledge checks | 35/35 have at least three answer/explanation prompts |
+| Knowledge checks | 37/37 have at least three answer/explanation prompts |
 | Availability and risk scope | All modules are offline or termux-optional; all are S0/S1 |
 | Canonical source validation | Passed `scripts/validate_content.py` with schema-v2 registry |
 | Android content parity | Passed `scripts/check_android_content.py` and direct comparisons |
 | Web content parity | Passed `scripts/check_web_content.py` and direct comparisons |
-| Source record | Stage 1–4 claims and URLs recorded in the staged reference notes |
-| Safety/privacy scan | Stage 3 contains no operational security detail; Stage 4 contains no network, real-data, arbitrary-execution, or third-party-script requirement |
+| Source record | Stage 1–5 claims and URLs recorded in the staged reference notes |
+| Safety/privacy scan | Stage 3 contains no operational security detail; Stage 4 contains no network, real-data, arbitrary-execution, or third-party-script requirement; Stage 5 contains no operational case-study detail or personal/career-data requirement |
 | New clarity issue | DL-04 corrected in the prior review; Stage 4 added with no automated contract issue |
 
 ## Remaining decision
 
-The content is **repository-consistent and client-ready for controlled testing**, but it is not yet human-approved for public release. A reviewer should read all 35 current lessons for age-appropriate pacing, cultural and linguistic clarity, factual accuracy, accessibility of examples, and safety framing, with particular attention to the fifteen post-MVP drafts and their source wording. The Stage 3 safety boundary must be reviewed by a maintainer who can assess dual-use risk; if any lesson becomes S2, it requires the documented S2 safety review before release. Findings should be fixed in place through the current stage process; Stage 5 must not be added until Stage 4 is closed and documented. The release owner should record approval or required rewrites before signing or publicly distributing an artifact.
+The content is **repository-consistent and client-ready for controlled testing**, but it is not yet human-approved for public release. A reviewer should read all 37 current lessons for age-appropriate pacing, cultural and linguistic clarity, factual accuracy, accessibility of examples, and safety framing, with particular attention to the seventeen post-MVP drafts and their source wording. The Stage 3 safety boundary must be reviewed by a maintainer who can assess dual-use risk; if any lesson becomes S2, it requires the documented S2 safety review before release. Findings should be fixed in place through the current stage process; Stage 5 is registered under D-038 but must not be marked released until its historical/cultural, source, career-framing, privacy, and accessibility review is complete. The release owner should record approval or required rewrites before signing or publicly distributing an artifact.
 
 ## References
 

@@ -81,8 +81,8 @@ class ValidateContentTests(unittest.TestCase):
             all_errors.extend(validate_lesson(lesson, content_root, repo_root))
         all_errors.extend(validate_graph(lessons, known_ids))
         self.assertEqual(all_errors, [])
-        self.assertEqual(len(lessons), 35)
-        self.assertEqual(len(known_ids), 35)
+        self.assertEqual(len(lessons), 37)
+        self.assertEqual(len(known_ids), 37)
         self.assertTrue({lesson.module_id for lesson in lessons}.issuperset({
             "dl-01-digital-information",
             "dl-05-privacy-passwords-phishing",
@@ -95,6 +95,8 @@ class ValidateContentTests(unittest.TestCase):
             "sec-04-security-organizations-and-roles",
             "web-01-semantic-html-accessibility",
             "web-04-data-modeling-and-json",
+            "sec-05-morris-worm-history-and-response",
+            "sec-06-cybersecurity-career-role-families",
         }))
 
     def test_registry_rejects_changed_mvp_baseline(self):

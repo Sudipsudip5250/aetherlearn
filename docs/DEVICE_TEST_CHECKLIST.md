@@ -39,23 +39,23 @@ Prepare two fictional lesson values for testing: `Offline functions` and `Review
 
 **Pass evidence:** privacy wording is visible, no account or network is required for the core path, and the shell opens offline. **Fail or stop:** a login, unexplained permission, automatic upload, or required network appears.
 
-## 3. Android navigation and 35-lesson discovery
+## 3. Android navigation and 37-lesson discovery
 
 1. On the main shell, verify the four bottom destinations: **Learn**, **Practice**, **Search**, and **Progress**. Verify **Settings** is available from the top bar.
-2. Open **Learn**. Confirm that the catalog contains 35 lessons: the stable 20-module MVP baseline, three Stage 1 lessons, four Stage 2 lessons, four Stage 3 security-ethics lessons, and four Stage 4 Web/data foundations lessons.
-3. Confirm that the previously completed content is visible: PY-06, PY-07, AL-01, AL-02, AL-03, AL-04, AL-05, DEV-02, and DEV-03. Also open DL-06, DL-07, DL-08, DEV-04, DEV-05, DEV-06, DEV-07, SEC-01, SEC-02, SEC-03, SEC-04, WEB-01, WEB-02, WEB-03, and WEB-04. For SEC-01 through SEC-04, confirm the safety text is visible and no lesson asks for a live target, external contact, credential, or unsafe command.
+2. Open **Learn**. Confirm that the catalog contains 37 lessons: the stable 20-module MVP baseline, three Stage 1 lessons, four Stage 2 lessons, four Stage 3 security-ethics lessons, four Stage 4 Web/data foundations lessons, and two Stage 5 historical-security/career lessons.
+3. Confirm that the previously completed content is visible: PY-06, PY-07, AL-01, AL-02, AL-03, AL-04, AL-05, DEV-02, and DEV-03. Also open DL-06, DL-07, DL-08, DEV-04, DEV-05, DEV-06, DEV-07, SEC-01, SEC-02, SEC-03, SEC-04, WEB-01, WEB-02, WEB-03, WEB-04, SEC-05, and SEC-06. For SEC-01 through SEC-06, confirm the safety and privacy text is visible and no lesson asks for a live target, external contact, credential, unsafe command, real incident data, or personal career data.
 4. Confirm that the first five existing modules remain visible and that no duplicate stable IDs appear.
 5. Open **Practice**, **Search**, and **Progress** in turn. Each destination should show a useful screen rather than a placeholder or crash.
 6. Open **Settings** and return with **Back**. Confirm that returning does not reset the selected destination or learning state unexpectedly.
 7. Change the theme to **Light**, **Dark**, and **Follow system** if the controls are available. Confirm that text and controls remain readable in each mode. Restore the preferred mode.
 
-**Pass evidence:** all 35 current lessons are discoverable, the original 20-module baseline remains present, all Stage 1, Stage 2, Stage 3, and Stage 4 lessons open, the Stage 3 safety boundary and Stage 4 offline/privacy boundary are visible, all destinations open, and no crash or data reset occurs.
+**Pass evidence:** all 37 current lessons are discoverable, the original 20-module baseline remains present, all Stage 1 through Stage 5 lessons open, the Stage 3 safety boundary, Stage 4 offline/privacy boundary, and Stage 5 historical/cultural/career-framing boundary are visible, all destinations open, and no crash or data reset occurs.
 
 ## 4. Complete one lesson fully offline
 
 1. Enable airplane mode and confirm that Wi-Fi and mobile data are disabled. Do not use a network pack in this section.
-2. From **Learn**, open `PY-06 — Functions, scope, and reusable code` or another newly authored lesson.
-3. Confirm that the reader shows the title, strand, level, estimated time, availability, risk tier, objectives, prerequisites, explanation, worked example, common mistakes, offline practice, project/application, accessibility notes, safety guidance, further reading, and change log.
+2. From **Learn**, open `PY-06 — Functions, scope, and reusable code` and, if available, sample `SEC-05 — Morris worm: history, impact, and response` or `SEC-06 — Cybersecurity role families and learning paths`.
+3. Confirm that the reader shows the title, strand, level, estimated time, availability, risk tier, objectives, prerequisites, explanation, worked example, common mistakes, offline practice, project/application, accessibility notes, safety guidance, further reading, and change log. For Stage 5, confirm the case-study or career-framing boundary is visible and remains offline/non-operational.
 4. Scroll through the entire lesson. Confirm that code blocks, tables, links, and paragraphs remain readable and do not prevent reaching the quiz and local study tools.
 5. In **Knowledge check**, answer the four prompts using the fictional lesson material. Tap **Check answers**. Confirm that feedback appears and explains the result in words rather than relying only on color.
 6. Tap **Retry**, give at least one different answer, and check again. Confirm that the attempt count changes and the best score is retained locally.
@@ -141,7 +141,7 @@ This section requires an authorized HTTPS test host containing a pack generated 
 2. Tap **Pause**. Confirm that the status changes to paused and that the URL field cannot be edited during the active transfer.
 3. Tap **Resume**. Confirm that progress continues. If the server does not support HTTP Range, record that the transfer restarted rather than failing; this is an expected limitation.
 4. Start another controlled download only if the first one completed or was cancelled. Tap **Cancel** during transfer. Confirm that the status reports cancellation and that the next attempt can start cleanly.
-5. Complete a valid download. Confirm that the app reports validation/activation success and that the optional lesson becomes available.
+5. Complete a valid download. Confirm that the app reports validation/activation success and that the optional lesson becomes available. Stage 5 lessons are bundled-only and must not be treated as optional network-pack content.
 6. Reopen the same URL and download again. Confirm that re-download does not duplicate stable IDs or destroy existing core learning state.
 7. Submit an authorized malformed, oversized, tampered, or incompatible test pack if the release owner provides one. Confirm that it is rejected and the previously active valid pack remains available.
 
@@ -190,10 +190,10 @@ The actual Termux package, permission, service, and Android-version matrix remai
 Use a desktop browser that supports service workers and IndexedDB over an HTTP(S) origin. A local development server is sufficient for a controlled test.
 
 1. Serve the `web/` directory using the repository instructions, or open the authorized deployed test origin.
-2. Open the Web client and confirm that it presents **35 current lessons** and the message that Termux is Android-only. The original 20-module MVP baseline remains part of the catalog.
+2. Open the Web client and confirm that it presents **37 current lessons** and the message that Termux is Android-only. The original 20-module MVP baseline remains part of the catalog.
 3. Open **Search**, **Practice**, and **Progress**. Confirm that they work without an account.
-4. Select **Cache core content**. Confirm a status such as `Cached 35 core lessons in this browser.` and `35 modules · cached core pack`.
-5. Open DL-06, DL-07, DL-08, PY-06, AL-03, DEV-03, WEB-01, WEB-02, WEB-03, and WEB-04 from the cached catalog. Confirm the full reader and quiz controls render. Sample at least one original MVP lesson, all three Stage 1 lessons, and all four Stage 4 lessons.
+4. Select **Cache core content**. Confirm a status such as `Cached 37 core lessons in this browser.` and `37 modules · cached core pack`.
+5. Open DL-06, DL-07, DL-08, PY-06, AL-03, DEV-03, WEB-01, WEB-02, WEB-03, WEB-04, SEC-05, and SEC-06 from the cached catalog. Confirm the full reader and quiz controls render. Sample at least one original MVP lesson, all three Stage 1 lessons, all four Stage 4 lessons, and both Stage 5 lessons. For SEC-05 and SEC-06, verify the historical/cultural and career/privacy boundaries described in Sections 3 and 4.
 6. Add a fictional note, bookmark, quiz attempt, and completion state in the browser.
 7. Disable the network using the browser’s offline mode or operating-system network controls. Reload the application and reopen the cached lessons and local state.
 8. Confirm that the old state remains local and that the cache failure state does not replace a previous valid cache.
@@ -206,8 +206,8 @@ The Web fallback does not expose the Android network-pack URL field or a Termux 
 Run this section on an Android phone browser if available. It is separate from the native app.
 
 1. Open the authorized Web/PWA origin in the Android browser.
-2. Confirm the page displays 35 current lessons, readable navigation, the local privacy note, and the Android-only Termux message. The original MVP baseline remains identifiable in project documentation.
-3. Cache the core content and confirm the 35-lesson cache status.
+2. Confirm the page displays 37 current lessons, readable navigation, the local privacy note, and the Android-only Termux message. The original MVP baseline remains identifiable in project documentation.
+3. Cache the core content and confirm the 37-lesson cache status.
 4. Open and complete a short lesson, add a fictional note/bookmark, and reload.
 5. Enable airplane mode or browser offline mode. Reload and reopen the cached lesson, search, practice, and progress routes.
 6. Check for horizontal scrolling, clipped controls, blocked keyboard focus, unreadable code, and inputs hidden below the viewport.

@@ -6,7 +6,7 @@ The original MVP contains **four strands and 20 modules**. It is designed to tak
 
 The order is recommended rather than compulsory. Prerequisites are explicit, and the learner can choose a diagnostic starting point. Every module is available as offline text and lightweight assets. Only selected practical modules offer an optional Termux exercise.
 
-Content expansion batch 1 added DL-02, DL-03, DL-04, PY-03, PY-04, and PY-05. Content expansion batch 2 added PY-06, PY-07, AL-01 through AL-05, DEV-02, and DEV-03. Those 20 modules remain the complete `mvp-20` baseline. The user-approved Stage 1 adds DL-06, DL-07, and DL-08; Stage 2 adds DEV-04 through DEV-07; and approved Stage 3 adds SEC-01 through SEC-04; active Stage 4 adds WEB-01 through WEB-04, bringing the current canonical registry to 35 lessons. Stages 1–4 remain draft pending final human technical/pedagogical review; Stage 3 also requires explicit safety review, while Stage 4 requires Web/data accessibility and privacy review. Accessibility, device/emulator runtime evidence, supply-chain review for DEV-06, and release gates remain separate open requirements.
+Content expansion batch 1 added DL-02, DL-03, DL-04, PY-03, PY-04, and PY-05. Content expansion batch 2 added PY-06, PY-07, AL-01 through AL-05, DEV-02, and DEV-03. Those 20 modules remain the complete `mvp-20` baseline. The user-approved Stage 1 adds DL-06, DL-07, and DL-08; Stage 2 adds DEV-04 through DEV-07; and approved Stage 3 adds SEC-01 through SEC-04; approved Stage 4 adds WEB-01 through WEB-04; active Stage 5 adds SEC-05 and SEC-06, bringing the current canonical registry to 37 lessons. Stages 1–5 remain draft pending final human technical/pedagogical review; Stage 3 requires explicit safety review, Stage 4 requires Web/data accessibility and privacy review, and Stage 5 requires historical/cultural, source, and career-framing review. Accessibility, device/emulator runtime evidence, supply-chain review for DEV-06, and release gates remain separate open requirements.
 
 ## Availability labels
 
@@ -97,6 +97,15 @@ These four lessons are the approved Stage 3 security-ethics slice. SEC-01 and SE
 
 These four lessons are the approved Stage 4 Web/data slice. WEB-01 and WEB-02 are S0; WEB-03 and WEB-04 are provisionally S1 because they introduce state and data-handling concepts. Activities use fictional, static local fixtures and paper/text traces only. They require no network requests, external APIs, third-party scripts, real personal data, arbitrary JavaScript execution, or Termux wrapper.
 
+## Stage 5: Historical security and career orientation
+
+| ID | Module | Prerequisites | Time | Availability |
+|---|---|---|---:|---|
+| SEC-05 | Morris worm: history, impact, and response | SEC-04 | 60 min | `offline` |
+| SEC-06 | Cybersecurity role families and learning paths | SEC-04 | 55 min | `offline` |
+
+These two lessons are the approved Stage 5 slice. Both are S0, offline, bundled-only, and use fictional discussion cards or learning-plan worksheets. SEC-05 focuses on impact, affected stakeholders, institutional response, ethics, and accountability using CMU SEI, FBI, Computer History Museum, and ACM sources; it does not glorify an actor or reproduce operational details. SEC-06 uses the NIST NICE Framework to describe role families and learning evidence without employment, salary, legal-outcome, or regional-portability claims. Neither lesson uses live targets, credentials, real personal data, external contact, arbitrary execution, network access, or a Termux wrapper.
+
 ## MVP assessment model
 
 Each module contains clear objectives, a short explanation, worked examples, at least one interactive exercise, a knowledge check, and a completion rule. Each objective is written as an observable action, such as “trace a loop for a given input,” “identify the difference between a file and a folder,” or “create a local Git commit with a meaningful message.”
@@ -138,4 +147,4 @@ Community contributions use pull requests and cannot publish directly to the app
 
 ## Post-MVP curriculum parking lot
 
-Stage 1 covers the first approved history/systems slice: DL-06, DL-07, and DL-08. Stage 2 covers DEV-04 through DEV-07. Stage 3 covers SEC-01 through SEC-04. Stage 4 covers WEB-01 through WEB-04. Later releases may add computer architecture, operating systems, networks, databases, software engineering, distributed systems, cybersecurity foundations, cryptography, AI and machine learning, computer graphics, embedded systems, robotics, quantum computing, formal methods, scientific computing, and domain-specific tracks. Each later stage remains gated by the preceding stage’s validation and review checkpoint. Offensive-security labs, model-behavior research, anonymity networks, and other dual-use material require the governance described in [`SAFETY.md`](SAFETY.md) before they are scheduled.
+Stage 1 covers the first approved history/systems slice: DL-06, DL-07, and DL-08. Stage 2 covers DEV-04 through DEV-07. Stage 3 covers SEC-01 through SEC-04. Stage 4 covers WEB-01 through WEB-04. Stage 5 covers SEC-05 and SEC-06. Later releases may add computer architecture, operating systems, networks, databases, software engineering, distributed systems, cybersecurity foundations, cryptography, AI and machine learning, computer graphics, embedded systems, robotics, quantum computing, formal methods, scientific computing, and domain-specific tracks. Each later stage remains gated by the preceding stage’s validation and review checkpoint. Offensive-security labs, model-behavior research, anonymity networks, and other dual-use material require the governance described in [`SAFETY.md`](SAFETY.md) before they are scheduled.

@@ -1,6 +1,6 @@
 schema_version: 2
 curriculum_id: aetherlearn
-curriculum_version: 1.6.0
+curriculum_version: 1.7.0
 mvp_baseline:
   id: mvp-20
   module_count: 20
@@ -96,6 +96,15 @@ stages:
         title: JavaScript events and local state
       - id: web-04-data-modeling-and-json
         title: Data modeling and JSON fixtures
+  - id: stage-5
+    title: Historical security and career orientation
+    status: approved
+    module_count: 2
+    modules:
+      - id: sec-05-morris-worm-history-and-response
+        title: "Morris worm: history, impact, and response"
+      - id: sec-06-cybersecurity-career-role-families
+        title: Cybersecurity role families and learning paths
 modules:
   - id: dl-01-digital-information
     title: How digital devices represent information
@@ -202,3 +211,9 @@ modules:
   - id: web-04-data-modeling-and-json
     title: Data modeling and JSON fixtures
     stage: stage-4
+  - id: sec-05-morris-worm-history-and-response
+    title: "Morris worm: history, impact, and response"
+    stage: stage-5
+  - id: sec-06-cybersecurity-career-role-families
+    title: Cybersecurity role families and learning paths
+    stage: stage-5

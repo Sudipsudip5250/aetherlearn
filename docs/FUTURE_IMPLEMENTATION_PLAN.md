@@ -1,12 +1,12 @@
 # Future curriculum implementation plan
 
-**Status:** Stage 1, Stage 2, and Stage 3 automated checkpoints complete; Stage 4 is active under decision D-036; Stage 5 remains gated by the Stage 4 checkpoint.
+**Status:** Stage 1 through Stage 5 automated checkpoints are complete; Stage 5’s exact two-lesson scope is closed under decision D-039. All five post-MVP stages remain draft pending human technical, pedagogical, accessibility, source, safety, privacy, historical/cultural, and career-framing review.
 
 ## Decision boundary
 
 The current AetherLearn MVP remains a validated, frozen 20-module curriculum. The roadmap is not a license to add an encyclopedic catalog. A future implementation must begin with an explicit decision-log entry that names the approved batch, changes the curriculum scope intentionally, identifies maintainers and reviewers, and accepts the additional Android/Web parity and long-term source-maintenance burden.
 
-The user-approved Stage 1 and Stage 2 slices are represented in `content/curriculum.yml`, `content/core/`, Android assets, and the Web payload. Both passed their automated validators, client-parity, browser-smoke, deterministic-pack, and hosted-CI checkpoints. Stage 3 has its own exact module list, source matrix, and safety boundary, and its automated checkpoint passed hosted Quality workflow `32975751921`. Stage 4 is now represented by its exact approved list and source matrix; Stage 5 remains planning-only until Stage 4 is validated, documented, committed, and pushed.
+The user-approved Stage 1 and Stage 2 slices are represented in `content/curriculum.yml`, `content/core/`, Android assets, and the Web payload. Both passed their automated validators, client-parity, browser-smoke, deterministic-pack, and hosted-CI checkpoints. Stage 3 has its own exact module list, source matrix, and safety boundary, and its automated checkpoint passed hosted Quality workflow `32975751921`. Stage 4 is represented by its exact approved list, source matrix, synchronized clients, browser evidence, commit, and hosted Quality checkpoint `32979503787`. Stage 5 is represented by its exact approved list, source matrix, synchronized clients, browser evidence, deterministic 37-lesson pack, commit, and hosted Quality checkpoint `32982750065` under D-039.
 
 ## Recommended staged implementation
 
@@ -16,10 +16,10 @@ The user-approved Stage 1 and Stage 2 slices are represented in `content/curricu
 | 1 | Computing history and systems vocabulary | 3 lessons | Extends digital literacy without requiring risky tooling or external services | Technical and pedagogical reviewers | Automated checkpoint complete; human review open |
 | 2 | Software engineering and open-source practice | 4 lessons | Builds directly on Git and debugging already taught | Technical, pedagogical, accessibility, and supply-chain reviewers | Automated checkpoint complete; human review open |
 | 3 | Ethical security, disclosure, and organization literacy | 4 lessons | Adds only high-level defensive security context after the safety governance and source process are exercised | Technical, pedagogical, safety, and source reviewers | Automated checkpoint complete; human safety/pedagogical review open |
-| 4 | Web/data foundations and local-only application practice | 4 lessons | Adds browser and data concepts with static/local fixtures | Technical, pedagogical, accessibility, and privacy reviewers | Active under D-036; automated checkpoint in progress; human review open |
-| 5 | Historical security case studies and career orientation | 2–4 lessons | Depends on stable source review, careful framing, and a named maintainer | Historical/source, pedagogical, safety, and accessibility reviewers | Gated pending Stage 4 checkpoint |
+| 4 | Web/data foundations and local-only application practice | 4 lessons | Adds browser and data concepts with static/local fixtures | Technical, pedagogical, accessibility, and privacy reviewers | Automated checkpoint complete under D-036; human review open |
+| 5 | Historical security case studies and career orientation | 2 lessons | Builds historical and career literacy only after source review and careful framing | Historical/source, pedagogical, safety, accessibility, and career-framing reviewers | Automated checkpoint complete under D-039; human review open |
 
-The table is a delivery sequence, not blanket approval of new modules. Stage 3’s automated implementation checkpoint is complete, but it remains draft until human safety/pedagogical review. Stage 4 is active under its exact D-036 scope and remains draft until its automated and human review gates are complete; Stage 5 remains gated until Stage 4 is validated, documented, committed, and pushed.
+The table is a delivery sequence, not blanket approval of new modules. Stages 1–5 have completed their automated implementation checkpoints but remain draft until human review. Stage 5 closed its automated checkpoint under the exact D-038 scope and D-039 evidence; no later stage is authorized without a new exact decision. Approval to continue does not waive human review or release gates.
 
 ## Stage 1: computing history and systems vocabulary
 
@@ -68,7 +68,12 @@ All four lessons are bundled-only, offline, and use static fictional fixtures or
 
 ## Stage 5: case studies and career orientation
 
-Case studies require a source table with publication date, update date, uncertainty, affected parties, and defensive response. Career content should use frameworks such as NIST NICE to describe skills and role families, not to promise jobs, salaries, legal outcomes, or regional portability. The project should name a maintainer for source freshness and a reviewer for historical and cultural framing.
+The approved Stage 5 slice is:
+
+1. **`sec-05-morris-worm-history-and-response` — Morris worm: history, impact, and response.** Use CMU SEI, FBI, Computer History Museum, and ACM sources to separate intent, impact, affected stakeholders, institutional response, ethics, and accountability. The lesson must not glorify an actor or reproduce operational details.
+2. **`sec-06-cybersecurity-career-role-families` — Cybersecurity role families and learning paths.** Use the NIST NICE Framework to describe broad task lenses, skills, and safe learning evidence without employment, salary, legal-outcome, or regional-portability claims.
+
+Both lessons are S0, offline, bundled-only, and draft. Exercises use fictional discussion cards or learning-plan worksheets. No live target, malware, exploit or evasion detail, credential, personal data, external contact, network exercise, arbitrary execution, or Termux wrapper is allowed. The source matrix in `docs/references/stage5_sources.md` records CMU SEI, FBI, Computer History Museum, ACM, and NIST sources, their intended claims, and limitations. Case studies require a source table with publication date, update date, uncertainty, affected parties, and defensive response. The project must retain a maintainer for source freshness and a reviewer for historical, cultural, accessibility, and career framing.
 
 ## Per-module implementation contract
 
@@ -117,4 +122,4 @@ A Termux-optional lesson additionally requires a fixed wrapper ID, immutable exe
 
 ## Current action and later gate
 
-Stages 1–4 were approved and implemented one bounded lesson slice at a time under their exact scopes. Stages 1–3 have passed their automated, parity, browser, pack, and hosted-CI checkpoints, while human technical, pedagogical, accessibility, source, and safety review remains open. Stage 4’s exact source matrix is recorded and implementation is active; its parity, deterministic-pack, browser-smoke, commit/push, and hosted-CI checkpoint must close before Stage 5 can begin. Approval to continue later does not waive any per-stage gate.
+Stages 1–5 are approved and implemented one bounded lesson slice at a time under their exact scopes. All five stages have passed their automated, parity, browser, pack, commit/push, and hosted-CI checkpoints, while human technical, pedagogical, accessibility, source, safety, privacy, cultural, and career-framing review remains open. Stage 5 closed under D-039 with exactly two lessons; no Stage 6 scope is authorized. Approval to continue later does not waive any per-stage gate.

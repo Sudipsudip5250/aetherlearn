@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "pack_id": "core",
-  "pack_version": "1.6.0",
+  "pack_version": "1.7.0",
   "lessons": [
     {
       "id": "dl-01-digital-information",
@@ -177,6 +177,16 @@
       "id": "web-04-data-modeling-and-json",
       "title": "Data modeling and JSON fixtures",
       "path": "content/core/web-04-data-modeling-and-json.md"
+    },
+    {
+      "id": "sec-05-morris-worm-history-and-response",
+      "title": "Morris worm: history, impact, and response",
+      "path": "content/core/sec-05-morris-worm-history-and-response.md"
+    },
+    {
+      "id": "sec-06-cybersecurity-career-role-families",
+      "title": "Cybersecurity role families and learning paths",
+      "path": "content/core/sec-06-cybersecurity-career-role-families.md"
     }
   ]
 }
