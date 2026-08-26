@@ -81,11 +81,12 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Reuse the five canonical Markdown lessons through `web/content/manifest.json` and the shared frontmatter/section parser; `scripts/check_web_content.py` prevents payload drift.
 - [x] Add the initial lesson list and full reader route with objectives, metadata, sections, safe inline Markdown rendering, and external-link handling.
 - [x] Add a clear privacy note and message that full native Termux integration is Android-only in the MVP.
-- [ ] Add service-worker caching for the app shell and explicit IndexedDB storage for cached content packs.
-- [ ] Implement offline lesson reading, one practice flow, and local-only progress/notes/bookmarks in the browser.
-- [ ] Implement simple local search over the five modules.
-- [ ] Test cached use in a desktop browser and Android browser with the network disabled.
-- [ ] **Checkpoint M6:** Core reading and practice remain usable offline after the user has cached the content pack.
+- [x] Add service-worker caching for the app shell and explicit IndexedDB storage for cached content packs; updates stage before activating the new pack.
+- [x] Implement offline lesson reading, one practice flow, and local-only progress/notes/bookmarks in the browser.
+- [x] Implement simple local search over the five modules.
+- [x] Test cached use in a Chromium desktop browser with the local server stopped: catalog, reader, practice, search, progress, quiz, note, bookmark, completion, and reload persistence all worked offline.
+- [ ] Repeat the cached offline smoke test in an Android browser; no Android browser or device is attached to this environment.
+- [x] **Checkpoint M6:** After explicitly caching the core pack, core reading and practice remained usable offline in the verified desktop browser; the Android-browser runtime evidence gate remains open.
 
 ## M7 — Release hardening
 
