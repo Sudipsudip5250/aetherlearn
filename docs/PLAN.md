@@ -29,6 +29,9 @@ M2 is implemented as a native Android shell under `android/`. The project uses K
 
 M3 implementation is complete for the five bundled modules. The app now parses Markdown assets, opens full lesson readers, records progress and quiz attempts in SQLite schema version 2, supports notes and bookmarks, searches lesson titles/body offline, and lists offline exercises in Practice. Static repository checks, the deterministic content-pack build, Python tests, Android debug build, Android unit-test task, and Android lint all pass. The M3 runtime checkpoint remains open until a device or emulator verifies the end-to-end offline journey and restart persistence.
 
+M4 is implemented as an offline foundation. SQLite schema version 3 adds a content-pack registry while preserving all M3 learning tables. Users can generate Markdown or JSON exports through an explicit personal-notes warning and Android file picker destination; exports contain only learning data and are never uploaded automatically. Settings now reports core-pack size, local learning-data/optional-pack usage, and the status of a bundled optional-pack example. The optional-pack manager validates an immutable manifest checksum and schema before staging, atomically activating, and recording the pack; failed activation restores the previous pack. Deletion removes only the optional pack and cannot target the protected core pack. Real network downloading and pause/resume flows remain deliberately deferred.
+
+
 ## Suggested sequencing
 
 M0 and M1 establish governance and content contracts before application work. M2 and M3 build the smallest useful product. M4 adds portability and safe updates. M5 proves the differentiator without allowing Termux to become a dependency. M6 provides secondary web access. M7 is a release gate, not an optional cleanup phase.
@@ -78,6 +81,9 @@ The first implementation slice should create the repository, license, content sc
 | D-013 | 2026-08-24 | Keep M2 storage limited to app metadata and first-run/theme state; defer learning tables to M3 | Preserves a small, testable local boundary while making schema versioning ready for progress, notes, bookmarks, and scores | M3 storage schema is approved |
 | D-014 | 2026-08-25 | Keep M3 Markdown parsing dependency-free and search the five in-memory lesson documents locally | Avoids adding network or runtime dependencies while the content set is small and fixed; the parser matches the existing lesson contract | M4 content-pack lifecycle or a larger corpus justifies a dedicated index/parser library |
 | D-015 | 2026-08-25 | Treat quiz answers as feedback rather than a completion gate | The current five lessons use short-answer knowledge checks and PRODUCT_SPEC permits completion without a score requirement | A future curriculum review introduces a different assessment contract |
+| D-016 | 2026-08-25 | Use Android CreateDocument for user-controlled Markdown/JSON export | Keeps export offline, explicit, and under user control without adding sharing or upload infrastructure | A later UX decision adds a separate share-sheet shortcut |
+| D-017 | 2026-08-25 | Make the first optional pack a pre-bundled manifest-only lifecycle example | Proves validation, staging, activation, persistence, and deletion without expanding curriculum or adding network infrastructure | M4+ approves a real signed content-pack distribution format |
+| D-018 | 2026-08-25 | Keep pack activation metadata in SQLite schema version 3 and pack files under app-private `filesDir` | Separates user learning data from replaceable content and supports last-known-good rollback | A future pack format requires a new migration or storage boundary |
 
 ## Decision ownership
 

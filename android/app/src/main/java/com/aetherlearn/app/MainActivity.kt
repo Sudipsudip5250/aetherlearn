@@ -2,7 +2,9 @@ package com.aetherlearn.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +21,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -51,6 +54,9 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import com.aetherlearn.app.data.AvailablePack
+import com.aetherlearn.app.data.ExportManager
+import com.aetherlearn.app.data.InstalledPack
 import com.aetherlearn.app.data.LessonDocument
 import com.aetherlearn.app.data.LearningState
 import com.aetherlearn.app.data.LocalStore
@@ -58,6 +64,7 @@ import com.aetherlearn.app.data.ModuleCatalog
 import com.aetherlearn.app.data.ModuleProgress
 import com.aetherlearn.app.data.ModuleSummary
 import com.aetherlearn.app.data.NoteSummary
+import com.aetherlearn.app.data.PackManager
 import com.aetherlearn.app.data.ThemeMode
 import com.aetherlearn.app.data.QuizQuestion
 import com.aetherlearn.app.ui.theme.AetherLearnTheme
@@ -134,6 +141,8 @@ private fun AppShell(
 
     if (settingsOpen) {
         SettingsScreen(
+            store = localStore,
+            lessons = lessons,
             themeMode = themeMode,
             onThemeModeChanged = onThemeModeChanged,
             onBack = { settingsOpen = false },
@@ -722,10 +731,48 @@ private fun PrivacyWelcomeScreen(onContinue: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SettingsScreen(
+    store: LocalStore,
+    lessons: List<LessonDocument>,
     themeMode: ThemeMode,
     onThemeModeChanged: (ThemeMode) -> Unit,
     onBack: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val packManager = remember { PackManager(context.applicationContext, store) }
+    var installedPacks by remember { mutableStateOf(packManager.installedPacks()) }
+    var packMessage by remember { mutableStateOf<String?>(null) }
+    var exportWarning by rememberSaveable { mutableStateOf<String?>(null) }
+    var exportMessage by remember { mutableStateOf<String?>(null) }
+    val exportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("*/*"),
+    ) { uri ->
+        val format = exportWarning
+        if (uri != null && format != null) {
+            val content = if (format == "json") ExportManager.json(store, lessons) else ExportManager.markdown(store, lessons)
+            exportMessage = if (ExportManager.write(context.contentResolver, uri, content)) {
+                "Export saved to the location you selected."
+            } else {
+                "The export could not be written to the selected location."
+            }
+        }
+        exportWarning = null
+    }
+
+    if (exportWarning != null) {
+        AlertDialog(
+            onDismissRequest = { exportWarning = null },
+            title = { Text("Export local learning data?") },
+            text = { Text("The export is created only after you choose a destination. It may contain personal learning notes. AetherLearn will not upload it automatically.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    val format = exportWarning ?: "markdown"
+                    exportLauncher.launch(if (format == "json") "aetherlearn-learning.json" else "aetherlearn-learning.md")
+                }) { Text("Choose destination") }
+            },
+            dismissButton = { TextButton(onClick = { exportWarning = null }) { Text("Cancel") } },
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -748,11 +795,68 @@ private fun SettingsScreen(
                 ThemeOptionRow(mode, mode == themeMode) { onThemeModeChanged(mode) }
             }
             HorizontalDivider()
+            Text("Export", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+            Text("Export your progress, quiz attempts, notes, and bookmarks offline. You choose the destination with the Android file picker.")
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { exportWarning = "markdown" }, modifier = Modifier.weight(1f)) { Text("Markdown") }
+                Button(onClick = { exportWarning = "json" }, modifier = Modifier.weight(1f)) { Text("JSON") }
+            }
+            exportMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+            HorizontalDivider()
+            Text("Storage & content packs", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+            Text("Core pack: 5 modules, ${formatBytes(packManager.coreSizeBytes())}, always available offline and protected from deletion.")
+            Text("Learning data and installed optional packs: approximately ${formatBytes(packManager.learningDataSizeBytes())}.")
+            packManager.availablePacks().forEach { available ->
+                OptionalPackCard(
+                    available = available,
+                    installed = installedPacks.firstOrNull { it.id == available.id },
+                    onInstall = {
+                        val result = packManager.installPack(available.id)
+                        packMessage = result.message
+                        installedPacks = packManager.installedPacks()
+                    },
+                    onDelete = {
+                        val result = packManager.deletePack(available.id)
+                        packMessage = result.message
+                        installedPacks = packManager.installedPacks()
+                    },
+                )
+            }
+            packMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+            HorizontalDivider()
             Text("Privacy", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
-            Text("Progress, quiz attempts, notes, bookmarks, and preferences are stored in app-private SQLite storage.")
-            Text("No network permission is requested by the core Android app.")
+            Text("Progress, quiz attempts, notes, bookmarks, preferences, and pack status are stored in app-private SQLite storage.")
+            Text("No network permission is requested by the core Android app. Optional packs in this M4 foundation are bundled local assets; no network download is implemented.")
         }
     }
+}
+
+@Composable
+private fun OptionalPackCard(
+    available: AvailablePack,
+    installed: InstalledPack?,
+    onInstall: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(available.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(available.description)
+            Text("Version ${available.version} · ${formatBytes(available.sizeBytes)} · ${if (installed == null) "Available locally" else "Installed and verified"}")
+            if (installed == null) {
+                Button(onClick = onInstall, modifier = Modifier.fillMaxWidth()) { Text("Install local pack") }
+            } else {
+                Text("Checksum: ${installed.checksum.take(12)}…", style = MaterialTheme.typography.bodySmall)
+                TextButton(onClick = onDelete, modifier = Modifier.fillMaxWidth()) { Text("Delete optional pack") }
+            }
+        }
+    }
+}
+
+private fun formatBytes(bytes: Long): String = when {
+    bytes < 1024L -> "$bytes B"
+    bytes < 1024L * 1024L -> "${bytes / 1024L} KB"
+    else -> "${bytes / (1024L * 1024L)} MB"
 }
 
 @Composable

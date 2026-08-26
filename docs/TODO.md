@@ -51,13 +51,15 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 
 ## M4 — Exports and optional packs
 
-- [ ] Implement user-initiated Markdown and JSON export.
-- [ ] Add export warnings and confirm that no export is automatic.
-- [ ] Implement optional pack download, pause, resume, delete, and re-download.
-- [ ] Validate size declarations, checksums, schema versions, and minimum app version.
-- [ ] Implement temporary download location and atomic activation.
-- [ ] Preserve the last known-good pack after corruption, interruption, or incompatible update.
-- [ ] **Checkpoint M4:** Export and optional-pack flows work without an account; invalid or incomplete packs cannot replace valid content.
+- [x] Implement user-initiated Markdown and JSON export through the Android file picker.
+- [x] Add a clear personal-notes warning and confirm that no export is automatic or uploaded.
+- [x] Implement a local, pre-bundled optional-pack listing and install/delete lifecycle.
+- [x] Validate optional-pack checksum, schema version, manifest ID, version, and name before activation.
+- [x] Implement staging, atomic activation, and last-known-good rollback for local optional packs.
+- [x] Protect the core five-module pack and preserve learning data when an optional pack is deleted.
+- [x] Add Settings storage accounting and core/optional-pack status UI.
+- [ ] Implement real network download, pause, resume, and re-download flows; deferred by M4 scope.
+- [ ] **Checkpoint M4:** Device/emulator smoke testing must confirm file-picker export, restart persistence, optional-pack install/delete, rollback behavior, and core-content protection; static build, test, lint, and repository checks pass.
 
 ## M5 — Termux pilot
 

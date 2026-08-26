@@ -5,9 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-/**
- * App-private storage boundary. Content-pack assets remain separate from user learning data.
- */
+/** App-private storage boundary. Content-pack assets remain separate from user learning data. */
 class LocalStore(context: Context) : SQLiteOpenHelper(
     context,
     DATABASE_NAME,
@@ -24,31 +22,27 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
             """.trimIndent(),
         )
         createLearningTables(db)
+        createPackTable(db)
         putValue(db, KEY_SCHEMA_VERSION, DATABASE_VERSION.toString())
         putValue(db, KEY_FIRST_RUN_COMPLETE, "false")
         putValue(db, KEY_THEME_MODE, ThemeMode.SYSTEM.name)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        if (oldVersion < 2) {
-            createLearningTables(db)
-        }
+        if (oldVersion < 2) createLearningTables(db)
+        if (oldVersion < 3) createPackTable(db)
         putValue(db, KEY_SCHEMA_VERSION, newVersion.toString())
     }
 
     fun isFirstRunComplete(): Boolean = getValue(KEY_FIRST_RUN_COMPLETE) == "true"
 
-    fun markFirstRunComplete() {
-        putValue(KEY_FIRST_RUN_COMPLETE, "true")
-    }
+    fun markFirstRunComplete() = putValue(KEY_FIRST_RUN_COMPLETE, "true")
 
     fun getThemeMode(): ThemeMode = runCatching {
         ThemeMode.valueOf(getValue(KEY_THEME_MODE) ?: ThemeMode.SYSTEM.name)
     }.getOrDefault(ThemeMode.SYSTEM)
 
-    fun setThemeMode(mode: ThemeMode) {
-        putValue(KEY_THEME_MODE, mode.name)
-    }
+    fun setThemeMode(mode: ThemeMode) = putValue(KEY_THEME_MODE, mode.name)
 
     fun getProgress(moduleId: String): ModuleProgress = readableDatabase.query(
         TABLE_PROGRESS,
@@ -66,11 +60,12 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
 
     fun markInProgress(moduleId: String) {
         val existing = getProgress(moduleId)
-        if (existing.state == LearningState.NOT_STARTED) {
-            upsertProgress(existing.copy(state = LearningState.IN_PROGRESS, updatedAt = now()))
-        } else {
-            upsertProgress(existing.copy(updatedAt = now()))
-        }
+        upsertProgress(
+            existing.copy(
+                state = if (existing.state == LearningState.NOT_STARTED) LearningState.IN_PROGRESS else existing.state,
+                updatedAt = now(),
+            ),
+        )
     }
 
     fun setCompleted(moduleId: String) {
@@ -99,6 +94,29 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
                 attemptCount = existing.attemptCount + 1,
             ),
         )
+    }
+
+    fun getQuizAttempts(): List<QuizAttemptSummary> = readableDatabase.query(
+        TABLE_QUIZ_ATTEMPTS,
+        arrayOf(COLUMN_MODULE_ID, COLUMN_SCORE, COLUMN_TOTAL, COLUMN_ATTEMPTED_AT),
+        null,
+        null,
+        null,
+        null,
+        "$COLUMN_ATTEMPTED_AT DESC",
+    ).use { cursor ->
+        buildList {
+            while (cursor.moveToNext()) {
+                add(
+                    QuizAttemptSummary(
+                        moduleId = cursor.getString(0),
+                        score = cursor.getInt(1),
+                        total = cursor.getInt(2),
+                        attemptedAt = cursor.getLong(3),
+                    ),
+                )
+            }
+        }
     }
 
     fun saveNote(moduleId: String, body: String) {
@@ -176,6 +194,38 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         null,
     ).use { cursor -> buildSet { while (cursor.moveToNext()) add(cursor.getString(0)) } }
 
+    fun getInstalledPacks(): List<InstalledPack> = readableDatabase.query(
+        TABLE_PACKS,
+        PACK_COLUMNS,
+        null,
+        null,
+        null,
+        null,
+        "$COLUMN_PACK_ID ASC",
+    ).use { cursor -> buildList { while (cursor.moveToNext()) add(cursor.toPack()) } }
+
+    fun saveInstalledPack(pack: InstalledPack) {
+        writableDatabase.insertWithOnConflict(
+            TABLE_PACKS,
+            null,
+            ContentValues().apply {
+                put(COLUMN_PACK_ID, pack.id)
+                put(COLUMN_VERSION, pack.version)
+                put(COLUMN_NAME, pack.name)
+                put(COLUMN_DESCRIPTION, pack.description)
+                put(COLUMN_CHECKSUM, pack.checksum)
+                put(COLUMN_SIZE_BYTES, pack.sizeBytes)
+                put(COLUMN_INSTALL_PATH, pack.installPath)
+                put(COLUMN_INSTALLED_AT, pack.installedAt)
+            },
+            SQLiteDatabase.CONFLICT_REPLACE,
+        )
+    }
+
+    fun removeInstalledPack(packId: String) {
+        writableDatabase.delete(TABLE_PACKS, "$COLUMN_PACK_ID = ?", arrayOf(packId))
+    }
+
     private fun upsertProgress(progress: ModuleProgress) {
         writableDatabase.insertWithOnConflict(
             TABLE_PROGRESS,
@@ -201,9 +251,7 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         null,
     ).use { cursor -> if (cursor.moveToFirst()) cursor.getString(0) else null }
 
-    private fun putValue(key: String, value: String) {
-        putValue(writableDatabase, key, value)
-    }
+    private fun putValue(key: String, value: String) = putValue(writableDatabase, key, value)
 
     private fun putValue(db: SQLiteDatabase, key: String, value: String) {
         db.execSQL(
@@ -255,6 +303,23 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         )
     }
 
+    private fun createPackTable(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS content_packs (
+                pack_id TEXT PRIMARY KEY NOT NULL,
+                version TEXT NOT NULL,
+                name TEXT NOT NULL,
+                description TEXT NOT NULL,
+                checksum TEXT NOT NULL,
+                size_bytes INTEGER NOT NULL,
+                install_path TEXT NOT NULL,
+                installed_at INTEGER NOT NULL
+            )
+            """.trimIndent(),
+        )
+    }
+
     private fun android.database.Cursor.toProgress(): ModuleProgress = ModuleProgress(
         moduleId = getString(getColumnIndexOrThrow(COLUMN_MODULE_ID)),
         state = runCatching { LearningState.valueOf(getString(getColumnIndexOrThrow(COLUMN_STATE))) }
@@ -270,16 +335,28 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         updatedAt = getLong(getColumnIndexOrThrow(COLUMN_UPDATED_AT)),
     )
 
+    private fun android.database.Cursor.toPack(): InstalledPack = InstalledPack(
+        id = getString(0),
+        version = getString(1),
+        name = getString(2),
+        description = getString(3),
+        checksum = getString(4),
+        sizeBytes = getLong(5),
+        installPath = getString(6),
+        installedAt = getLong(7),
+    )
+
     private fun now(): Long = System.currentTimeMillis()
 
     companion object {
         private const val DATABASE_NAME = "aetherlearn_local.db"
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 3
         private const val TABLE_METADATA = "app_metadata"
         private const val TABLE_PROGRESS = "module_progress"
         private const val TABLE_QUIZ_ATTEMPTS = "quiz_attempts"
         private const val TABLE_NOTES = "notes"
         private const val TABLE_BOOKMARKS = "bookmarks"
+        private const val TABLE_PACKS = "content_packs"
         private const val COLUMN_KEY = "key"
         private const val COLUMN_VALUE = "value"
         private const val COLUMN_MODULE_ID = "module_id"
@@ -292,21 +369,38 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         private const val COLUMN_ATTEMPTED_AT = "attempted_at"
         private const val COLUMN_BODY = "body"
         private const val COLUMN_CREATED_AT = "created_at"
+        private const val COLUMN_PACK_ID = "pack_id"
+        private const val COLUMN_VERSION = "version"
+        private const val COLUMN_NAME = "name"
+        private const val COLUMN_DESCRIPTION = "description"
+        private const val COLUMN_CHECKSUM = "checksum"
+        private const val COLUMN_SIZE_BYTES = "size_bytes"
+        private const val COLUMN_INSTALL_PATH = "install_path"
+        private const val COLUMN_INSTALLED_AT = "installed_at"
         private const val KEY_SCHEMA_VERSION = "schema_version"
         private const val KEY_FIRST_RUN_COMPLETE = "first_run_complete"
         private const val KEY_THEME_MODE = "theme_mode"
-        private val PROGRESS_COLUMNS = arrayOf(
-            COLUMN_MODULE_ID,
-            COLUMN_STATE,
-            COLUMN_UPDATED_AT,
-            COLUMN_BEST_SCORE,
-            COLUMN_ATTEMPT_COUNT,
-        )
+        private val PROGRESS_COLUMNS = arrayOf(COLUMN_MODULE_ID, COLUMN_STATE, COLUMN_UPDATED_AT, COLUMN_BEST_SCORE, COLUMN_ATTEMPT_COUNT)
+        private val PACK_COLUMNS = arrayOf(COLUMN_PACK_ID, COLUMN_VERSION, COLUMN_NAME, COLUMN_DESCRIPTION, COLUMN_CHECKSUM, COLUMN_SIZE_BYTES, COLUMN_INSTALL_PATH, COLUMN_INSTALLED_AT)
     }
 }
 
-enum class ThemeMode {
-    SYSTEM,
-    LIGHT,
-    DARK,
-}
+enum class ThemeMode { SYSTEM, LIGHT, DARK }
+
+data class QuizAttemptSummary(
+    val moduleId: String,
+    val score: Int,
+    val total: Int,
+    val attemptedAt: Long,
+)
+
+data class InstalledPack(
+    val id: String,
+    val version: String,
+    val name: String,
+    val description: String,
+    val checksum: String,
+    val sizeBytes: Long,
+    val installPath: String,
+    val installedAt: Long,
+)

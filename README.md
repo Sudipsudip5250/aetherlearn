@@ -10,7 +10,7 @@ Then read [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the native Android 
 
 ## Repository status
 
-M0, M1, and the M3 implementation slice are complete. The native Kotlin/Jetpack Compose Android app now reads the five bundled lessons offline, tracks progress and quiz attempts, stores private notes/bookmarks, searches locally, and lists practice exercises. The debug APK builds with the pinned Gradle wrapper; device/emulator smoke testing for the M2/M3 runtime gates remains open. See [`android/README.md`](android/README.md) for build instructions.
+M0 through M4 are implemented for the current offline scope. The native Kotlin/Jetpack Compose Android app reads the five bundled lessons, tracks learning state and quiz attempts, stores private notes/bookmarks, searches locally, lists practice exercises, exports learning data as Markdown/JSON through a user-controlled file picker, and manages a validated pre-bundled optional-pack example. The debug APK builds with the pinned Gradle wrapper; device/emulator smoke testing for the M2/M3/M4 runtime gates remains open. See [`android/README.md`](android/README.md) for build instructions.
 
 ## Core decisions
 

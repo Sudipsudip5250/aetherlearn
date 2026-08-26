@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "pack_id": "optional-foundations",
+  "version": "1.0.0",
+  "name": "Optional Foundations Lab",
+  "description": "A small local pack placeholder for validating the optional-pack lifecycle. It adds no curriculum modules yet.",
+  "content_files": []
+}
