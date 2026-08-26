@@ -12,6 +12,8 @@ Install Android Studio or the Android command-line tools, JDK 17 or newer, Andro
 
 ## Build
 
+For the complete build/install, CI-artifact, sample-pack, network-pack, and human-test handoff, see [`../docs/RELEASE_HANDOFF.md`](../docs/RELEASE_HANDOFF.md). Signing is intentionally human-operated and documented separately in [`../docs/SIGNING.md`](../docs/SIGNING.md); no keystore or signing secret belongs in this repository.
+
 From this directory, run:
 
 ```bash

@@ -112,8 +112,11 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Create the non-expert Android, Android-browser, desktop-browser, Termux, network-pack, persistence, export, and accessibility procedure in [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md).
 - [x] Add dependency/build/release-artifact gates, including Android debug/release build, unit tests, lint, manifest boundary checks, and APK SHA-256 sidecars.
 - [x] Prepare release notes, installation instructions, content-pack recovery instructions, and contributor handoff in `docs/M7_RELEASE_NOTES.md` and `docs/NETWORK_PACKS.md`.
+- [x] Create the human tester handoff in [`docs/RELEASE_HANDOFF.md`](RELEASE_HANDOFF.md), including local/CI APK acquisition, ADB/file-transfer installation, safe unknown-source handling, sample-pack hosting limits, and exact network-pack controls.
+- [x] Generate and checksum the deterministic 20-module sample core ZIP at `docs/sample-pack/`; document that its protected `pack_id: core` is suitable for transport/rejection testing, not optional-pack activation.
+- [x] Create the human-operated signing guide in [`docs/SIGNING.md`](SIGNING.md) without creating or storing a keystore, password, or private key.
 - [ ] Publish signed release metadata; unsigned release artifacts and checksums are verified, but no authorized signing key or public pack host is configured.
-- [ ] **Checkpoint M7:** Static and CI gates pass; the exact remaining human-only and operational gates are the device/emulator matrix, Android-browser matrix, manual assistive-technology review, final pedagogical/safety approval, authorized signing and signed metadata, authorized network inspection for the pack path, and production distribution/pack-host setup.
+- [ ] **Checkpoint M7:** Static and CI gates pass; the exact remaining human-only and operational gates are the device/emulator matrix, Android-browser matrix, manual assistive-technology review, final pedagogical/safety approval, authorized network inspection for the pack path, authorized signing and signed metadata, and production distribution/pack-host setup. Use [`docs/RELEASE_HANDOFF.md`](RELEASE_HANDOFF.md) and [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) as the required handoff path.
 
 ## Android maintainability refactor
 
