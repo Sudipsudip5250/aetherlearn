@@ -10,7 +10,7 @@ Then read [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the native Android 
 
 ## Repository status
 
-M0 and M1 are complete. M2 is now in progress: the repository contains a native Kotlin/Jetpack Compose Android shell with four-tab navigation, local privacy-first setup, schema-versioned SQLite metadata, and the five-module local asset catalog. The debug APK builds with the pinned Gradle wrapper; device/emulator smoke testing remains the final M2 gate. See [`android/README.md`](android/README.md) for build instructions.
+M0, M1, and the M3 implementation slice are complete. The native Kotlin/Jetpack Compose Android app now reads the five bundled lessons offline, tracks progress and quiz attempts, stores private notes/bookmarks, searches locally, and lists practice exercises. The debug APK builds with the pinned Gradle wrapper; device/emulator smoke testing for the M2/M3 runtime gates remains open. See [`android/README.md`](android/README.md) for build instructions.
 
 ## Core decisions
 

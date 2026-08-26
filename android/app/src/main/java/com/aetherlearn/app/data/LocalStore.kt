@@ -1,12 +1,12 @@
 package com.aetherlearn.app.data
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 /**
- * App-private storage boundary for settings and future learning state.
- * Content packs are kept separately in assets/files and are never mixed with user state.
+ * App-private storage boundary. Content-pack assets remain separate from user learning data.
  */
 class LocalStore(context: Context) : SQLiteOpenHelper(
     context,
@@ -23,13 +23,16 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
             )
             """.trimIndent(),
         )
+        createLearningTables(db)
         putValue(db, KEY_SCHEMA_VERSION, DATABASE_VERSION.toString())
         putValue(db, KEY_FIRST_RUN_COMPLETE, "false")
         putValue(db, KEY_THEME_MODE, ThemeMode.SYSTEM.name)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // Future migrations for progress, notes, bookmarks, and scores belong here.
+        if (oldVersion < 2) {
+            createLearningTables(db)
+        }
         putValue(db, KEY_SCHEMA_VERSION, newVersion.toString())
     }
 
@@ -47,19 +50,156 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         putValue(KEY_THEME_MODE, mode.name)
     }
 
-    private fun getValue(key: String): String? {
-        readableDatabase.query(
-            TABLE_METADATA,
-            arrayOf(COLUMN_VALUE),
-            "$COLUMN_KEY = ?",
-            arrayOf(key),
-            null,
-            null,
-            null,
-        ).use { cursor ->
-            return if (cursor.moveToFirst()) cursor.getString(0) else null
+    fun getProgress(moduleId: String): ModuleProgress = readableDatabase.query(
+        TABLE_PROGRESS,
+        PROGRESS_COLUMNS,
+        "$COLUMN_MODULE_ID = ?",
+        arrayOf(moduleId),
+        null,
+        null,
+        null,
+    ).use { cursor ->
+        if (cursor.moveToFirst()) cursor.toProgress() else ModuleProgress(moduleId, LearningState.NOT_STARTED, 0L)
+    }
+
+    fun getAllProgress(moduleIds: List<String>): Map<String, ModuleProgress> = moduleIds.associateWith(::getProgress)
+
+    fun markInProgress(moduleId: String) {
+        val existing = getProgress(moduleId)
+        if (existing.state == LearningState.NOT_STARTED) {
+            upsertProgress(existing.copy(state = LearningState.IN_PROGRESS, updatedAt = now()))
+        } else {
+            upsertProgress(existing.copy(updatedAt = now()))
         }
     }
+
+    fun setCompleted(moduleId: String) {
+        val existing = getProgress(moduleId)
+        upsertProgress(existing.copy(state = LearningState.COMPLETED, updatedAt = now()))
+    }
+
+    fun saveQuizAttempt(moduleId: String, score: Int, total: Int) {
+        val timestamp = now()
+        writableDatabase.insert(
+            TABLE_QUIZ_ATTEMPTS,
+            null,
+            ContentValues().apply {
+                put(COLUMN_MODULE_ID, moduleId)
+                put(COLUMN_SCORE, score)
+                put(COLUMN_TOTAL, total)
+                put(COLUMN_ATTEMPTED_AT, timestamp)
+            },
+        )
+        val existing = getProgress(moduleId)
+        upsertProgress(
+            existing.copy(
+                state = if (existing.state == LearningState.COMPLETED) existing.state else LearningState.IN_PROGRESS,
+                updatedAt = timestamp,
+                bestScore = maxOf(existing.bestScore ?: 0, score),
+                attemptCount = existing.attemptCount + 1,
+            ),
+        )
+    }
+
+    fun saveNote(moduleId: String, body: String) {
+        val trimmed = body.trim()
+        if (trimmed.isEmpty()) {
+            writableDatabase.delete(TABLE_NOTES, "$COLUMN_MODULE_ID = ?", arrayOf(moduleId))
+            return
+        }
+        writableDatabase.insertWithOnConflict(
+            TABLE_NOTES,
+            null,
+            ContentValues().apply {
+                put(COLUMN_MODULE_ID, moduleId)
+                put(COLUMN_BODY, trimmed)
+                put(COLUMN_UPDATED_AT, now())
+            },
+            SQLiteDatabase.CONFLICT_REPLACE,
+        )
+    }
+
+    fun getNote(moduleId: String): NoteSummary? = readableDatabase.query(
+        TABLE_NOTES,
+        arrayOf(COLUMN_MODULE_ID, COLUMN_BODY, COLUMN_UPDATED_AT),
+        "$COLUMN_MODULE_ID = ?",
+        arrayOf(moduleId),
+        null,
+        null,
+        null,
+    ).use { cursor -> if (cursor.moveToFirst()) cursor.toNote() else null }
+
+    fun getNotes(): List<NoteSummary> = readableDatabase.query(
+        TABLE_NOTES,
+        arrayOf(COLUMN_MODULE_ID, COLUMN_BODY, COLUMN_UPDATED_AT),
+        null,
+        null,
+        null,
+        null,
+        "$COLUMN_UPDATED_AT DESC",
+    ).use { cursor -> buildList { while (cursor.moveToNext()) add(cursor.toNote()) } }
+
+    fun setBookmarked(moduleId: String, bookmarked: Boolean) {
+        if (bookmarked) {
+            writableDatabase.insertWithOnConflict(
+                TABLE_BOOKMARKS,
+                null,
+                ContentValues().apply {
+                    put(COLUMN_MODULE_ID, moduleId)
+                    put(COLUMN_CREATED_AT, now())
+                },
+                SQLiteDatabase.CONFLICT_IGNORE,
+            )
+        } else {
+            writableDatabase.delete(TABLE_BOOKMARKS, "$COLUMN_MODULE_ID = ?", arrayOf(moduleId))
+        }
+    }
+
+    fun isBookmarked(moduleId: String): Boolean = readableDatabase.query(
+        TABLE_BOOKMARKS,
+        arrayOf(COLUMN_MODULE_ID),
+        "$COLUMN_MODULE_ID = ?",
+        arrayOf(moduleId),
+        null,
+        null,
+        null,
+        "1",
+    ).use { it.moveToFirst() }
+
+    fun getBookmarkedIds(): Set<String> = readableDatabase.query(
+        TABLE_BOOKMARKS,
+        arrayOf(COLUMN_MODULE_ID),
+        null,
+        null,
+        null,
+        null,
+        null,
+    ).use { cursor -> buildSet { while (cursor.moveToNext()) add(cursor.getString(0)) } }
+
+    private fun upsertProgress(progress: ModuleProgress) {
+        writableDatabase.insertWithOnConflict(
+            TABLE_PROGRESS,
+            null,
+            ContentValues().apply {
+                put(COLUMN_MODULE_ID, progress.moduleId)
+                put(COLUMN_STATE, progress.state.name)
+                put(COLUMN_UPDATED_AT, progress.updatedAt)
+                progress.bestScore?.let { put(COLUMN_BEST_SCORE, it) } ?: putNull(COLUMN_BEST_SCORE)
+                put(COLUMN_ATTEMPT_COUNT, progress.attemptCount)
+            },
+            SQLiteDatabase.CONFLICT_REPLACE,
+        )
+    }
+
+    private fun getValue(key: String): String? = readableDatabase.query(
+        TABLE_METADATA,
+        arrayOf(COLUMN_VALUE),
+        "$COLUMN_KEY = ?",
+        arrayOf(key),
+        null,
+        null,
+        null,
+    ).use { cursor -> if (cursor.moveToFirst()) cursor.getString(0) else null }
 
     private fun putValue(key: String, value: String) {
         putValue(writableDatabase, key, value)
@@ -72,15 +212,96 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         )
     }
 
+    private fun createLearningTables(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS module_progress (
+                module_id TEXT PRIMARY KEY NOT NULL,
+                state TEXT NOT NULL,
+                updated_at INTEGER NOT NULL,
+                best_score INTEGER,
+                attempt_count INTEGER NOT NULL DEFAULT 0
+            )
+            """.trimIndent(),
+        )
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS quiz_attempts (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                module_id TEXT NOT NULL,
+                score INTEGER NOT NULL,
+                total INTEGER NOT NULL,
+                attempted_at INTEGER NOT NULL
+            )
+            """.trimIndent(),
+        )
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_quiz_attempts_module ON quiz_attempts(module_id)")
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS notes (
+                module_id TEXT PRIMARY KEY NOT NULL,
+                body TEXT NOT NULL,
+                updated_at INTEGER NOT NULL
+            )
+            """.trimIndent(),
+        )
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS bookmarks (
+                module_id TEXT PRIMARY KEY NOT NULL,
+                created_at INTEGER NOT NULL
+            )
+            """.trimIndent(),
+        )
+    }
+
+    private fun android.database.Cursor.toProgress(): ModuleProgress = ModuleProgress(
+        moduleId = getString(getColumnIndexOrThrow(COLUMN_MODULE_ID)),
+        state = runCatching { LearningState.valueOf(getString(getColumnIndexOrThrow(COLUMN_STATE))) }
+            .getOrDefault(LearningState.NOT_STARTED),
+        updatedAt = getLong(getColumnIndexOrThrow(COLUMN_UPDATED_AT)),
+        bestScore = if (isNull(getColumnIndexOrThrow(COLUMN_BEST_SCORE))) null else getInt(getColumnIndexOrThrow(COLUMN_BEST_SCORE)),
+        attemptCount = getInt(getColumnIndexOrThrow(COLUMN_ATTEMPT_COUNT)),
+    )
+
+    private fun android.database.Cursor.toNote(): NoteSummary = NoteSummary(
+        moduleId = getString(getColumnIndexOrThrow(COLUMN_MODULE_ID)),
+        body = getString(getColumnIndexOrThrow(COLUMN_BODY)),
+        updatedAt = getLong(getColumnIndexOrThrow(COLUMN_UPDATED_AT)),
+    )
+
+    private fun now(): Long = System.currentTimeMillis()
+
     companion object {
         private const val DATABASE_NAME = "aetherlearn_local.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
         private const val TABLE_METADATA = "app_metadata"
+        private const val TABLE_PROGRESS = "module_progress"
+        private const val TABLE_QUIZ_ATTEMPTS = "quiz_attempts"
+        private const val TABLE_NOTES = "notes"
+        private const val TABLE_BOOKMARKS = "bookmarks"
         private const val COLUMN_KEY = "key"
         private const val COLUMN_VALUE = "value"
+        private const val COLUMN_MODULE_ID = "module_id"
+        private const val COLUMN_STATE = "state"
+        private const val COLUMN_UPDATED_AT = "updated_at"
+        private const val COLUMN_BEST_SCORE = "best_score"
+        private const val COLUMN_ATTEMPT_COUNT = "attempt_count"
+        private const val COLUMN_SCORE = "score"
+        private const val COLUMN_TOTAL = "total"
+        private const val COLUMN_ATTEMPTED_AT = "attempted_at"
+        private const val COLUMN_BODY = "body"
+        private const val COLUMN_CREATED_AT = "created_at"
         private const val KEY_SCHEMA_VERSION = "schema_version"
         private const val KEY_FIRST_RUN_COMPLETE = "first_run_complete"
         private const val KEY_THEME_MODE = "theme_mode"
+        private val PROGRESS_COLUMNS = arrayOf(
+            COLUMN_MODULE_ID,
+            COLUMN_STATE,
+            COLUMN_UPDATED_AT,
+            COLUMN_BEST_SCORE,
+            COLUMN_ATTEMPT_COUNT,
+        )
     }
 }
 

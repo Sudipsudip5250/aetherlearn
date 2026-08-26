@@ -2,29 +2,27 @@ package com.aetherlearn.app.data
 
 import android.content.Context
 
-/** Lightweight metadata used by the M2 shell before the M3 lesson reader exists. */
+/** Lightweight metadata used by the Learn list. */
 data class ModuleSummary(
     val id: String,
     val title: String,
     val availability: String,
+    val estimatedMinutes: Int,
 )
 
 class ModuleCatalog(private val context: Context) {
-    fun loadSummaries(): List<ModuleSummary> = MODULE_ASSETS.mapNotNull { assetName ->
-        val text = runCatching {
-            context.assets.open("content/core/$assetName").bufferedReader().use { it.readText() }
-        }.getOrNull() ?: return@mapNotNull null
-        val metadata = text.substringAfter("---\n", "").substringBefore("\n---\n", "")
-        val values = metadata.lineSequence()
-            .mapNotNull { line ->
-                val separator = line.indexOf(":")
-                if (separator < 1) null else line.substring(0, separator).trim() to line.substring(separator + 1).trim()
-            }
-            .toMap()
+    private val parser = LessonParser(context)
+
+    fun loadLessons(): List<LessonDocument> = MODULE_ASSETS.mapNotNull { assetName ->
+        runCatching { parser.parseAsset(assetName) }.getOrNull()
+    }
+
+    fun loadSummaries(): List<ModuleSummary> = loadLessons().map { lesson ->
         ModuleSummary(
-            id = values["id"] ?: return@mapNotNull null,
-            title = values["title"] ?: return@mapNotNull null,
-            availability = values["availability"] ?: "offline",
+            id = lesson.id,
+            title = lesson.title,
+            availability = lesson.availability,
+            estimatedMinutes = lesson.estimatedMinutes,
         )
     }
 

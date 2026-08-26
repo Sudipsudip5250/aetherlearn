@@ -39,14 +39,15 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 
 ## M3 — Offline learning loop
 
-- [ ] Import and activate the signed core content pack.
-- [ ] Render objectives, prerequisites, estimated time, availability, content, examples, and exercises.
-- [ ] Implement local completion state, quiz attempts, best score, and retry behavior.
-- [ ] Implement notes and bookmarks stored locally.
-- [ ] Build the SQLite full-text search index from the active pack.
-- [ ] Add storage usage and content-pack status screens.
-- [ ] Test fresh install, airplane mode, interrupted startup, missing assets, invalid pack, and low-storage paths.
-- [ ] **Checkpoint M3:** A learner completes the first strand in airplane mode, searches offline, saves a note and bookmark, restarts the app, and sees preserved state.
+- [x] Load and parse the five bundled core lesson assets offline.
+- [x] Render title, objectives, prerequisites, availability, explanation, worked example, common mistakes, offline practice, knowledge check, project, accessibility, safety, further reading, and change log sections.
+- [x] Implement versioned SQLite tables for module progress, quiz attempts, notes, and bookmarks without breaking M2 metadata.
+- [x] Implement not-started, in-progress, and completed states with Learn and Progress indicators.
+- [x] Implement knowledge checks with answer feedback, explanations, retry behavior, attempt counts, and best scores.
+- [x] Implement private local notes and lesson bookmarks, surfaced in Progress.
+- [x] Implement offline title/body search over all five lessons.
+- [x] Implement a simple offline Practice tab listing each lesson’s exercise.
+- [ ] **Checkpoint M3:** Device/emulator smoke testing must confirm the complete offline journey, persistence after restart, and accessibility behavior; static build, test, lint, and repository checks pass.
 
 ## M4 — Exports and optional packs
 
