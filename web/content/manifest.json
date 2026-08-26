@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "pack_id": "core",
-  "pack_version": "1.4.0",
+  "pack_version": "1.5.0",
   "lessons": [
     {
       "id": "dl-01-digital-information",
@@ -137,6 +137,26 @@
       "id": "dev-07-open-source-accessibility",
       "title": "Open-source contribution and accessibility review",
       "path": "content/core/dev-07-open-source-accessibility.md"
+    },
+    {
+      "id": "sec-01-ethics-scope-and-harm",
+      "title": "Ethics, scope, and harm minimization",
+      "path": "content/core/sec-01-ethics-scope-and-harm.md"
+    },
+    {
+      "id": "sec-02-threat-modeling-defensive-controls",
+      "title": "Threat models and defensive controls",
+      "path": "content/core/sec-02-threat-modeling-defensive-controls.md"
+    },
+    {
+      "id": "sec-03-coordinated-disclosure",
+      "title": "Coordinated vulnerability disclosure",
+      "path": "content/core/sec-03-coordinated-disclosure.md"
+    },
+    {
+      "id": "sec-04-security-organizations-and-roles",
+      "title": "Security organizations, roles, and evidence",
+      "path": "content/core/sec-04-security-organizations-and-roles.md"
     }
   ]
 }

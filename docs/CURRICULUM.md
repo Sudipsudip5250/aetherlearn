@@ -2,11 +2,11 @@
 
 ## Curriculum decision
 
-The original MVP contains **four strands and 20 modules**. It is designed to take a motivated beginner from phone and digital foundations through Python, basic algorithms, and developer workflow. That `mvp-20` baseline remains stable for learner progress and historical release comparison. Approved post-MVP Stage 1 adds three offline digital-literacy lessons, and active Stage 2 adds four offline developer-foundations lessons, without renumbering or replacing any MVP module.
+The original MVP contains **four strands and 20 modules**. It is designed to take a motivated beginner from phone and digital foundations through Python, basic algorithms, and developer workflow. That `mvp-20` baseline remains stable for learner progress and historical release comparison. Approved post-MVP Stage 1 adds three offline digital-literacy lessons, Stage 2 adds four offline developer-foundations lessons, and approved Stage 3 adds four offline security-ethics lessons, without renumbering or replacing any MVP module.
 
 The order is recommended rather than compulsory. Prerequisites are explicit, and the learner can choose a diagnostic starting point. Every module is available as offline text and lightweight assets. Only selected practical modules offer an optional Termux exercise.
 
-Content expansion batch 1 added DL-02, DL-03, DL-04, PY-03, PY-04, and PY-05. Content expansion batch 2 added PY-06, PY-07, AL-01 through AL-05, DEV-02, and DEV-03. Those 20 modules remain the complete `mvp-20` baseline. The user-approved Stage 1 adds DL-06, DL-07, and DL-08, and active Stage 2 adds DEV-04 through DEV-07, bringing the current canonical registry to 27 lessons. Stage 1 and Stage 2 remain draft pending final human technical/pedagogical review; accessibility, device/emulator runtime evidence, supply-chain review for DEV-06, and release gates remain separate open requirements.
+Content expansion batch 1 added DL-02, DL-03, DL-04, PY-03, PY-04, and PY-05. Content expansion batch 2 added PY-06, PY-07, AL-01 through AL-05, DEV-02, and DEV-03. Those 20 modules remain the complete `mvp-20` baseline. The user-approved Stage 1 adds DL-06, DL-07, and DL-08; Stage 2 adds DEV-04 through DEV-07; and approved Stage 3 adds SEC-01 through SEC-04, bringing the current canonical registry to 31 lessons. Stage 1, Stage 2, and Stage 3 remain draft pending final human technical/pedagogical review; Stage 3 also requires explicit safety review. Accessibility, device/emulator runtime evidence, supply-chain review for DEV-06, and release gates remain separate open requirements.
 
 ## Availability labels
 
@@ -72,7 +72,19 @@ This strand focuses on intuition, tracing, visual explanations, and small proble
 | DEV-06 | Dependencies, provenance, and reproducible builds | DEV-02, DEV-03 | 65 min | `offline` |
 | DEV-07 | Open-source contribution and accessibility review | DEV-05, DL-05 | 65 min | `offline` |
 
-The `mvp-20` registry ends this strand at DEV-03. DEV-04 through DEV-07 are the active Stage 2 software-engineering and open-source slice. Their exercises use fictional repositories, paper test tables, local manifests, and accessibility review prompts; they do not publish changes, install dependencies, or require a third-party account. Later additions remain gated by an explicit stage decision, source and safety review, and synchronized validator/client updates.
+
+The `mvp-20` registry ends this strand at DEV-03. DEV-04 through DEV-07 are the approved Stage 2 software-engineering and open-source slice. Their exercises use fictional repositories, paper test tables, local manifests, and accessibility review prompts; they do not publish changes, install dependencies, or require a third-party account.
+
+## Strand 5: Security ethics and defensive literacy
+
+| ID | Module | Prerequisites | Time | Availability |
+|---|---|---|---:|---|
+| SEC-01 | Ethics, scope, and harm minimization | DL-05, DEV-05 | 55 min | `offline` |
+| SEC-02 | Threat models and defensive controls | SEC-01, DL-08, DEV-07 | 65 min | `offline` |
+| SEC-03 | Coordinated vulnerability disclosure | SEC-01, SEC-02, DEV-05 | 65 min | `offline` |
+| SEC-04 | Security organizations, roles, and evidence | SEC-01, DEV-07 | 55 min | `offline` |
+
+These four lessons are the approved Stage 3 security-ethics slice. SEC-01 and SEC-04 are S0; SEC-02 and SEC-03 are provisionally S1. They use ACM, OWASP, CISA, CERT/CC, NIST NICE, and MITRE sources for high-level concepts only. All activities use fictional local fixtures and stop before any external contact, scanning, exploitation, credential handling, or publication.
 
 ## MVP assessment model
 
@@ -115,4 +127,4 @@ Community contributions use pull requests and cannot publish directly to the app
 
 ## Post-MVP curriculum parking lot
 
-Stage 1 covers the first approved history/systems slice: DL-06, DL-07, and DL-08. Stage 2 covers DEV-04 through DEV-07. Later releases may add computer architecture, operating systems, networks, databases, software engineering, distributed systems, cybersecurity foundations, cryptography, AI and machine learning, computer graphics, embedded systems, robotics, quantum computing, formal methods, scientific computing, and domain-specific tracks. Each later stage remains gated by the preceding stage’s validation and review checkpoint. Offensive-security labs, model-behavior research, anonymity networks, and other dual-use material require the governance described in [`SAFETY.md`](SAFETY.md) before they are scheduled.
+Stage 1 covers the first approved history/systems slice: DL-06, DL-07, and DL-08. Stage 2 covers DEV-04 through DEV-07. Stage 3 covers SEC-01 through SEC-04. Later releases may add computer architecture, operating systems, networks, databases, software engineering, distributed systems, cybersecurity foundations, cryptography, AI and machine learning, computer graphics, embedded systems, robotics, quantum computing, formal methods, scientific computing, and domain-specific tracks. Each later stage remains gated by the preceding stage’s validation and review checkpoint. Offensive-security labs, model-behavior research, anonymity networks, and other dual-use material require the governance described in [`SAFETY.md`](SAFETY.md) before they are scheduled.

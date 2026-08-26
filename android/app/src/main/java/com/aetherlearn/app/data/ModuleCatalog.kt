@@ -67,6 +67,10 @@ class ModuleCatalog(
             "dev-05-code-review-issue-reports.md",
             "dev-06-dependency-provenance-builds.md",
             "dev-07-open-source-accessibility.md",
+            "sec-01-ethics-scope-and-harm.md",
+            "sec-02-threat-modeling-defensive-controls.md",
+            "sec-03-coordinated-disclosure.md",
+            "sec-04-security-organizations-and-roles.md",
         )
     }
 }

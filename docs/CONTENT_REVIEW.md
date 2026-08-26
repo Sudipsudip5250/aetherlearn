@@ -1,16 +1,16 @@
 # AetherLearn final content consistency review
 
 **Review date:** 2026-08-26
-**Scope:** the stable 20-module `mvp-20` baseline plus the approved Stage 1 slice and four Stage 2 drafts
+**Scope:** the stable 20-module `mvp-20` baseline plus the approved Stage 1 and Stage 2 slices and four Stage 3 defensive-security drafts
 **Review type:** contract, source, safety-boundary, and cross-client consistency review; not a substitute for final human pedagogical or safety approval
 
 ## Outcome
 
-The 27 canonical lessons pass the repository content contract and prerequisite-graph checks. Every module has the required frontmatter, required body sections, at least three numbered knowledge-check prompts with inline answers and explanations, an offline-practice section, accessibility guidance, safety guidance, further reading, and a current change-log entry. All current modules remain within the requested **S0/S1** risk range. The three Stage 1 and four Stage 2 lessons are explicitly marked `draft` and remain subject to human technical, pedagogical, accessibility, and source review.
+The 31 canonical lessons pass the repository content contract and prerequisite-graph checks. Every module has the required frontmatter, required body sections, at least three numbered knowledge-check prompts with inline answers and explanations, an offline-practice section, accessibility guidance, safety guidance, further reading, and a current change-log entry. All current modules remain within the requested **S0/S1** risk range. The three Stage 1, four Stage 2, and four Stage 3 lessons are explicitly marked `draft` and remain subject to human technical, pedagogical, accessibility, source, and safety review.
 
 One real clarity issue was fixed during this review. DL-04 asked the learner to rank “fictional results” without supplying the results. The practice now includes three concrete fictional results, including a library page, a password-gated unknown page, and an opaque urgent-prize short link. The exercise also retains URL-part labeling and a rule about information never to enter into an unfamiliar page.
 
-The audit heuristic flagged DL-04, PY-02, and DEV-01 because their practice sections were concise. Manual inspection found PY-02 and DEV-01 answerable and aligned with their objectives. DL-04 was strengthened as described above. Stage 1 uses paper or fixed fictional traces rather than live tooling. Stage 2 uses fictional test tables, repository forms, provenance records, and accessibility findings; it does not publish changes, install dependencies, or claim standards conformance. No module was rejected for a rewrite in this repository consistency pass, but all 27 remain subject to the human teaching-quality and safety review listed in the release gates.
+The audit heuristic flagged DL-04, PY-02, and DEV-01 because their practice sections were concise. Manual inspection found PY-02 and DEV-01 answerable and aligned with their objectives. DL-04 was strengthened as described above. Stage 1 uses paper or fixed fictional traces rather than live tooling. Stage 2 uses fictional test tables, repository forms, provenance records, and accessibility findings; it does not publish changes, install dependencies, or claim standards conformance. Stage 3 uses only fictional decision cards, local system models, redacted disclosure forms, and organization/source-selection worksheets; it does not contact targets, scan systems, handle credentials, publish reports, or provide operational attack detail. No module was rejected for a rewrite in this repository consistency pass, but all 31 remain subject to the human teaching-quality and safety review listed in the release gates.
 
 ## Module review matrix
 
@@ -43,6 +43,10 @@ The audit heuristic flagged DL-04, PY-02, and DEV-01 because their practice sect
 | DEV-05 | Pull-request context and issue-report fields use a fictional repository and respectful, actionable feedback. | offline / S0 | Draft; technical and pedagogical review open |
 | DEV-06 | Checksums, provenance, dependencies, and reproducibility are kept distinct through a fictional manifest. | offline / S1 | Draft; technical and supply-chain review open |
 | DEV-07 | Open-source boundaries and WCAG principles are framed as review vocabulary, not a conformance claim. | offline / S0 | Draft; technical, accessibility, and pedagogical review open |
+| SEC-01 | ACM ethics principles are applied to fictional scope and harm decisions without legal claims. | offline / S0 | Draft; technical, pedagogical, and safety review open |
+| SEC-02 | OWASP threat-modeling questions are applied to a fictional local app with defensive controls only. | offline / S1 | Draft; technical, pedagogical, and safety review open |
+| SEC-03 | CISA/CERT disclosure roles are practiced with a redacted fictional report and no real contact. | offline / S1 | Draft; technical, pedagogical, and safety review open |
+| SEC-04 | NIST NICE and MITRE ATT&CK are distinguished as bounded vocabularies, not authority or attack instructions. | offline / S0 | Draft; technical, pedagogical, and safety review open |
 
 ## Termux consistency
 
@@ -56,20 +60,21 @@ The following checks were completed for this review:
 
 | Check | Result |
 |---|---|
-| Canonical registry membership and exact titles | 27/27 aligned; original `mvp-20` order and IDs preserved |
-| Required frontmatter and body sections | 27/27 passed |
+| Canonical registry membership and exact titles | 31/31 aligned; original `mvp-20` order and IDs preserved |
+| Required frontmatter and body sections | 31/31 passed |
 | Prerequisite names and ordering | No unknown or forward prerequisite found |
-| Knowledge checks | 27/27 have at least three answer/explanation prompts |
+| Knowledge checks | 31/31 have at least three answer/explanation prompts |
 | Availability and risk scope | All modules are offline or termux-optional; all are S0/S1 |
 | Canonical source validation | Passed `scripts/validate_content.py` with schema-v2 registry |
 | Android content parity | Passed `scripts/check_android_content.py` and direct comparisons |
 | Web content parity | Passed `scripts/check_web_content.py` and direct comparisons |
-| Source record | Stage 1 and Stage 2 claims and URLs recorded in the staged reference notes |
-| New clarity issue | DL-04 corrected in the prior review; Stage 1 and Stage 2 added with no automated contract issue |
+| Source record | Stage 1, Stage 2, and Stage 3 claims and URLs recorded in the staged reference notes |
+| Safety scan | Stage 3 source files contain no operational tool, credential-capture, persistence, evasion, or exploit-kit instructions |
+| New clarity issue | DL-04 corrected in the prior review; Stage 1, Stage 2, and Stage 3 added with no automated contract issue |
 
 ## Remaining decision
 
-The content is **repository-consistent and client-ready for controlled testing**, but it is not yet human-approved for public release. A reviewer should read all 27 current lessons for age-appropriate pacing, cultural and linguistic clarity, factual accuracy, accessibility of examples, and safety framing, with particular attention to the seven post-MVP drafts and their source wording. Findings should be fixed in place through the current stage process; later stages must not be added until Stage 2 is closed and documented. The release owner should record approval or required rewrites before signing or publicly distributing an artifact.
+The content is **repository-consistent and client-ready for controlled testing**, but it is not yet human-approved for public release. A reviewer should read all 31 current lessons for age-appropriate pacing, cultural and linguistic clarity, factual accuracy, accessibility of examples, and safety framing, with particular attention to the eleven post-MVP drafts and their source wording. The Stage 3 safety boundary must be reviewed by a maintainer who can assess dual-use risk; if any lesson becomes S2, it requires the documented S2 safety review before release. Findings should be fixed in place through the current stage process; later stages must not be added until Stage 3 is closed and documented. The release owner should record approval or required rewrites before signing or publicly distributing an artifact.
 
 ## References
 

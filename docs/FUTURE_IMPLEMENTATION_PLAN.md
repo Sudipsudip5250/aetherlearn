@@ -1,12 +1,12 @@
 # Future curriculum implementation plan
 
-**Status:** Stage 1 automated checkpoint complete; Stage 2 approved for execution; later stages remain sequentially gated by completion, review, and validation checkpoints.
+**Status:** Stage 1, Stage 2, and Stage 3 automated checkpoints complete; Stage 4 remains gated by Stage 3 human safety/pedagogical review and its own exact-scope decision.
 
 ## Decision boundary
 
 The current AetherLearn MVP remains a validated, frozen 20-module curriculum. The roadmap is not a license to add an encyclopedic catalog. A future implementation must begin with an explicit decision-log entry that names the approved batch, changes the curriculum scope intentionally, identifies maintainers and reviewers, and accepts the additional Android/Web parity and long-term source-maintenance burden.
 
-The user-approved Stage 1 slice is represented in `content/curriculum.yml`, `content/core/`, Android assets, and the Web payload. Stage 1 passed its automated validator, client-parity, browser-smoke, deterministic-pack, and hosted-CI checkpoint. Stage 2 now has its own exact module list and source matrix; Stages 3–5 remain planning-only until their own exact lists are recorded and their prior stages pass all required checkpoints.
+The user-approved Stage 1 and Stage 2 slices are represented in `content/curriculum.yml`, `content/core/`, Android assets, and the Web payload. Both passed their automated validators, client-parity, browser-smoke, deterministic-pack, and hosted-CI checkpoints. Stage 3 has its own exact module list, source matrix, and safety boundary, and its automated checkpoint passed hosted Quality workflow `32975751921`. Stage 4–5 remain planning-only until Stage 3 human review is complete and their own exact lists are recorded.
 
 ## Recommended staged implementation
 
@@ -14,12 +14,12 @@ The user-approved Stage 1 slice is represented in `content/curriculum.yml`, `con
 |---|---|---:|---|---|---|
 | 0 | Release the current 20-module MVP and complete device, accessibility, pedagogical, and safety gates | 0 new modules | Establish a trustworthy baseline before expanding product scope | Release owner, device tester, pedagogical reviewer, safety reviewer | Baseline complete; human release gates remain |
 | 1 | Computing history and systems vocabulary | 3 lessons | Extends digital literacy without requiring risky tooling or external services | Technical and pedagogical reviewers | Automated checkpoint complete; human review open |
-| 2 | Software engineering and open-source practice | 4 lessons | Builds directly on Git and debugging already taught | Technical, pedagogical, accessibility, and supply-chain reviewers | Approved and executing |
-| 3 | Ethical security, disclosure, and organization literacy | 3–4 lessons | Adds security context only after the safety governance and source process are exercised | Technical, pedagogical, safety, and source reviewers | Gated pending Stage 2 checkpoint |
-| 4 | Web/data foundations and local-only application practice | 3–5 lessons | Adds browser and data concepts with static/local fixtures | Technical, pedagogical, accessibility, and privacy reviewers | Gated pending Stage 3 checkpoint |
+| 2 | Software engineering and open-source practice | 4 lessons | Builds directly on Git and debugging already taught | Technical, pedagogical, accessibility, and supply-chain reviewers | Automated checkpoint complete; human review open |
+| 3 | Ethical security, disclosure, and organization literacy | 4 lessons | Adds only high-level defensive security context after the safety governance and source process are exercised | Technical, pedagogical, safety, and source reviewers | Automated checkpoint complete; human safety/pedagogical review open |
+| 4 | Web/data foundations and local-only application practice | 3–5 lessons | Adds browser and data concepts with static/local fixtures | Technical, pedagogical, accessibility, and privacy reviewers | Gated pending Stage 3 review and decision |
 | 5 | Historical security case studies and career orientation | 2–4 lessons | Depends on stable source review, careful framing, and a named maintainer | Historical/source, pedagogical, safety, and accessibility reviewers | Gated pending Stage 4 checkpoint |
 
-The table is a delivery sequence, not blanket approval of new modules. Stage 2 is the active approved post-MVP slice at this checkpoint; Stages 3–5 begin only after the previous stage is complete, validated, reviewed, committed, and documented.
+The table is a delivery sequence, not blanket approval of new modules. Stage 3’s automated implementation checkpoint is complete, but it remains draft until human safety/pedagogical review. Stage 4–5 begin only after the previous stage is complete, validated, reviewed, committed, and documented.
 
 ## Stage 1: computing history and systems vocabulary
 
@@ -44,7 +44,14 @@ All four lessons are offline and use synthetic fixtures. DEV-06 is S1 because su
 
 ## Stage 3: ethics, security, and organizations
 
-Candidate lessons cover permission and scope, threat modeling, harm minimization, evidence handling, coordinated vulnerability disclosure, defensive incident analysis, and organization literacy. Organizations may include ACM, OWASP, CISA/CVE, CERT/SEI, MITRE, NIST NICE, IETF/W3C, and open-source foundations. The learner outcome should be the ability to distinguish an authority’s role, read a source critically, draft a bounded report, or map a fictional incident to a mitigation.
+The approved Stage 3 slice is:
+
+1. **`sec-01-ethics-scope-and-harm` — Ethics, scope, and harm minimization.** Apply the ACM framework to fictional decisions and replace unnecessary realism with safer local simulations.
+2. **`sec-02-threat-modeling-defensive-controls` — Threat models and defensive controls.** Model assets, actors, flows, trust boundaries, and mitigations for a fictional offline note app using OWASP’s high-level process.
+3. **`sec-03-coordinated-disclosure` — Coordinated vulnerability disclosure.** Classify roles and draft a private, redacted fictional handoff using CISA and CERT/CC process vocabulary.
+4. **`sec-04-security-organizations-and-roles` — Security organizations, roles, and evidence.** Distinguish ethics bodies, technical communities, government programs, workforce frameworks, and defensive knowledge bases using NIST NICE and MITRE ATT&CK vocabulary.
+
+All four lessons are offline and use synthetic fixtures. SEC-01 and SEC-04 are S0; SEC-02 and SEC-03 are provisionally S1. The source matrix in `docs/references/stage3_sources.md` records the scope and review limitations.
 
 A security lesson must use synthetic data, toy applications, or written fixtures. It must not include public-target scanning, credential capture, exploit kits, malware, persistence, evasion, bypass instructions, or real-target testing. MITRE ATT&CK may be used as a defensive vocabulary, not as an attack recipe. Historical “hacker” case studies should focus on impact, affected stakeholders, response, ethics, and defensive lessons; they should not glorify criminal groups or reproduce operational details.
 
@@ -103,4 +110,4 @@ A Termux-optional lesson additionally requires a fixed wrapper ID, immutable exe
 
 ## Current action and later gate
 
-Stage 1 is approved by the user and is being authored one lesson at a time under the exact three-module scope above. After its automated, parity, and human-review checkpoint is recorded, the next stage may be proposed and implemented using the same source, safety, registry, client, and release process. Approval to continue later does not waive those per-stage gates.
+Stages 1–3 were approved and implemented one bounded lesson slice at a time under their exact scopes. Stage 3 has passed automated, parity, browser, pack, safety-pattern, and hosted-CI checks, but human safety/pedagogical review remains open. Stage 4 may be proposed only after that review and its own exact source and safety matrix are recorded; approval to continue later does not waive any per-stage gate.

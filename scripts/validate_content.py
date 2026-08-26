@@ -51,7 +51,7 @@ REQUIRED_SECTIONS = [
 ]
 AVAILABILITY = {"offline", "offline-pack", "termux-optional", "network-optional"}
 RISK_TIERS = {"S0", "S1", "S2"}
-STRANDS = {"digital-literacy", "python-fundamentals", "algorithms", "developer-foundations"}
+STRANDS = {"digital-literacy", "python-fundamentals", "algorithms", "developer-foundations", "security-ethics"}
 LEVELS = {"beginner", "intermediate"}
 REVIEW_STATUSES = {"draft", "in-review", "released", "needs-update", "deprecated"}
 REGISTRY_SCHEMA_VERSION = 2
@@ -79,7 +79,7 @@ MVP_BASELINE_IDS = (
     "dev-02-git-local-repositories-history",
     "dev-03-debugging-error-messages",
 )
-ID_PATTERN = re.compile(r"^(dl|py|al|dev)-\d{2}(?:-[a-z0-9]+)+$")
+ID_PATTERN = re.compile(r"^(dl|py|al|dev|sec)-\d{2}(?:-[a-z0-9]+)+$")
 SEMVER_PATTERN = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
 LINK_PATTERN = re.compile(r"!?(?:\[[^\]]*\])\(([^)]+)\)")
 

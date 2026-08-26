@@ -1,6 +1,6 @@
 schema_version: 2
 curriculum_id: aetherlearn
-curriculum_version: 1.4.0
+curriculum_version: 1.5.0
 mvp_baseline:
   id: mvp-20
   module_count: 20
@@ -70,6 +70,19 @@ stages:
         title: Dependencies, provenance, and reproducible builds
       - id: dev-07-open-source-accessibility
         title: Open-source contribution and accessibility review
+  - id: stage-3
+    title: Ethics, defensive security, disclosure, and organizations
+    status: approved
+    module_count: 4
+    modules:
+      - id: sec-01-ethics-scope-and-harm
+        title: Ethics, scope, and harm minimization
+      - id: sec-02-threat-modeling-defensive-controls
+        title: Threat models and defensive controls
+      - id: sec-03-coordinated-disclosure
+        title: Coordinated vulnerability disclosure
+      - id: sec-04-security-organizations-and-roles
+        title: Security organizations, roles, and evidence
 modules:
   - id: dl-01-digital-information
     title: How digital devices represent information
@@ -152,3 +165,15 @@ modules:
   - id: dev-07-open-source-accessibility
     title: Open-source contribution and accessibility review
     stage: stage-2
+  - id: sec-01-ethics-scope-and-harm
+    title: Ethics, scope, and harm minimization
+    stage: stage-3
+  - id: sec-02-threat-modeling-defensive-controls
+    title: Threat models and defensive controls
+    stage: stage-3
+  - id: sec-03-coordinated-disclosure
+    title: Coordinated vulnerability disclosure
+    stage: stage-3
+  - id: sec-04-security-organizations-and-roles
+    title: Security organizations, roles, and evidence
+    stage: stage-3

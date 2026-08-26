@@ -1,6 +1,6 @@
 # AetherLearn device and browser test checklist
 
-**Purpose:** verify the first usable Android and Web/PWA release on real environments without changing the frozen 20-module curriculum or weakening the local-first privacy boundary.
+**Purpose:** verify the first usable Android and Web/PWA release on real environments without weakening the frozen 20-module MVP baseline or the local-first privacy boundary.
 
 **Audience:** a non-expert tester working with a release owner. Follow the steps in order, record the result of each test, and stop when a step is unsafe or differs materially from the expected result. A test marked **Not tested** is an open release gate, not a pass.
 
@@ -39,17 +39,17 @@ Prepare two fictional lesson values for testing: `Offline functions` and `Review
 
 **Pass evidence:** privacy wording is visible, no account or network is required for the core path, and the shell opens offline. **Fail or stop:** a login, unexplained permission, automatic upload, or required network appears.
 
-## 3. Android navigation and 27-lesson discovery
+## 3. Android navigation and 31-lesson discovery
 
 1. On the main shell, verify the four bottom destinations: **Learn**, **Practice**, **Search**, and **Progress**. Verify **Settings** is available from the top bar.
-2. Open **Learn**. Confirm that the catalog contains 27 lessons: the stable 20-module MVP baseline plus the three Stage 1 lessons and DEV-04 through DEV-07 from Stage 2.
-3. Confirm that the previously completed content is visible: PY-06, PY-07, AL-01, AL-02, AL-03, AL-04, AL-05, DEV-02, and DEV-03. Also open DL-06, DL-07, DL-08, DEV-04, DEV-05, DEV-06, and DEV-07.
+2. Open **Learn**. Confirm that the catalog contains 31 lessons: the stable 20-module MVP baseline, three Stage 1 lessons, four Stage 2 lessons, and four Stage 3 security-ethics lessons.
+3. Confirm that the previously completed content is visible: PY-06, PY-07, AL-01, AL-02, AL-03, AL-04, AL-05, DEV-02, and DEV-03. Also open DL-06, DL-07, DL-08, DEV-04, DEV-05, DEV-06, DEV-07, SEC-01, SEC-02, SEC-03, and SEC-04. For SEC-01 through SEC-04, confirm the safety text is visible and no lesson asks for a live target, external contact, credential, or unsafe command.
 4. Confirm that the first five existing modules remain visible and that no duplicate stable IDs appear.
 5. Open **Practice**, **Search**, and **Progress** in turn. Each destination should show a useful screen rather than a placeholder or crash.
 6. Open **Settings** and return with **Back**. Confirm that returning does not reset the selected destination or learning state unexpectedly.
 7. Change the theme to **Light**, **Dark**, and **Follow system** if the controls are available. Confirm that text and controls remain readable in each mode. Restore the preferred mode.
 
-**Pass evidence:** all 27 current lessons are discoverable, the original 20-module baseline remains present, all three Stage 1 and four Stage 2 lessons open, all destinations open, and no crash or data reset occurs.
+**Pass evidence:** all 31 current lessons are discoverable, the original 20-module baseline remains present, all Stage 1, Stage 2, and Stage 3 lessons open, the Stage 3 safety boundary is visible, all destinations open, and no crash or data reset occurs.
 
 ## 4. Complete one lesson fully offline
 
@@ -79,7 +79,7 @@ Prepare two fictional lesson values for testing: `Offline functions` and `Review
 
 ## 6. Practice and search coverage
 
-1. Open **Practice** while offline. Confirm that exercises from the 20 lessons are listed or that the screen clearly explains any filtering.
+1. Open **Practice** while offline. Confirm that exercises from the current catalog are listed or that the screen clearly explains any filtering.
 2. Open an exercise from PY-06, AL-03, or DEV-03 and confirm that it is answerable using the lesson text and does not require a network or unsafe command.
 3. Open **Search** and search for `scope`, `stack`, `binary`, `Git`, and `traceback`, one at a time.
 4. Confirm that results identify the matching lesson and can open the reader.
@@ -116,7 +116,7 @@ Run this section only if the build includes an available local optional pack. Th
 1. In **Settings**, open **Storage & content packs**.
 2. Record the core module count and confirm that the core pack is marked always available offline and protected from deletion.
 3. For a listed optional pack, tap **Install local pack**. Confirm that the UI reports installation and that the pack’s lessons become discoverable.
-4. Open one optional-pack lesson and confirm that it parses using the shared reader without changing the original 20 bundled MVP lessons or the three bundled Stage 1 lessons.
+4. Open one optional-pack lesson and confirm that it parses using the shared reader without changing the original 20 bundled MVP lessons or the approved Stage 1, Stage 2, and Stage 3 bundled lessons.
 5. Verify that existing progress, notes, bookmarks, and quiz attempts for core lessons remain.
 6. Tap **Delete optional pack**. Confirm that only the optional content is removed, while the core pack and all learning data remain.
 7. If installation fails, confirm that the prior valid content remains available and that the error is understandable.

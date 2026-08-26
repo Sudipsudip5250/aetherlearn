@@ -1,8 +1,8 @@
 # Future content roadmap and source plan
 
-**Status:** Stage 1 is approved and implemented as a three-lesson slice; the original `mvp-20` baseline remains stable and later stages remain gated.
+**Status:** Stage 1 and Stage 2 automated checkpoints are complete; Stage 3 is approved and implemented as a four-lesson safety-bounded slice; the original `mvp-20` baseline remains stable and Stages 4–5 remain gated.
 
-AetherLearn’s original MVP curriculum is intentionally frozen at 20 modules. It provides a coherent foundation in digital literacy, Python, basic algorithms, and developer practice. The approved Stage 1 expansion adds three bundled, offline history/systems lessons without renumbering or replacing that baseline. It does not attempt to cover every programming language, operating system, organization, security topic, or career path. This document records what could come next so future contributors do not expand the product ad hoc or turn historical and security material into unsafe operational instruction.
+AetherLearn’s original MVP curriculum is intentionally frozen at 20 modules. It provides a coherent foundation in digital literacy, Python, basic algorithms, and developer practice. The approved Stage 1 expansion adds three bundled, offline history/systems lessons, Stage 2 adds four software-engineering lessons, and Stage 3 adds four high-level defensive security-ethics lessons, without renumbering or replacing that baseline. It does not attempt to cover every programming language, operating system, organization, security topic, or career path. This document records what could come next so future contributors do not expand the product ad hoc or turn historical and security material into unsafe operational instruction.
 
 ## 1. Coverage assessment
 
@@ -17,7 +17,7 @@ AetherLearn’s original MVP curriculum is intentionally frozen at 20 modules. I
 | Organizations and community | Open-source project behavior is implied by Git and contribution docs | Learners lack a map of standards bodies, foundations, research groups, and career roles | Add an organization-literacy lesson with roles, governance, evidence, and contribution paths |
 | Career orientation | No explicit role map | Learners may not know how skills connect to real work | Add role-based pathways using skills and outcomes, not job promises or salary claims |
 
-The gap analysis is a planning assessment, not evidence that the MVP was incomplete. Stage 1 is deliberately limited and remains draft until human pedagogical and technical review; later releases must wait for their own stage decisions and checkpoints.
+The gap analysis is a planning assessment, not evidence that the MVP was incomplete. Stages 1–3 are deliberately limited and remain draft until human pedagogical, technical, accessibility, source, and—where applicable—safety review; later releases must wait for their own stage decisions and checkpoints.
 
 ## 2. Recommended future strands
 
@@ -99,13 +99,13 @@ The current research set supports the roadmap with the Computer History Museum l
 
 Before any future strand becomes an authored module, the contributor should submit a scope note identifying the learner outcome, prerequisites, offline/online requirement, risk tier, exercise boundary, source list, accessibility considerations, and maintenance owner. A reviewer should then check technical accuracy, citation support, answerability, reading level, cultural and historical framing, and whether the exercise can be completed without unauthorized access or personal data.
 
-A release candidate should keep unapproved content outside `content/curriculum.yml`. Once a batch is explicitly approved, it must use the versioned registry, existing validator, Android/Web byte-parity process, and human pedagogical/safety review. This preserves the stable `mvp-20` baseline and prevents a roadmap from silently becoming product scope. Stage 1 is the first recorded exception under decision D-031.
+A release candidate should keep unapproved content outside `content/curriculum.yml`. Once a batch is explicitly approved, it must use the versioned registry, existing validator, Android/Web byte-parity process, and human pedagogical/safety review. This preserves the stable `mvp-20` baseline and prevents a roadmap from silently becoming product scope. Stages 1–3 are the recorded exceptions under decisions D-031, D-032, and D-034; Stage 3 also has the safety matrix in `docs/references/stage3_sources.md`.
 
 ## 5. Recommended order after release gates
 
 The first post-MVP content increment should be a small, non-operational **computing history and systems vocabulary** set. The second should be **software engineering and open-source practice**. The third should be **ethical security, disclosure, and organization literacy**. Historical security case studies and career pathways should follow only after the project has a named human reviewer for source quality, safety framing, and local-law sensitivity.
 
-The immediate content priority is to complete Stage 1’s technical and pedagogical review without claiming that repository checks replace human approval. Contributors may begin Stage 2 only after Stage 1’s validation, parity, documentation, commit, and review checkpoint is recorded. The roadmap is successful when each increment remains bounded, source-backed, safety-reviewed, and reversible.
+The immediate content priority is to complete Stage 3’s technical, pedagogical, accessibility, source, and safety review without claiming that repository checks replace human approval. Contributors may begin Stage 4 only after Stage 3’s validation, parity, documentation, commit, and review checkpoint is recorded. The roadmap is successful when each increment remains bounded, source-backed, safety-reviewed, and reversible.
 
 ## References
 
