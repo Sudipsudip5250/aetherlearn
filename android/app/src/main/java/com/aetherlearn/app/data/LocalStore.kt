@@ -23,6 +23,7 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         )
         createLearningTables(db)
         createPackTable(db)
+        createExerciseTable(db)
         putValue(db, KEY_SCHEMA_VERSION, DATABASE_VERSION.toString())
         putValue(db, KEY_FIRST_RUN_COMPLETE, "false")
         putValue(db, KEY_THEME_MODE, ThemeMode.SYSTEM.name)
@@ -31,6 +32,7 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if (oldVersion < 2) createLearningTables(db)
         if (oldVersion < 3) createPackTable(db)
+        if (oldVersion < 4) createExerciseTable(db)
         putValue(db, KEY_SCHEMA_VERSION, newVersion.toString())
     }
 
@@ -194,6 +196,40 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         null,
     ).use { cursor -> buildSet { while (cursor.moveToNext()) add(cursor.getString(0)) } }
 
+    fun setExerciseCompleted(wrapperId: String, contractVersion: Int) {
+        writableDatabase.insertWithOnConflict(
+            TABLE_EXERCISE_PROGRESS,
+            null,
+            ContentValues().apply {
+                put(COLUMN_WRAPPER_ID, wrapperId)
+                put(COLUMN_CONTRACT_VERSION, contractVersion)
+                put(COLUMN_COMPLETED_AT, now())
+            },
+            SQLiteDatabase.CONFLICT_REPLACE,
+        )
+    }
+
+    fun isExerciseCompleted(wrapperId: String): Boolean = readableDatabase.query(
+        TABLE_EXERCISE_PROGRESS,
+        arrayOf(COLUMN_WRAPPER_ID),
+        "$COLUMN_WRAPPER_ID = ?",
+        arrayOf(wrapperId),
+        null,
+        null,
+        null,
+        "1",
+    ).use { it.moveToFirst() }
+
+    fun getCompletedExerciseIds(): Set<String> = readableDatabase.query(
+        TABLE_EXERCISE_PROGRESS,
+        arrayOf(COLUMN_WRAPPER_ID),
+        null,
+        null,
+        null,
+        null,
+        null,
+    ).use { cursor -> buildSet { while (cursor.moveToNext()) add(cursor.getString(0)) } }
+
     fun getInstalledPacks(): List<InstalledPack> = readableDatabase.query(
         TABLE_PACKS,
         PACK_COLUMNS,
@@ -303,6 +339,18 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         )
     }
 
+    private fun createExerciseTable(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS exercise_progress (
+                wrapper_id TEXT PRIMARY KEY NOT NULL,
+                contract_version INTEGER NOT NULL,
+                completed_at INTEGER NOT NULL
+            )
+            """.trimIndent(),
+        )
+    }
+
     private fun createPackTable(db: SQLiteDatabase) {
         db.execSQL(
             """
@@ -350,13 +398,14 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
 
     companion object {
         private const val DATABASE_NAME = "aetherlearn_local.db"
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_VERSION = 4
         private const val TABLE_METADATA = "app_metadata"
         private const val TABLE_PROGRESS = "module_progress"
         private const val TABLE_QUIZ_ATTEMPTS = "quiz_attempts"
         private const val TABLE_NOTES = "notes"
         private const val TABLE_BOOKMARKS = "bookmarks"
         private const val TABLE_PACKS = "content_packs"
+        private const val TABLE_EXERCISE_PROGRESS = "exercise_progress"
         private const val COLUMN_KEY = "key"
         private const val COLUMN_VALUE = "value"
         private const val COLUMN_MODULE_ID = "module_id"
@@ -377,6 +426,9 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         private const val COLUMN_SIZE_BYTES = "size_bytes"
         private const val COLUMN_INSTALL_PATH = "install_path"
         private const val COLUMN_INSTALLED_AT = "installed_at"
+        private const val COLUMN_WRAPPER_ID = "wrapper_id"
+        private const val COLUMN_CONTRACT_VERSION = "contract_version"
+        private const val COLUMN_COMPLETED_AT = "completed_at"
         private const val KEY_SCHEMA_VERSION = "schema_version"
         private const val KEY_FIRST_RUN_COMPLETE = "first_run_complete"
         private const val KEY_THEME_MODE = "theme_mode"

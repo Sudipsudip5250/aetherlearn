@@ -63,15 +63,17 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 
 ## M5 — Termux pilot
 
-- [ ] Define the versioned exercise-wrapper contract and allowlist.
-- [ ] Select two or three benign local exercises from PY-02, DEV-01, and DEV-02.
-- [ ] Implement Termux package detection and clear setup guidance.
-- [ ] Implement explicit confirmation showing wrapper ID, path, arguments, working directory, prerequisites, and expected effects.
-- [ ] Implement the native RUN_COMMAND handoff without arbitrary shell text.
-- [ ] Add manual copy-and-run fallback and in-app alternative.
-- [ ] Add validated result-file import or explicit learner confirmation; do not trust terminal output as completion proof.
-- [ ] Fuzz unknown exercise IDs, altered arguments, malformed result files, replayed nonces, and oversized imports.
-- [ ] **Checkpoint M5:** Termux present, absent, denied-permission, misconfigured, and successful paths work without executing an unallowlisted command.
+- [x] Define the versioned exercise-wrapper contract and strict allowlist in [`TERMUX_WRAPPERS.md`](TERMUX_WRAPPERS.md) and `TermuxWrappers.kt`.
+- [x] Select two benign local exercises: `py-02-local-expressions` from PY-02 and `dev-01-safe-navigation` from DEV-01. A third exercise is intentionally deferred.
+- [x] Implement Termux package detection and clear setup guidance without automatic permission changes.
+- [x] Implement explicit confirmation showing wrapper ID, path, arguments, working directory, prerequisites, expected effects, and fallback.
+- [x] Implement the native RUN_COMMAND handoff with only fixed, validated arguments and no arbitrary shell text.
+- [x] Add a manual/in-app fallback path that keeps the lesson completable without Termux.
+- [x] Use learner-confirmed completion for the pilot; no process callback or terminal output is trusted as proof.
+- [x] Add focused negative tests for unknown IDs, altered arguments, altered executable/path, and contract-version tampering.
+- [x] Add code-level handling for missing Termux, denied permission, and unsupported/misconfigured service paths.
+- [ ] Run device/emulator runtime tests for missing Termux, denied permission, misconfiguration, and successful handoff; no device/emulator is available in this environment.
+- [ ] **Checkpoint M5:** Device/emulator evidence must confirm Termux present/absent, denied-permission, misconfigured, fallback, and successful paths without executing an unallowlisted command.
 
 ## M6 — Web/PWA fallback
 

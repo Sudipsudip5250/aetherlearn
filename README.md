@@ -10,7 +10,7 @@ Then read [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the native Android 
 
 ## Repository status
 
-M0 through M4 are implemented for the current offline scope. The native Kotlin/Jetpack Compose Android app reads the five bundled lessons, tracks learning state and quiz attempts, stores private notes/bookmarks, searches locally, lists practice exercises, exports learning data as Markdown/JSON through a user-controlled file picker, and manages a validated pre-bundled optional-pack example. The debug APK builds with the pinned Gradle wrapper; device/emulator smoke testing for the M2/M3/M4 runtime gates remains open. See [`android/README.md`](android/README.md) for build instructions.
+M0 through M4 are implemented for the current offline scope, and the feasible M5 code slice is implemented. The native Kotlin/Jetpack Compose Android app reads the five bundled lessons, tracks learning state and quiz attempts, stores private notes/bookmarks, searches locally, lists practice exercises, exports learning data as Markdown/JSON through a user-controlled file picker, manages a validated pre-bundled optional-pack example, and provides a strict versioned Termux allowlist, package detection, explicit confirmation, guarded RUN_COMMAND handoff, fallback guidance, and learner-confirmed completion for two local-only exercises. Device/emulator smoke testing remains the only unavailable runtime evidence gate. See [`android/README.md`](android/README.md) and [`docs/TERMUX_WRAPPERS.md`](docs/TERMUX_WRAPPERS.md).
 
 ## Core decisions
 

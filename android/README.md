@@ -1,6 +1,6 @@
 # AetherLearn Android shell
 
-This directory contains the native Android M2 shell for AetherLearn. It uses Kotlin, Jetpack Compose, Material 3, and an app-private SQLite storage boundary. The shell has four bottom destinations—Learn, Practice, Search, and Progress—plus Settings. The Learn screen reads metadata for the five validated M1 lessons from local Android assets.
+This directory contains the native Android client for AetherLearn. It uses Kotlin, Jetpack Compose, Material 3, and an app-private SQLite storage boundary. The app has four bottom destinations—Learn, Practice, Search, and Progress—plus Settings. It reads the five validated lessons from local assets, supports offline learning state, exports, local optional-pack management, and a safe optional Termux pilot.
 
 ## Requirements
 
@@ -20,7 +20,7 @@ The debug APK is produced at `app/build/outputs/apk/debug/app-debug.apk`. Instal
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-The first launch displays the local privacy screen. After continuing, the app opens the offline shell. The first-run decision and theme preference are stored in app-private SQLite storage. No network permission is requested by the app manifest.
+The first launch displays the local privacy screen. After continuing, the app opens the offline learning shell. Progress, quiz attempts, notes, bookmarks, pack status, first-run state, and theme preference are stored in app-private SQLite storage. No network permission is requested by the app manifest. The Termux pilot additionally declares only `com.termux.permission.RUN_COMMAND` and does not grant it automatically.
 
 ## Checks
 
@@ -34,4 +34,4 @@ python3 scripts/validate_content.py --content-dir content/core --manifest build/
 python3 -m unittest discover -s tests -v
 ```
 
-The Android shell is intentionally limited to M2. It does not yet implement lesson reading, quizzes, notes, search, progress history, Termux integration, a backend, accounts, analytics, or arbitrary code execution. Those boundaries are defined in [`../docs/PRODUCT_SPEC.md`](../docs/PRODUCT_SPEC.md).
+M5 currently includes the contract, allowlist, package detection, explicit confirmation, fixed-argument `RUN_COMMAND` handoff, learner-confirmed completion, and in-app fallback for two local-only S1 exercises. It does not install packages, change Termux settings, use shared storage, accept arbitrary commands, receive terminal output as completion proof, or contact a network target. The remaining device/emulator checks are documented in `docs/TODO.md`; the product and safety boundaries are defined in [`../docs/PRODUCT_SPEC.md`](../docs/PRODUCT_SPEC.md), [`../docs/SAFETY.md`](../docs/SAFETY.md), and [`../docs/TERMUX_WRAPPERS.md`](../docs/TERMUX_WRAPPERS.md).
