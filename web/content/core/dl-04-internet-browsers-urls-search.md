@@ -68,7 +68,13 @@ A common mistake is thinking a browser and search engine are the same. Another i
 
 ## Offline practice
 
-Rank the fictional results from **best starting point** to **do not open**, giving one reason for each. Then label the scheme, host, path, query, and fragment in:
+Rank these fictional results from **best starting point** to **do not open**, giving one reason for each:
+
+1. A public library page at `https://library.example/books?topic=python` that names its author and review date.
+2. A result at `https://unknown.example/free-book` that asks for a password before showing a preview.
+3. A shortened link with no visible destination that promises an urgent prize.
+
+Then label the scheme, host, path, query, and fragment in:
 
 ```text
 https://library.example/books?topic=python#chapter-2

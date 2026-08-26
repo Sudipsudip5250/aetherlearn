@@ -39,6 +39,8 @@ M7 repository hardening is implemented for the feasible sandbox scope. The Andro
 
 Content expansion batch 2 is implemented within the frozen registry. PY-06 and PY-07 complete the planned Python fundamentals, AL-01 through AL-05 complete the approved algorithms strand, and DEV-02 and DEV-03 complete the approved developer-foundations strand. All twenty source lessons now validate, the Android catalog and assets contain all twenty, the Web manifest and payload contain all twenty, and only three additional fixed local Termux wrappers were added for the new termux-optional modules. The content remains draft pending final pedagogical and safety review; no post-MVP tracks were added.
 
+The final repository content-consistency review is recorded in [`docs/CONTENT_REVIEW.md`](CONTENT_REVIEW.md). It found no contract, graph, or S0/S1 errors, clarified the previously underspecified DL-04 practice with concrete fictional results, and judged the concise PY-02 and DEV-01 practices answerable without rewrites. [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) now provides a non-expert procedure for Android offline learning, persistence, exports, local and network packs, Termux variants, desktop and Android-browser PWA checks, privacy boundaries, and accessibility basics. The exact human-only gates remain final pedagogical/safety approval of all 20 lessons, physical Android and Termux matrix testing, Android-browser testing, manual TalkBack/screen-reader testing, authorized network inspection where available, and release signing/distribution setup. Repository checks do not constitute evidence for those gates.
+
 
 ## Suggested sequencing
 

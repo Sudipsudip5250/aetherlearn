@@ -104,14 +104,16 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 
 ## M7 — Release hardening
 
-- [ ] Run the Android device matrix, including a low-memory or aggressive-battery device.
+- [ ] Run the Android device matrix, including a low-memory or aggressive-battery device; use [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) and record each result.
+- [x] Complete the repository content-consistency pass for all 20 modules; record the DL-04 practice clarification and audit results in [`docs/CONTENT_REVIEW.md`](CONTENT_REVIEW.md).
 - [x] Implement web accessibility hardening for text scaling/reflow, focus restoration, semantic labels/live regions, touch targets, forced colors, reduced motion, restrictive CSP, and safe external links; manual screen-reader and Android-browser checks remain open.
 - [x] Implement the privacy/network boundary: explicit HTTPS-only pack requests, no cookies or credentials, no learning-data request fields, cleartext denial, no broad external-storage permissions, and no analytics path. Physical network inspection remains open.
-- [ ] Run final pedagogical and safety review for all 20 authored modules; automated contract and S0/S1 checks pass, but human review remains open.
+- [ ] Run final pedagogical and safety review for all 20 authored modules; the consistency audit and automated contract/S0/S1 checks pass, but human review remains open.
+- [x] Create the non-expert Android, Android-browser, desktop-browser, Termux, network-pack, persistence, export, and accessibility procedure in [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md).
 - [x] Add dependency/build/release-artifact gates, including Android debug/release build, unit tests, lint, manifest boundary checks, and APK SHA-256 sidecars.
 - [x] Prepare release notes, installation instructions, content-pack recovery instructions, and contributor handoff in `docs/M7_RELEASE_NOTES.md` and `docs/NETWORK_PACKS.md`.
 - [ ] Publish signed release metadata; unsigned release artifacts and checksums are verified, but no authorized signing key or public pack host is configured.
-- [ ] **Checkpoint M7:** Static and CI gates pass; device matrix, Android-browser, assistive-technology, full-20-module review, signed metadata, and production distribution gates remain explicitly assigned as release follow-ups.
+- [ ] **Checkpoint M7:** Static and CI gates pass; the exact remaining human-only and operational gates are the device/emulator matrix, Android-browser matrix, manual assistive-technology review, final pedagogical/safety approval, authorized signing and signed metadata, authorized network inspection for the pack path, and production distribution/pack-host setup.
 
 ## Deferred backlog
 

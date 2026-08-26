@@ -8,16 +8,16 @@ AetherLearn is an offline-first Android and static web/PWA learning project. The
 
 | Gate | Status | Evidence or limitation |
 | --- | --- | --- |
-| Content and deterministic pack validation | Complete for 11 authored modules | `scripts/validate_content.py`, deterministic pack build, manifest verification |
+| Content and deterministic pack validation | Complete for 20 authored modules; final human review open | `scripts/validate_content.py`, deterministic pack build, manifest verification, and content consistency audit |
 | Android/web payload parity | Complete | Exact byte comparison remains enforced for every canonical lesson |
 | HTTPS-only explicit network pack download | Implemented | URL validation, no redirects, bounded streaming transfer, app-private partial file |
 | Pause, resume, retry, cancellation | Implemented in foreground Settings flow | Range resume depends on server support; interrupted-radio and process-death device tests remain open |
 | Pack integrity and safe activation | Implemented | ZIP path restrictions, schema/ID/section checks, per-file SHA-256, size checks, staged activation and rollback |
 | Android manifest boundary | Complete | INTERNET/ACCESS_NETWORK_STATE only for network; cleartext and broad external-storage access denied |
 | Android release build | Complete as unsigned artifact | Minified/shrunk release APK builds and receives a SHA-256 sidecar; signing key and publication are not configured |
-| CI quality gates | Complete for this repository scope | Hosted Quality run [32863228054](https://github.com/Sudipsudip5250/aetherlearn-mvp-spec/actions/runs/32863228054) passed both `validate` and `android`; local checks also passed |
+| CI quality gates | Complete for this repository scope | Hosted Quality run [32864191155](https://github.com/Sudipsudip5250/aetherlearn-mvp-spec/actions/runs/32864191155) passed both `validate` and `android`; local checks also passed |
 | Web accessibility hardening | Implemented in source | CSP/referrer policy, HTTPS-only external links, no-opener, focus restoration, touch-target and forced-color safeguards |
-| Manual browser accessibility review | Partial | Desktop browser checks are feasible here; screen-reader, Android-browser, and multiple assistive-technology checks require attached environments |
+| Manual browser accessibility review | Partial | Desktop browser checks are feasible here; screen-reader, Android-browser, and multiple assistive-technology checks require attached environments; the step-by-step procedure is in [`DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) |
 | Android device matrix | Open | No physical devices or emulator are attached in this environment |
 | Termux runtime matrix | Open | Static allowlist tests pass; actual package/permission/service variants need a device |
 | Release signing and signed pack metadata | Open | Requires an approved project key, rotation policy, and distribution host |
