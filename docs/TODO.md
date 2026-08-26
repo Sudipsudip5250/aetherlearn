@@ -124,6 +124,15 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Preserve existing persistence, callback, privacy, offline, export, pack, and Termux behavior; source-equivalence checks confirm the pre-refactor UI bodies remain present.
 - [x] Verify the refactor with Android JVM unit tests, debug compilation, and lint; no new feature or curriculum scope was added.
 
+## Repository hygiene and future-content planning
+
+- [x] Remove the unreferenced raw requirements transcript `docs/references/revised_requirements.txt`; its maintained requirements are represented in `PRODUCT_SPEC.md`, `ARCHITECTURE.md`, `SAFETY.md`, `PLAN.md`, and `TODO.md`.
+- [x] Retain substantive historical review and evidence notes under `docs/references/` because they support architectural decisions, browser/build evidence, or milestone recovery.
+- [x] Add [`docs/FUTURE_CONTENT_ROADMAP.md`](FUTURE_CONTENT_ROADMAP.md) with source-backed planning for historical languages, systems, software engineering, ethical security, organizations, and career orientation.
+- [x] Add [`docs/FUTURE_IMPLEMENTATION_PLAN.md`](FUTURE_IMPLEMENTATION_PLAN.md) with staged batches, acceptance criteria, source-maintenance rules, and safety boundaries.
+- [x] Keep the roadmap and implementation plan outside `content/curriculum.yml`; neither expands the frozen 20-module MVP or changes Android/Web payloads.
+- [ ] Approve any future curriculum change through a new decision-log entry, exact lesson list, human technical/pedagogical/safety review, and the existing validator/parity process.
+
 ## Deferred backlog
 
 - [ ] Portable encrypted backup with tested key ownership and recovery.

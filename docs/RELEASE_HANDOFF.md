@@ -21,7 +21,7 @@ The outputs are:
 | Artifact | Path | Meaning |
 |---|---|---|
 | Debug APK | `android/app/build/outputs/apk/debug/app-debug.apk` | Development/test APK for a controlled device or emulator |
-| Release APK | `android/app/build/outputs/apk/release/app-release-unsigned.apk` | Minified/shrunk but **unsigned**; not a production artifact until an authorized operator signs it |
+| Release APK | `android/app/build/outputs/apk/release/app-release-unsigned.apk` | Minified/shrunk but **unsigned**; it is not installable as a release artifact until an authorized operator signs it |
 
 Generate checksums before transferring an APK:
 
@@ -32,7 +32,7 @@ sha256sum android/app/build/outputs/apk/release/app-release-unsigned.apk
 
 ### Download from CI
 
-Open the repository’s **Actions** tab, select the **Quality** workflow, open a successful run for the intended commit, and download the `aetherlearn-apks` artifact from the run summary. Extract it without renaming its internal directories. It contains the debug APK, the unsigned release APK, and their `.SHA256SUMS` sidecars.
+Open the repository’s **Actions** tab, select the **Quality** workflow, open a successful run for the exact commit under test, and download the `aetherlearn-apks` artifact from the run summary. Confirm the run’s commit SHA and both job conclusions before downloading. Extract it without renaming its internal directories. It contains the debug APK, the unsigned release APK, and their `.SHA256SUMS` sidecars. Do not use an artifact from an untrusted fork, an unknown workflow, or an unrelated commit.
 
 From the extracted artifact directory, verify the sidecars before installation:
 
@@ -41,7 +41,7 @@ sha256sum -c build/release/app-debug.SHA256SUMS
 sha256sum -c build/release/app-release-unsigned.SHA256SUMS
 ```
 
-A checksum confirms file-transfer integrity; it does not prove publisher identity. The release APK remains unsigned until the authorized process in [`SIGNING.md`](SIGNING.md) is completed.[3]
+A checksum confirms file-transfer integrity; it does not prove publisher identity. The release APK remains unsigned until the authorized process in [`SIGNING.md`](SIGNING.md) is completed.[3] For ordinary device testing, install `app-debug.apk`; do not try to install `app-release-unsigned.apk` directly. Android package installation will reject an unsigned APK. A signed release must be verified separately before installation.
 
 ## 2. Install safely on Android
 
@@ -59,6 +59,8 @@ Install the debug APK:
 adb install -r android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
+The `-r` update path works only when the installed application has a compatible signing identity. A debug-signed installation and a release-signed installation normally cannot update one another. If ADB reports a signature or certificate mismatch, stop and decide whether the existing app data must be preserved; uninstalling to resolve the mismatch deletes local learning data. Use separate test devices or explicitly exported fictional data for clean-install comparisons.
+
 The `-r` option updates an existing installation and normally retains app data. Do not use it for a clean-install test. For a clean test, record only fictional data first, then uninstall intentionally:
 
 ```bash
@@ -66,7 +68,7 @@ adb uninstall com.aetherlearn.app
 adb install android/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Never uninstall an installation containing learning data that must be preserved.[2]
+Never uninstall an installation containing learning data that must be preserved.[2] If the phone already has an app with the same package name signed by another publisher, do not remove it merely to force installation; use a dedicated test device or obtain the authorized matching artifact.
 
 ### File transfer
 
@@ -146,7 +148,7 @@ Mark unavailable environments **Not tested**. Desktop source checks do not prove
 
 ## 6. Release decision boundary
 
-The current repository is suitable for controlled human testing. It is not production-signed or publicly approved. The release owner must still obtain human approval for all 20 lessons, complete representative Android/emulator and Termux tests, complete Android-browser and assistive-technology tests, establish authorized signing and key rotation, verify signed metadata, and approve the distribution and pack-host process.
+The current repository is suitable for controlled human testing. The debug APK is the normal unsigned-by-project test artifact; the release APK is explicitly unsigned and must be signed before it can be installed or distributed. The repository is not production-signed or publicly approved. The release owner must still obtain human approval for all 20 lessons, complete representative Android/emulator and Termux tests, complete Android-browser and assistive-technology tests, establish authorized signing and key rotation, verify signed metadata, and approve the distribution and pack-host process.
 
 Do not commit a keystore, password, signing configuration containing secret values, private certificate material, or personal test data. Follow [`SIGNING.md`](SIGNING.md) for human-operated signing only.
 

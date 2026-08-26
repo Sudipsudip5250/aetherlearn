@@ -57,7 +57,7 @@ A checksum of a keystore is not a replacement for encrypted storage or access co
 
 ## 4. Connect signing to a local release build
 
-The repository intentionally does not contain a signing configuration or secret values. A release operator may configure Android signing locally or through an approved protected CI environment. Keep the keystore path and passwords outside the repository, preferably in environment variables or the operating-system/CI secret store. Never print them.
+The repository intentionally does not contain a signing configuration or secret values. A release operator may configure Android signing locally or through an approved protected CI environment. Keep the keystore path and passwords outside the repository, preferably in environment variables or the operating-system/CI secret store. Never print them. Do not put passwords in `gradle.properties`, shell scripts, build logs, command history, issue comments, or uploaded artifacts. Before a release commit, run the repository secret scan and inspect the staged diff for key material and personal test data.
 
 After authorized local configuration is in place, build the release variant:
 
@@ -72,15 +72,15 @@ The unsigned baseline output is:
 android/app/build/outputs/apk/release/app-release-unsigned.apk
 ```
 
-The signed output path depends on the release operator’s approved Gradle signing configuration. Record the exact signed artifact path privately and keep unsigned and signed artifacts clearly separated.
+The signed output path depends on the release operator’s approved Gradle signing configuration. Record the exact signed artifact path privately and keep unsigned and signed artifacts clearly separated. Do not change `applicationId com.aetherlearn.app` for a normal update, and increase `versionCode` monotonically for each distributed update. Test an update from the previous signed build on a dedicated device before distribution; never use a downgrade or a signing-identity change as an ad hoc migration strategy. If a device already contains data that matters, export only approved fictional test data before any uninstall or identity-mismatch experiment.
 
-Verify the signed artifact with Android’s signing tools:
+If signing manually, align the final APK before signing, then sign it, and never modify the APK after signing. Use the build-tools version selected by the release owner. Verify the signed artifact with Android’s signing tools:
 
 ```bash
 apksigner verify --verbose --print-certs /path/to/aetherlearn-release.apk
 ```
 
-Confirm the package name, signer certificate fingerprint, and verification result. Then compute a checksum for the exact file that will be transferred:
+Confirm the package name, signer certificate fingerprint, enabled signature schemes, and verification result. Also inspect the final package/version metadata with an approved SDK tool, for example `apkanalyzer manifest application-id /path/to/aetherlearn-release.apk` and `apkanalyzer manifest version-code /path/to/aetherlearn-release.apk`. Then compute a checksum for the exact file that will be transferred:
 
 ```bash
 sha256sum /path/to/aetherlearn-release.apk
@@ -96,7 +96,7 @@ Pull requests from untrusted contributors must not gain access to signing secret
 
 ## 6. Rotation, compromise, and loss
 
-Plan key rotation before the first public release. Android application updates generally depend on continuity of the recognized signing identity, so do not rotate casually or delete the old key. Confirm the chosen distribution path’s key-upgrade mechanism before changing keys.
+Plan key rotation before the first public release. Android application updates generally depend on continuity of the recognized signing identity, so do not rotate casually or delete the old key. Confirm the chosen distribution path’s key-upgrade mechanism before changing keys. Keep a record of the old and new certificate fingerprints, the first version code using each identity, the migration approval, and the rollback limits. A release operator must also decide how debug/test builds are kept separate from production updates so a tester does not accidentally replace a production installation with a debug-signed package.
 
 If the keystore or password may have been exposed, stop distribution, preserve relevant logs, revoke or rotate according to the distribution provider’s process, assess affected artifacts, and document the incident. If the only copy is lost, do not invent a replacement identity and call it an update; consult the approved distribution and application-identity recovery process first.
 
