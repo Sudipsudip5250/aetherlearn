@@ -30,3 +30,24 @@ Offline PY-05 checkpoint: with the local HTTP server still stopped, direct navig
 ## Final verification
 
 The eleven lessons passed `scripts/validate_content.py`; the deterministic core pack built and its generated manifest verified. `scripts/check_web_content.py` passed, and `cmp` confirmed byte identity for every canonical lesson against both Android assets and web payload copies. Markdown links, secret-pattern checks, five Python unit tests, JavaScript syntax checks, JSON validation, and `git diff --check` passed. Android `assembleDebug`, `testDebugUnitTest`, and `lintDebug` passed with the project’s Java 17 toolchain. No Android device/emulator runtime evidence was claimed.
+
+
+## Content expansion batch 2 browser checkpoint
+
+The first browser reload after copying the twenty-module payload still displayed the prior eleven-module shell because the persistent test browser retained the earlier M6 service-worker/page state. A direct repository check confirmed `web/content/manifest.json` contains twenty IDs and no hard-coded eleven count remains in `web/app.js`; stale present-state text was then corrected in `web/index.html` and `web/README.md`. A fresh cache-busting reload will be used for the final Web smoke check.
+
+
+After clearing the stale browser state and selecting **Cache core content**, the current Web client reported `Cached 20 core lessons in this browser.` and `20 modules · cached core pack`. The Learn view rendered PY-06, PY-07, AL-01 through AL-05, DEV-02, and DEV-03 in canonical order. The browser still contained prior batch-1 learning-state examples, which remained keyed by stable ID and did not block the new content cache.
+
+
+The twenty-module Learn view also rendered the newly authored lesson cards in the browser, including PY-06, PY-07, all five algorithm modules, DEV-02, and DEV-03. Existing batch-1 state remained visible only for the earlier stable IDs; no schema or state migration was required.
+
+
+Direct route smoke test for `py-06-functions-scope-reusable-code` rendered the title, objectives, Termux-is-Android-only notice, prerequisites, availability, explanation, worked example table, offline practice, four quiz inputs, local study tools, accessibility, safety, and source links. The browser console had no output/errors after the new reader loaded.
+
+
+## Batch-2 final verification
+
+The completed batch contains twenty canonical lesson files. `scripts/validate_content.py` passed for all twenty lessons and the generated deterministic core pack; `scripts/check_web_content.py` confirmed twenty Web payload mirrors; and byte comparison confirmed every canonical lesson matches both Android assets and Web payload copies. The full Python test suite passed all six tests, including the twenty-lesson repository assertion, along with Markdown links, secret-pattern, dependency-pin, Android-manifest, Node syntax, JSON, and whitespace checks.
+
+The Android regression matrix passed after synchronization: `assembleDebug`, `assembleRelease`, `testDebugUnitTest`, and `lintDebug` completed successfully with the Java 17 toolchain. A cache-busted Chromium smoke test refreshed the browser pack to twenty lessons, rendered the new lesson cards, opened PY-06 through the shared reader, showed the Android-only Termux boundary, and produced no browser-console errors. No physical-device, emulator, Android-browser, assistive-technology, or final human pedagogical/safety review evidence is claimed.

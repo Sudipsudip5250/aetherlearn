@@ -79,7 +79,7 @@ class ValidateContentTests(unittest.TestCase):
             all_errors.extend(validate_lesson(lesson, content_root, repo_root))
         all_errors.extend(validate_graph(lessons, known_ids))
         self.assertEqual(all_errors, [])
-        self.assertEqual(len(lessons), 11)
+        self.assertEqual(len(lessons), 20)
 
     def test_unknown_prerequisite_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:

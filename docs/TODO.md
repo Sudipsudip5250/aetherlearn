@@ -96,15 +96,18 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Update Android catalog discovery and web manifest/runtime discovery without changing the lesson schema or existing learning-state keys.
 - [x] Add only the narrowly required safe local wrappers for the new `termux-optional` lessons and retain manual fallbacks.
 - [x] Correct stale five-module wording and align `docs/CURRICULUM.md` with the effective `mvp-20` registry.
-- [ ] Next content batch: PY-06, PY-07, and the approved algorithms strand, after this batch receives pedagogical and safety review.
-- [ ] Deferred: DEV-04 and DEV-05 remain outside the validator-backed 20-module registry and are not authored in this slice.
+- [x] Content expansion batch 2: author PY-06, PY-07, AL-01, AL-02, AL-03, AL-04, AL-05, DEV-02, and DEV-03 against the existing lesson contract.
+- [x] Synchronize all twenty canonical Markdown lessons into Android assets and the web payload; preserve exact byte-parity checks.
+- [x] Add only fixed, local-only Termux wrappers for PY-06, PY-07, and DEV-02; retain written fallbacks and learner-confirmed completion.
+- [x] **Checkpoint content expansion batch 2:** all twenty frozen MVP modules now exist and validate in the canonical source tree and both client payloads.
+- [ ] Deferred: post-MVP tracks remain outside the validator-backed 20-module registry and are not authored.
 
 ## M7 — Release hardening
 
 - [ ] Run the Android device matrix, including a low-memory or aggressive-battery device.
 - [x] Implement web accessibility hardening for text scaling/reflow, focus restoration, semantic labels/live regions, touch targets, forced colors, reduced motion, restrictive CSP, and safe external links; manual screen-reader and Android-browser checks remain open.
 - [x] Implement the privacy/network boundary: explicit HTTPS-only pack requests, no cookies or credentials, no learning-data request fields, cleartext denial, no broad external-storage permissions, and no analytics path. Physical network inspection remains open.
-- [ ] Run content and safety review for all 20 modules; only 11 modules are authored so far.
+- [ ] Run final pedagogical and safety review for all 20 authored modules; automated contract and S0/S1 checks pass, but human review remains open.
 - [x] Add dependency/build/release-artifact gates, including Android debug/release build, unit tests, lint, manifest boundary checks, and APK SHA-256 sidecars.
 - [x] Prepare release notes, installation instructions, content-pack recovery instructions, and contributor handoff in `docs/M7_RELEASE_NOTES.md` and `docs/NETWORK_PACKS.md`.
 - [ ] Publish signed release metadata; unsigned release artifacts and checksums are verified, but no authorized signing key or public pack host is configured.

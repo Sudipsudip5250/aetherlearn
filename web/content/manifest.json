@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "pack_id": "core",
-  "pack_version": "1.1.0",
+  "pack_version": "1.2.0",
   "lessons": [
     {
       "id": "dl-01-digital-information",
@@ -54,9 +54,54 @@
       "path": "content/core/py-05-loops-repetition-tracing.md"
     },
     {
+      "id": "py-06-functions-scope-reusable-code",
+      "title": "Functions, scope, and reusable code",
+      "path": "content/core/py-06-functions-scope-reusable-code.md"
+    },
+    {
+      "id": "py-07-lists-dictionaries-strings-data",
+      "title": "Lists, dictionaries, strings, and simple data processing",
+      "path": "content/core/py-07-lists-dictionaries-strings-data.md"
+    },
+    {
+      "id": "al-01-data-structures",
+      "title": "What makes a good data structure?",
+      "path": "content/core/al-01-data-structures.md"
+    },
+    {
+      "id": "al-02-arrays-lists-stacks-queues",
+      "title": "Arrays, lists, stacks, and queues",
+      "path": "content/core/al-02-arrays-lists-stacks-queues.md"
+    },
+    {
+      "id": "al-03-searching-sorting",
+      "title": "Searching and sorting by example",
+      "path": "content/core/al-03-searching-sorting.md"
+    },
+    {
+      "id": "al-04-complexity-growth",
+      "title": "Complexity intuition and growth rates",
+      "path": "content/core/al-04-complexity-growth.md"
+    },
+    {
+      "id": "al-05-recursion-trees-graphs",
+      "title": "Recursion, trees, and graph vocabulary",
+      "path": "content/core/al-05-recursion-trees-graphs.md"
+    },
+    {
       "id": "dev-01-terminal-command-line",
       "title": "The terminal and command-line mental model",
       "path": "content/core/dev-01-terminal-command-line.md"
+    },
+    {
+      "id": "dev-02-git-local-repositories-history",
+      "title": "Git concepts, local repositories, and useful history",
+      "path": "content/core/dev-02-git-local-repositories-history.md"
+    },
+    {
+      "id": "dev-03-debugging-error-messages",
+      "title": "Debugging, error messages, and minimal reproduction",
+      "path": "content/core/dev-03-debugging-error-messages.md"
     }
   ]
 }

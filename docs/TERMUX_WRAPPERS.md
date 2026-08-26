@@ -1,8 +1,8 @@
-# M5–M6 Termux Wrapper Contract
+# M5–M7 Termux Wrapper Contract
 
 ## Scope
 
-This document defines the version 1 Termux pilot contract used by the native Android client. It selects **four** Termux-optional exercises from the eleven-module core pack: PY-02, PY-03, PY-05, and DEV-01. All are S1, local-only, read-only or deterministic, and completable without Termux.
+This document defines the version 1 Termux pilot contract used by the native Android client. It selects **seven** Termux-optional exercises from the twenty-module MVP pack: PY-02, PY-03, PY-05, PY-06, PY-07, DEV-01, and DEV-02. All are S1, local-only, read-only or deterministic, and completable without Termux.
 
 The contract and allowlist are implemented in the Android client. Package detection, setup guidance, confirmation UI, and the guarded native handoff are also implemented. The pilot intentionally does not request a result callback: completion remains learner-confirmed, and runtime device testing remains the final evidence-limited M5 gate.
 
@@ -36,9 +36,12 @@ The contract intentionally has no field for free-form command text, user-entered
 | `py-02-local-expressions` | `py-02-python-setup-expressions-values` | `/data/data/com.termux/files/usr/bin/python` | `-c`, `print(2 * (3 + 4))`, `print("learn" + " " + "locally")` | `/data/data/com.termux/files/home/aetherlearn-practice/py-02` | Prints `14` and `learn locally`; changes no files and uses no network | Complete the in-app tracing exercise and record predicted outputs in notes |
 | `py-03-local-variables-output` | `py-03-variables-types-input-output` | `/data/data/com.termux/files/usr/bin/python` | `-c`, `name = "Learner"`, `minutes = 25`, `print(name)`, `print(minutes)` | `/data/data/com.termux/files/home/aetherlearn-practice/py-03` | Prints `Learner` and `25`; changes no files and uses no network | Complete the variable-tracing exercise and record each predicted output in notes |
 | `py-05-local-loop-trace` | `py-05-loops-repetition-tracing` | `/data/data/com.termux/files/usr/bin/python` | `-c`, `for step in range(1, 4):`, `print(step * 10)` | `/data/data/com.termux/files/home/aetherlearn-practice/py-05` | Prints `10`, `20`, and `30`; changes no files and uses no network | Complete the loop-tracing table and record the predicted output in notes |
+| `py-06-local-functions` | `py-06-functions-scope-reusable-code` | `/data/data/com.termux/files/usr/bin/python` | `-c`, `def add_bonus(value):`, `return value + 2`, `print(add_bonus(5))` | `/data/data/com.termux/files/home/aetherlearn-practice/py-06` | Prints `7`; changes no files and uses no network | Trace the fixed function by hand and record the returned value in notes |
+| `py-07-local-data-summary` | `py-07-lists-dictionaries-strings-data` | `/data/data/com.termux/files/usr/bin/python` | `-c`, fixed `PY`/`AL` labels and dictionary count | `/data/data/com.termux/files/home/aetherlearn-practice/py-07` | Prints counts for fictional labels; changes no files and uses no network | Complete the data-summary table and calculate final counts in notes |
+| `dev-02-local-git-version` | `dev-02-git-local-repositories-history` | `/data/data/com.termux/files/usr/bin/git` | `--version` | `/data/data/com.termux/files/home/aetherlearn-practice/dev-02` | Prints the installed Git version; changes no files and uses no network | Complete the paper repository-state exercise |
 | `dev-01-safe-navigation` | `dev-01-terminal-command-line` | `/data/data/com.termux/files/usr/bin/ls` | `-la` | `/data/data/com.termux/files/home/aetherlearn-practice/dev-01` | Reads a dedicated local practice directory; changes no files and uses no network | Use the in-app fictional directory-tree simulator and predict `pwd`, `ls`, and `cd notes` results |
 
-The Python wrappers use fixed `-c` argument arrays and do not accept Python code from the learner. The developer wrapper is deliberately limited to a read-only directory listing. None of the wrappers installs packages, accesses shared storage, runs shell built-ins through `sh -c`, uses `find`, reads arbitrary paths, or invokes a network tool.
+The Python wrappers use fixed `-c` argument arrays and do not accept Python code from the learner. The Git wrapper is limited to the read-only version query, and the developer navigation wrapper is limited to a read-only directory listing. None of the wrappers installs packages, accesses shared storage, runs shell built-ins through `sh -c`, uses `find`, reads arbitrary paths, or invokes a network tool.
 
 ## User-visible confirmation requirements
 

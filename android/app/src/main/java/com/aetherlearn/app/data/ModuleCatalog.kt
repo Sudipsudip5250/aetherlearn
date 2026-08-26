@@ -50,7 +50,16 @@ class ModuleCatalog(
             "py-03-variables-types-input-output.md",
             "py-04-conditions-boolean-logic.md",
             "py-05-loops-repetition-tracing.md",
+            "py-06-functions-scope-reusable-code.md",
+            "py-07-lists-dictionaries-strings-data.md",
+            "al-01-data-structures.md",
+            "al-02-arrays-lists-stacks-queues.md",
+            "al-03-searching-sorting.md",
+            "al-04-complexity-growth.md",
+            "al-05-recursion-trees-graphs.md",
             "dev-01-terminal-command-line.md",
+            "dev-02-git-local-repositories-history.md",
+            "dev-03-debugging-error-messages.md",
         )
     }
 }

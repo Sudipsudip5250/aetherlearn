@@ -6,7 +6,7 @@ The MVP contains **four strands and 20 modules**. It is designed to take a motiv
 
 The order is recommended rather than compulsory. Prerequisites are explicit, and the learner can choose a diagnostic starting point. Every module is available as offline text and lightweight assets. Only selected practical modules offer an optional Termux exercise.
 
-The current content batch adds DL-02, DL-03, DL-04, PY-03, PY-04, and PY-05. The canonical registry remains the authority for the frozen MVP scope and now contains eleven authored modules. Device/emulator runtime evidence remains a separate open release gate.
+Content expansion batch 1 added DL-02, DL-03, DL-04, PY-03, PY-04, and PY-05. Content expansion batch 2 added PY-06, PY-07, AL-01 through AL-05, DEV-02, and DEV-03. The canonical registry remains the authority for the frozen MVP scope, and all twenty approved modules are now authored and synchronized to both clients. Device/emulator runtime evidence and final pedagogical/safety review remain separate open release gates.
 
 ## Availability labels
 
