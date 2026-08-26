@@ -1,0 +1,43 @@
+schema_version: 1
+curriculum_id: mvp-20
+modules:
+  - id: dl-01-digital-information
+    title: How digital devices represent information
+  - id: dl-02-files-folders-storage-backups
+    title: Files, folders, storage, and backups
+  - id: dl-03-android-settings-permissions-apps
+    title: Android phone settings, permissions, and apps
+  - id: dl-04-internet-browsers-urls-search
+    title: Internet basics, browsers, URLs, and search
+  - id: dl-05-privacy-passwords-phishing
+    title: Privacy, passwords, phishing awareness, and safe updates
+  - id: py-01-problems-algorithms-instructions
+    title: Problems, algorithms, and precise instructions
+  - id: py-02-python-setup-expressions-values
+    title: Python setup, expressions, and values
+  - id: py-03-variables-types-input-output
+    title: Variables, types, input, and output
+  - id: py-04-conditions-boolean-logic
+    title: Conditions and Boolean logic
+  - id: py-05-loops-repetition-tracing
+    title: Loops, repetition, and tracing
+  - id: py-06-functions-scope-reusable-code
+    title: Functions, scope, and reusable code
+  - id: py-07-lists-dictionaries-strings-data
+    title: Lists, dictionaries, strings, and simple data processing
+  - id: al-01-data-structures
+    title: What makes a good data structure?
+  - id: al-02-arrays-lists-stacks-queues
+    title: Arrays, lists, stacks, and queues
+  - id: al-03-searching-sorting
+    title: Searching and sorting by example
+  - id: al-04-complexity-growth
+    title: Complexity intuition and growth rates
+  - id: al-05-recursion-trees-graphs
+    title: Recursion, trees, and graph vocabulary
+  - id: dev-01-terminal-command-line
+    title: The terminal and command-line mental model
+  - id: dev-02-git-local-repositories-history
+    title: Git concepts, local repositories, and useful history
+  - id: dev-03-debugging-error-messages
+    title: Debugging, error messages, and minimal reproduction

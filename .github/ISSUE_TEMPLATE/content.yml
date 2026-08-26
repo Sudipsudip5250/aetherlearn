@@ -1,0 +1,35 @@
+name: Content issue
+description: Report a content error, missing prerequisite, broken example, or outdated lesson.
+title: "[Content] "
+labels:
+  - content
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please avoid personal data, credentials, exploit material, or third-party targets.
+  - type: input
+    id: module
+    attributes:
+      label: Module ID
+      placeholder: "e.g. PY-02"
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: What is wrong or missing?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence or suggested correction
+      description: Include a source link when the issue is factual or version-sensitive.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment or version
+      placeholder: "e.g. offline core pack, Android 14"

@@ -1,0 +1,41 @@
+name: Quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install development dependencies
+        run: python -m pip install --requirement requirements-dev.txt
+
+      - name: Check local Markdown links
+        run: python scripts/check_markdown_links.py
+
+      - name: Check common secret patterns
+        run: python scripts/check_secrets.py
+
+      - name: Validate content and build deterministic pack
+        run: python scripts/build_pack.py --content-dir content/core --output-dir build/core-pack
+
+      - name: Run validator against generated manifest
+        run: python scripts/validate_content.py --content-dir content/core --manifest build/core-pack/manifest.json
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v

@@ -8,23 +8,23 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 
 ## M0 — Repository and governance
 
-- [ ] Create the repository with the selected open-source license; default to MIT unless the maintainers choose Apache-2.0.
-- [ ] Add `VISION.md`, `PRODUCT_SPEC.md`, `ARCHITECTURE.md`, `CURRICULUM.md`, `SAFETY.md`, `PLAN.md`, and this file.
-- [ ] Add contribution, code-of-conduct, security-reporting, and content-review instructions.
-- [ ] Add issue and pull-request templates for code, content, accessibility, and safety review.
-- [ ] Add CI checks for Markdown, YAML frontmatter, links, stable IDs, and secret scanning.
-- [ ] **Checkpoint M0:** A new contributor can understand the project, build the documentation checks, and submit a safe sample contribution.
+- [x] Create the repository with the selected open-source license; MIT is now committed in `LICENSE`.
+- [x] Add the planning documents under `docs/` and keep the repository root focused on project entry points and governance.
+- [x] Add `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, and content-review instructions.
+- [x] Add issue templates for code, content, accessibility, and safety plus a pull-request template.
+- [x] Add GitHub Actions checks for local Markdown links, secret patterns, content frontmatter, stable IDs, prerequisites, sizes, checksums, deterministic pack builds, and unit tests.
+- [x] **Checkpoint M0:** A new contributor can understand the project, run the repository checks, and submit a safe sample contribution.
 
 ## M1 — Content contract and sample pack
 
-- [ ] Define the lesson frontmatter schema and required body sections.
-- [ ] Define stable module-ID, prerequisite, availability-label, risk-tier, and asset-size rules.
-- [ ] Implement the content validator and deterministic pack builder.
-- [ ] Implement manifest versioning, per-file checksums, total-size reporting, and pack compatibility fields.
-- [ ] Author five representative modules: DL-01, DL-05, PY-01, PY-02, and DEV-01.
-- [ ] Add quiz schemas with explanations for every answer.
-- [ ] Add a content QA checklist and review-status workflow.
-- [ ] **Checkpoint M1:** The sample pack builds reproducibly, validates cleanly, and rejects duplicate IDs, broken prerequisites, malformed frontmatter, broken links, oversize assets, and missing safety metadata.
+- [x] Define the lesson frontmatter schema and required body sections in `content/README.md`.
+- [x] Define stable module IDs, the canonical 20-module registry, prerequisites, availability labels, risk tiers, and asset-size rules.
+- [x] Implement `scripts/validate_content.py` and `scripts/build_pack.py`.
+- [x] Implement deterministic manifest versioning, per-file SHA-256 checksums, total-size reporting, and pack metadata.
+- [x] Author five representative modules: DL-01, DL-05, PY-01, PY-02, and DEV-01.
+- [x] Add knowledge-check content with explanations for every answer in the five sample modules.
+- [x] Add content QA and review-status rules to `content/README.md` and `CONTRIBUTING.md`.
+- [x] **Checkpoint M1:** The five-module sample pack builds deterministically, validates cleanly, and has unit coverage for unknown prerequisites, cycles, broken links, tampered manifests, and the valid pack path.
 
 ## M2 — Android shell
 

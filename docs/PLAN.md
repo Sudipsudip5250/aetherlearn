@@ -21,6 +21,10 @@ The project is delivered in vertical slices. Each milestone must produce somethi
 | M6: Web/PWA fallback | Static web reader and practice client with shared content pack and offline cache | Core lessons and at least one practice flow work in a supported desktop and Android browser after caching; no user learning data is sent to a server |
 | M7: Release hardening | Device matrix, accessibility review, security review, content review, release notes, and reproducible build notes | All P0/P1 defects are closed or documented; release checklist passes; known limitations and recovery steps are public |
 
+## Current status — 2026-08-24
+
+M0 is complete. The repository has a root governance surface, documentation under `docs/`, references under `docs/references/`, an MIT license, contribution and security policies, community templates, and a GitHub Actions quality workflow. M1 is complete for the initial slice: the canonical 20-module registry, lesson contract, validator, deterministic pack builder, five representative lessons, and focused unit tests are present. M2 remains the next implementation milestone and is intentionally not started in this task.
+
 ## Suggested sequencing
 
 M0 and M1 establish governance and content contracts before application work. M2 and M3 build the smallest useful product. M4 adds portability and safe updates. M5 proves the differentiator without allowing Termux to become a dependency. M6 provides secondary web access. M7 is a release gate, not an optional cleanup phase.
@@ -63,6 +67,8 @@ The first implementation slice should create the repository, license, content sc
 | D-006 | 2026-08-24 | No general-purpose in-app Python runtime in MVP | Reduces code-execution risk and device resource demands | A separate sandbox threat model and implementation pass review |
 | D-007 | 2026-08-24 | Termux exercises use allowlisted wrappers and explicit confirmation | Prevents the learning app from becoming an arbitrary command launcher | A future signed plugin model passes security review |
 | D-008 | 2026-08-24 | Encrypted portable backup is post-MVP | Device-bound key storage alone does not solve cross-device recovery | Key ownership, recovery, password handling, and export tests are specified |
+| D-009 | 2026-08-24 | Keep governance documents in `docs/`, implementation under `content/` and `scripts/`, and repository entry points in the root | Separates stable project guidance from executable/content assets and keeps future app code discoverable | A future app scaffold requires a revised top-level layout |
+| D-010 | 2026-08-24 | Validate prerequisites against a canonical 20-module registry, even when only five modules are authored | The sample pack must remain small without treating approved curriculum prerequisites as invalid | Curriculum scope or stable IDs change through an approved decision record |
 
 ## Decision ownership
 
