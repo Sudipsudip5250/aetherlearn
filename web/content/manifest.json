@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "pack_id": "core",
+  "pack_version": "1.0.0",
+  "lessons": [
+    {
+      "id": "dl-01-digital-information",
+      "title": "How digital devices represent information",
+      "path": "content/core/dl-01-digital-information.md"
+    },
+    {
+      "id": "dl-05-privacy-passwords-phishing",
+      "title": "Privacy, passwords, phishing awareness, and safe updates",
+      "path": "content/core/dl-05-privacy-passwords-phishing.md"
+    },
+    {
+      "id": "py-01-problems-algorithms-instructions",
+      "title": "Problems, algorithms, and precise instructions",
+      "path": "content/core/py-01-problems-algorithms-instructions.md"
+    },
+    {
+      "id": "py-02-python-setup-expressions-values",
+      "title": "Python setup, expressions, and values",
+      "path": "content/core/py-02-python-setup-expressions-values.md"
+    },
+    {
+      "id": "dev-01-terminal-command-line",
+      "title": "The terminal and command-line mental model",
+      "path": "content/core/dev-01-terminal-command-line.md"
+    }
+  ]
+}

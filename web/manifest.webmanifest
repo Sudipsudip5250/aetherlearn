@@ -1,0 +1,10 @@
+{
+  "name": "AetherLearn — Offline learning",
+  "short_name": "AetherLearn",
+  "description": "A private, focused web reader for the five AetherLearn core modules.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fbfcff",
+  "theme_color": "#0c1021",
+  "icons": []
+}

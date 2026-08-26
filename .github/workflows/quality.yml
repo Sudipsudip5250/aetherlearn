@@ -28,6 +28,9 @@ jobs:
       - name: Check local Markdown links
         run: python scripts/check_markdown_links.py
 
+      - name: Check web payload mirrors canonical lessons
+        run: python scripts/check_web_content.py
+
       - name: Check common secret patterns
         run: python scripts/check_secrets.py
 

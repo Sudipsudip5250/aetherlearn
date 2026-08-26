@@ -77,10 +77,13 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 
 ## M6 — Web/PWA fallback
 
-- [ ] Build a static web reader using the same content-pack contract.
+- [x] Build the initial static web shell under `web/` with responsive, keyboard-accessible HTML/CSS/JavaScript.
+- [x] Reuse the five canonical Markdown lessons through `web/content/manifest.json` and the shared frontmatter/section parser; `scripts/check_web_content.py` prevents payload drift.
+- [x] Add the initial lesson list and full reader route with objectives, metadata, sections, safe inline Markdown rendering, and external-link handling.
+- [x] Add a clear privacy note and message that full native Termux integration is Android-only in the MVP.
 - [ ] Add service-worker caching for the app shell and explicit IndexedDB storage for cached content packs.
-- [ ] Implement offline lesson reading, one practice flow, and local-only state in the browser.
-- [ ] Add a clear message that full native Termux integration is Android-only in the MVP.
+- [ ] Implement offline lesson reading, one practice flow, and local-only progress/notes/bookmarks in the browser.
+- [ ] Implement simple local search over the five modules.
 - [ ] Test cached use in a desktop browser and Android browser with the network disabled.
 - [ ] **Checkpoint M6:** Core reading and practice remain usable offline after the user has cached the content pack.
 
