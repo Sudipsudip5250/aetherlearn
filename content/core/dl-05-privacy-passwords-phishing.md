@@ -34,7 +34,7 @@ By the end of this lesson, you can identify suspicious requests for secrets or u
 
 ## Prerequisites
 
-Complete DL-03 and DL-04, or understand basic apps, permissions, browsers, and links. These prerequisite modules are part of the approved 20-module curriculum and are not included in this five-module sample pack.
+Complete DL-03 and DL-04, or understand basic apps, permissions, browsers, and links.
 
 ## Availability
 

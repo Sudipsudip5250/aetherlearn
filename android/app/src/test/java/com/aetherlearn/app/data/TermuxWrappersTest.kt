@@ -7,9 +7,9 @@ import kotlin.test.assertTrue
 
 class TermuxWrappersTest {
     @Test
-    fun registryContainsOnlyTheTwoSelectedLocalExercises() {
+    fun registryContainsOnlyTheFourSelectedLocalExercises() {
         assertEquals(
-            setOf("py-02-local-expressions", "dev-01-safe-navigation"),
+            setOf("py-02-local-expressions", "py-03-local-variables-output", "py-05-local-loop-trace", "dev-01-safe-navigation"),
             TermuxWrapperRegistry.wrappers.map { it.wrapperId }.toSet(),
         )
         assertTrue(TermuxWrapperRegistry.validateRegistry().isEmpty())

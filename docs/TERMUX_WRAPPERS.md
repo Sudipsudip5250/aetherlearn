@@ -1,8 +1,8 @@
-# M5 Termux Wrapper Contract
+# M5–M6 Termux Wrapper Contract
 
 ## Scope
 
-This document defines the first M5 pilot contract. It selects **two** Termux-optional exercises from the existing five-module pack: one from `PY-02` and one from `DEV-01`. Both are S1, local-only, read-only or deterministic, and completable without Termux.
+This document defines the version 1 Termux pilot contract used by the native Android client. It selects **four** Termux-optional exercises from the eleven-module core pack: PY-02, PY-03, PY-05, and DEV-01. All are S1, local-only, read-only or deterministic, and completable without Termux.
 
 The contract and allowlist are implemented in the Android client. Package detection, setup guidance, confirmation UI, and the guarded native handoff are also implemented. The pilot intentionally does not request a result callback: completion remains learner-confirmed, and runtime device testing remains the final evidence-limited M5 gate.
 
@@ -23,7 +23,7 @@ TermuxWrapperContract {
   expected_effects: user-visible read-only or deterministic effects
   fallback: offline alternative that completes the learning objective
   completion_mode: learner-confirmed | validated-local-result
-  network_required: false for every M5 pilot wrapper
+  network_required: false for every wrapper
 }
 ```
 
@@ -34,9 +34,11 @@ The contract intentionally has no field for free-form command text, user-entered
 | Wrapper ID | Lesson | Fixed executable | Fixed arguments | Working directory | Effects | Offline fallback |
 |---|---|---|---|---|---|---|
 | `py-02-local-expressions` | `py-02-python-setup-expressions-values` | `/data/data/com.termux/files/usr/bin/python` | `-c`, `print(2 * (3 + 4))`, `print("learn" + " " + "locally")` | `/data/data/com.termux/files/home/aetherlearn-practice/py-02` | Prints `14` and `learn locally`; changes no files and uses no network | Complete the in-app tracing exercise and record predicted outputs in notes |
+| `py-03-local-variables-output` | `py-03-variables-types-input-output` | `/data/data/com.termux/files/usr/bin/python` | `-c`, `name = "Learner"`, `minutes = 25`, `print(name)`, `print(minutes)` | `/data/data/com.termux/files/home/aetherlearn-practice/py-03` | Prints `Learner` and `25`; changes no files and uses no network | Complete the variable-tracing exercise and record each predicted output in notes |
+| `py-05-local-loop-trace` | `py-05-loops-repetition-tracing` | `/data/data/com.termux/files/usr/bin/python` | `-c`, `for step in range(1, 4):`, `print(step * 10)` | `/data/data/com.termux/files/home/aetherlearn-practice/py-05` | Prints `10`, `20`, and `30`; changes no files and uses no network | Complete the loop-tracing table and record the predicted output in notes |
 | `dev-01-safe-navigation` | `dev-01-terminal-command-line` | `/data/data/com.termux/files/usr/bin/ls` | `-la` | `/data/data/com.termux/files/home/aetherlearn-practice/dev-01` | Reads a dedicated local practice directory; changes no files and uses no network | Use the in-app fictional directory-tree simulator and predict `pwd`, `ls`, and `cd notes` results |
 
-The Python wrapper uses a fixed `-c` argument array and does not accept Python code from the learner. The developer wrapper is deliberately limited to a read-only directory listing. It does not install packages, access shared storage, run shell built-ins through `sh -c`, use `find`, read arbitrary paths, or invoke a network tool.
+The Python wrappers use fixed `-c` argument arrays and do not accept Python code from the learner. The developer wrapper is deliberately limited to a read-only directory listing. None of the wrappers installs packages, accesses shared storage, runs shell built-ins through `sh -c`, uses `find`, reads arbitrary paths, or invokes a network tool.
 
 ## User-visible confirmation requirements
 

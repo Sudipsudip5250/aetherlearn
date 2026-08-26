@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify that the static web payload mirrors the canonical five-module source."""
+"""Verify that the static web payload mirrors the canonical lesson source."""
 
 from __future__ import annotations
 
@@ -12,9 +12,6 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT / "content" / "core"
 WEB_DIR = ROOT / "web"
 MANIFEST_PATH = WEB_DIR / "content" / "manifest.json"
-EXPECTED_COUNT = 5
-
-
 def frontmatter(path: Path) -> dict[str, str]:
     text = path.read_text(encoding="utf-8")
     match = re.match(r"^---\s*\n([\s\S]*?)\n---\s*\n", text)
@@ -40,10 +37,9 @@ def main() -> int:
     if manifest.get("schema_version") != 1 or not isinstance(entries, list):
         print("Web manifest must use schema_version 1 with a lessons list", file=sys.stderr)
         return 1
-    if len(entries) != EXPECTED_COUNT:
-        errors.append(f"expected {EXPECTED_COUNT} web lessons, found {len(entries)}")
-
     source_files = {path.name: path for path in SOURCE_DIR.glob("*.md")}
+    if len(entries) != len(source_files):
+        errors.append(f"expected {len(source_files)} web lessons, found {len(entries)}")
     manifest_files: set[str] = set()
     for entry in entries:
         path_value = entry.get("path", "")

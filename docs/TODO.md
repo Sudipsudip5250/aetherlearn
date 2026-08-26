@@ -39,13 +39,13 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 
 ## M3 — Offline learning loop
 
-- [x] Load and parse the five bundled core lesson assets offline.
+- [x] Load and parse the eleven bundled core lesson assets offline.
 - [x] Render title, objectives, prerequisites, availability, explanation, worked example, common mistakes, offline practice, knowledge check, project, accessibility, safety, further reading, and change log sections.
 - [x] Implement versioned SQLite tables for module progress, quiz attempts, notes, and bookmarks without breaking M2 metadata.
 - [x] Implement not-started, in-progress, and completed states with Learn and Progress indicators.
 - [x] Implement knowledge checks with answer feedback, explanations, retry behavior, attempt counts, and best scores.
 - [x] Implement private local notes and lesson bookmarks, surfaced in Progress.
-- [x] Implement offline title/body search over all five lessons.
+- [x] Implement offline title/body search over all eleven lessons.
 - [x] Implement a simple offline Practice tab listing each lesson’s exercise.
 - [ ] **Checkpoint M3:** Device/emulator smoke testing must confirm the complete offline journey, persistence after restart, and accessibility behavior; static build, test, lint, and repository checks pass.
 
@@ -56,7 +56,7 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Implement a local, pre-bundled optional-pack listing and install/delete lifecycle.
 - [x] Validate optional-pack checksum, schema version, manifest ID, version, and name before activation.
 - [x] Implement staging, atomic activation, and last-known-good rollback for local optional packs.
-- [x] Protect the core five-module pack and preserve learning data when an optional pack is deleted.
+- [x] Protect the core eleven-module pack and preserve learning data when an optional pack is deleted.
 - [x] Add Settings storage accounting and core/optional-pack status UI.
 - [ ] Implement real network download, pause, resume, and re-download flows; deferred by M4 scope.
 - [ ] **Checkpoint M4:** Device/emulator smoke testing must confirm file-picker export, restart persistence, optional-pack install/delete, rollback behavior, and core-content protection; static build, test, lint, and repository checks pass.
@@ -64,7 +64,7 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 ## M5 — Termux pilot
 
 - [x] Define the versioned exercise-wrapper contract and strict allowlist in [`TERMUX_WRAPPERS.md`](TERMUX_WRAPPERS.md) and `TermuxWrappers.kt`.
-- [x] Select two benign local exercises: `py-02-local-expressions` from PY-02 and `dev-01-safe-navigation` from DEV-01. A third exercise is intentionally deferred.
+- [x] Select four benign local exercises: `py-02-local-expressions`, `py-03-local-variables-output`, `py-05-local-loop-trace`, and `dev-01-safe-navigation`. All are fixed, local-only, learner-confirmed exercises with in-app fallbacks.
 - [x] Implement Termux package detection and clear setup guidance without automatic permission changes.
 - [x] Implement explicit confirmation showing wrapper ID, path, arguments, working directory, prerequisites, expected effects, and fallback.
 - [x] Implement the native RUN_COMMAND handoff with only fixed, validated arguments and no arbitrary shell text.
@@ -78,15 +78,25 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 ## M6 — Web/PWA fallback
 
 - [x] Build the initial static web shell under `web/` with responsive, keyboard-accessible HTML/CSS/JavaScript.
-- [x] Reuse the five canonical Markdown lessons through `web/content/manifest.json` and the shared frontmatter/section parser; `scripts/check_web_content.py` prevents payload drift.
+- [x] Reuse the eleven canonical Markdown lessons through `web/content/manifest.json` and the shared frontmatter/section parser; `scripts/check_web_content.py` prevents payload drift.
 - [x] Add the initial lesson list and full reader route with objectives, metadata, sections, safe inline Markdown rendering, and external-link handling.
 - [x] Add a clear privacy note and message that full native Termux integration is Android-only in the MVP.
 - [x] Add service-worker caching for the app shell and explicit IndexedDB storage for cached content packs; updates stage before activating the new pack.
 - [x] Implement offline lesson reading, one practice flow, and local-only progress/notes/bookmarks in the browser.
-- [x] Implement simple local search over the five modules.
+- [x] Implement simple local search over the eleven modules.
 - [x] Test cached use in a Chromium desktop browser with the local server stopped: catalog, reader, practice, search, progress, quiz, note, bookmark, completion, and reload persistence all worked offline.
 - [ ] Repeat the cached offline smoke test in an Android browser; no Android browser or device is attached to this environment.
 - [x] **Checkpoint M6:** After explicitly caching the core pack, core reading and practice remained usable offline in the verified desktop browser; the Android-browser runtime evidence gate remains open.
+
+## Content expansion — batch 1
+
+- [x] Author and validate DL-02, DL-03, DL-04, PY-03, PY-04, and PY-05 against the existing lesson contract.
+- [x] Synchronize all eleven canonical Markdown lessons into Android assets and the web payload; preserve byte-parity checks.
+- [x] Update Android catalog discovery and web manifest/runtime discovery without changing the lesson schema or existing learning-state keys.
+- [x] Add only the narrowly required safe local wrappers for the new `termux-optional` lessons and retain manual fallbacks.
+- [x] Correct stale five-module wording and align `docs/CURRICULUM.md` with the effective `mvp-20` registry.
+- [ ] Next content batch: PY-06, PY-07, and the approved algorithms strand, after this batch receives pedagogical and safety review.
+- [ ] Deferred: DEV-04 and DEV-05 remain outside the validator-backed 20-module registry and are not authored in this slice.
 
 ## M7 — Release hardening
 

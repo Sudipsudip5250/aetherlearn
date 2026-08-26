@@ -1,6 +1,6 @@
 # AetherLearn Android shell
 
-This directory contains the native Android client for AetherLearn. It uses Kotlin, Jetpack Compose, Material 3, and an app-private SQLite storage boundary. The app has four bottom destinations—Learn, Practice, Search, and Progress—plus Settings. It reads the five validated lessons from local assets, supports offline learning state, exports, local optional-pack management, and a safe optional Termux pilot.
+This directory contains the native Android client for AetherLearn. It uses Kotlin, Jetpack Compose, Material 3, and an app-private SQLite storage boundary. The app has four bottom destinations—Learn, Practice, Search, and Progress—plus Settings. It reads the eleven validated lessons from local assets, supports offline learning state, exports, local optional-pack management, and a safe optional Termux pilot.
 
 ## Requirements
 
@@ -34,4 +34,4 @@ python3 scripts/validate_content.py --content-dir content/core --manifest build/
 python3 -m unittest discover -s tests -v
 ```
 
-M5 currently includes the contract, allowlist, package detection, explicit confirmation, fixed-argument `RUN_COMMAND` handoff, learner-confirmed completion, and in-app fallback for two local-only S1 exercises. It does not install packages, change Termux settings, use shared storage, accept arbitrary commands, receive terminal output as completion proof, or contact a network target. The remaining device/emulator checks are documented in `docs/TODO.md`; the product and safety boundaries are defined in [`../docs/PRODUCT_SPEC.md`](../docs/PRODUCT_SPEC.md), [`../docs/SAFETY.md`](../docs/SAFETY.md), and [`../docs/TERMUX_WRAPPERS.md`](../docs/TERMUX_WRAPPERS.md).
+M5 currently includes the contract, allowlist, package detection, explicit confirmation, fixed-argument `RUN_COMMAND` handoff, learner-confirmed completion, and in-app fallback for four local-only S1 exercises. It does not install packages, change Termux settings, use shared storage, accept arbitrary commands, receive terminal output as completion proof, or contact a network target. The remaining device/emulator checks are documented in `docs/TODO.md`; the product and safety boundaries are defined in [`../docs/PRODUCT_SPEC.md`](../docs/PRODUCT_SPEC.md), [`../docs/SAFETY.md`](../docs/SAFETY.md), and [`../docs/TERMUX_WRAPPERS.md`](../docs/TERMUX_WRAPPERS.md).

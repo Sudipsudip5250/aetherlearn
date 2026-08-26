@@ -83,7 +83,7 @@ async function fetchNetworkPack() {
   const manifestResponse = await fetch(CONTENT_MANIFEST, { cache: "no-store" });
   if (!manifestResponse.ok) throw new Error(`Could not load content manifest (${manifestResponse.status}).`);
   const manifest = await manifestResponse.json();
-  if (manifest.schema_version !== 1 || !Array.isArray(manifest.lessons) || manifest.lessons.length !== 5) throw new Error("Unsupported or incomplete core content manifest.");
+  if (manifest.schema_version !== 1 || !Array.isArray(manifest.lessons) || manifest.lessons.length === 0) throw new Error("Unsupported or empty core content manifest.");
   const lessons = await Promise.all(manifest.lessons.map(async (entry) => {
     const response = await fetch(`./${entry.path}`, { cache: "no-store" });
     if (!response.ok) throw new Error(`Could not load ${entry.path} (${response.status}).`);
@@ -239,7 +239,7 @@ function renderSearchResults(query = "") {
   const normalized = normalizeText(query);
   const matches = normalized ? state.lessons.filter((lesson) => lesson.searchText.includes(normalized)) : [];
   $("#search-count").textContent = normalized ? `${matches.length} match${matches.length === 1 ? "" : "es"}` : "";
-  $("#search-results").innerHTML = normalized ? (matches.length ? matches.map((lesson) => `<article class="search-result"><span class="lesson-index">${escapeHtml(lesson.strand)}</span><h3>${escapeHtml(lesson.title)}</h3><p>${escapeHtml(preview(lesson))}</p><button class="open-card" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Read lesson →</button></article>`).join("") : `<div class="loading-card">No lessons match “${escapeHtml(query)}”.</div>`) : `<div class="loading-card">Search the five cached lesson titles and bodies.</div>`;
+  $("#search-results").innerHTML = normalized ? (matches.length ? matches.map((lesson) => `<article class="search-result"><span class="lesson-index">${escapeHtml(lesson.strand)}</span><h3>${escapeHtml(lesson.title)}</h3><p>${escapeHtml(preview(lesson))}</p><button class="open-card" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Read lesson →</button></article>`).join("") : `<div class="loading-card">No lessons match “${escapeHtml(query)}”.</div>`) : `<div class="loading-card">Search the cached lesson titles and bodies.</div>`;
   document.querySelectorAll("#search-results [data-open-lesson]").forEach((button) => button.addEventListener("click", () => { window.location.hash = `#/lesson/${button.dataset.openLesson}`; }));
 }
 

@@ -36,7 +36,7 @@ By the end of this lesson, you can describe the main parts of a command-line ses
 
 ## Prerequisites
 
-Complete DL-02 and PY-02. The PY-02 sample lesson is included in this pack; DL-02 is part of the approved curriculum but is not included in this five-module sample pack. Termux is optional.
+Complete DL-02 and PY-02. Termux is optional.
 
 ## Availability
 

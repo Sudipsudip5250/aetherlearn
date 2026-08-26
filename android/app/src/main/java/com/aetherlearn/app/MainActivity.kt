@@ -276,7 +276,7 @@ private fun LearnScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Read the five-module core pack, practice at your pace, and keep learning data on this device.",
+                text = "Read the eleven-module core pack, practice at your pace, and keep learning data on this device.",
                 style = MaterialTheme.typography.bodyLarge,
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -568,7 +568,7 @@ private fun PracticeScreen(
         item {
             Text("Practice", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Offline exercises from the five core lessons. Interactive code runners are intentionally deferred.")
+            Text("Offline exercises from the eleven core lessons. Interactive code runners are intentionally deferred.")
         }
         lessons.forEach { lesson ->
             item(key = "${lesson.id}-practice") {
@@ -612,7 +612,7 @@ private fun SearchScreen(
                 value = query,
                 onValueChange = { query = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Search five module titles and lesson text") },
+                label = { Text("Search module titles and lesson text") },
                 singleLine = true,
             )
             Spacer(modifier = Modifier.height(8.dp))

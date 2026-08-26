@@ -67,7 +67,7 @@ def lesson_text(module_id="dl-01-example", prerequisites=None, body_override=Non
 
 
 class ValidateContentTests(unittest.TestCase):
-    def test_repository_sample_pack_is_valid(self):
+    def test_repository_core_pack_is_valid(self):
         repo_root = Path(__file__).resolve().parents[1]
         content_root = repo_root / "content" / "core"
         known_ids, registry_errors = load_curriculum_registry(repo_root)
@@ -79,7 +79,7 @@ class ValidateContentTests(unittest.TestCase):
             all_errors.extend(validate_lesson(lesson, content_root, repo_root))
         all_errors.extend(validate_graph(lessons, known_ids))
         self.assertEqual(all_errors, [])
-        self.assertEqual(len(lessons), 5)
+        self.assertEqual(len(lessons), 11)
 
     def test_unknown_prerequisite_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:

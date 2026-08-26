@@ -6,6 +6,8 @@ The MVP contains **four strands and 20 modules**. It is designed to take a motiv
 
 The order is recommended rather than compulsory. Prerequisites are explicit, and the learner can choose a diagnostic starting point. Every module is available as offline text and lightweight assets. Only selected practical modules offer an optional Termux exercise.
 
+The current content batch adds DL-02, DL-03, DL-04, PY-03, PY-04, and PY-05. The canonical registry remains the authority for the frozen MVP scope and now contains eleven authored modules. Device/emulator runtime evidence remains a separate open release gate.
+
 ## Availability labels
 
 | Label | Meaning |
@@ -60,10 +62,8 @@ This strand focuses on intuition, tracing, visual explanations, and small proble
 | DEV-01 | The terminal and command-line mental model | DL-02, PY-02 | 55 min | `termux-optional` |
 | DEV-02 | Git concepts, local repositories, and useful history | DEV-01 | 70 min | `termux-optional` |
 | DEV-03 | Debugging, error messages, and minimal reproduction | PY-06 | 65 min | `offline` |
-| DEV-04 | How web pages work: HTML, CSS, JavaScript, and HTTP | DL-04, PY-03 | 75 min | `offline` |
-| DEV-05 | Small project: publish a local learning page | DEV-02, DEV-04 | 120 min | `termux-optional` |
 
-The final project is completed locally. A network publication step is optional and is not required for assessment. The learner can export the finished project as a local archive or share it through Android’s file-sharing flow.
+The effective MVP registry currently ends this strand at DEV-03. The earlier DEV-04 web-page module and DEV-05 local-publishing project are deferred from the frozen 20-module scope until a future curriculum decision. Any future addition must first update `content/curriculum.yml`, the validator-backed registry, and the clients together.
 
 ## MVP assessment model
 
@@ -91,7 +91,7 @@ objectives:
   - Explain what a variable name refers to in a simple program.
   - Predict the output of a short example involving values and types.
 review_status: draft
-last_reviewed: 2026-08-24
+last_reviewed: 2026-08-25
 ```
 
 The body must contain: a plain-language introduction; objectives; prerequisites; concept explanation; worked examples; common mistakes; an offline exercise; an assessment; a project or application; accessibility notes; safety or legal notes when relevant; further reading; source references; and a change log. Code examples must state the intended runtime and version assumptions. Every Termux exercise must include package prerequisites, exact user-visible commands, expected output shape, cleanup steps, and a manual fallback.

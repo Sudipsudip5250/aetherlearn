@@ -99,7 +99,7 @@ class PackManager(
     }
 
     fun deletePack(packId: String): PackResult {
-        if (packId == CORE_PACK_ID) return PackResult(false, "The core five-module pack is protected.")
+        if (packId == CORE_PACK_ID) return PackResult(false, "The core eleven-module pack is protected.")
         val installed = installedPacks().firstOrNull { it.id == packId }
             ?: return PackResult(false, "That optional pack is not installed.")
         val deleted = File(installed.installPath).deleteRecursively()
