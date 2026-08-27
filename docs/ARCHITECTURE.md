@@ -118,3 +118,20 @@ The MVP must be tested on at least two modern Android phones from different manu
 [2]: https://developer.android.com/training/app-links "Android Developers: About deep links"
 [3]: https://developer.android.com/guide/components/intents-filters "Android Developers: Intents and intent filters"
 [4]: https://web.dev/learn/pwa/service-workers "web.dev: Service workers"
+
+
+## Media-pack research constraints (2026-08-27)
+
+The first optional media proof of concept follows app-controlled storage and a separate pack contract rather than a legacy expansion-file design. Android app-specific internal files do not require storage permission, are private to the app, and are removed on uninstall; Android also warns that cache files may be removed under storage pressure, so optional assets must be treated as reproducible downloads rather than archival backups. See [Android app-specific storage](https://developer.android.com/training/data-storage/app-specific).
+
+For the Web client, Cache Storage is appropriate for URL-addressable resources such as images, audio, and video, while IndexedDB is appropriate for structured local state and pack metadata. Browser storage is origin-scoped and subject to browser-specific quotas and eviction. The Web client therefore must keep visual-pack metadata separate from learner state and must not promise durable archival media storage. See [web.dev offline data](https://web.dev/learn/pwa/offline-data).
+
+Google Play Asset Delivery is a Play-only delivery optimization with install-time, fast-follow, and on-demand modes; its asset packs contain non-executable resources and are managed by Google Play. It is not the canonical abstraction for sideloaded APKs, open-source mirrors, or arbitrary user-selected HTTPS pack URLs, so it remains a future distribution channel rather than a dependency in this proof of concept. See [Play Asset Delivery](https://developer.android.com/guide/playcore/asset-delivery).
+
+Media3 provides a specialized DownloadService/DownloadManager/Cache path for offline media playback and persists download state independently of generic content-pack transactions. It is intentionally deferred until audio/video is authorized and implemented; the current visual proof of concept uses static SVG files and the existing app-controlled pack lifecycle instead. See [Media3 offline downloads](https://developer.android.com/media/media3/exoplayer/downloading-media).
+
+The current `visual-foundations` fixture is deliberately small and local-only. Its manifest associates three optional SVG diagrams with `dl-01`, `dl-02`, and `web-01`, declares raw installed/source-payload bytes plus per-asset SHA-256 values, and carries alt text, captions, text equivalents, reduced-motion text, license, attribution, author, locale, and unsigned-development status. The generated ZIP’s actual transport size and SHA-256 sidecar are recorded separately because a source manifest cannot know a future archive’s compression result without a second generated manifest.
+
+Android installs the visual fixture below app-private `filesDir/optional_packs/visual-foundations`, using a staging directory and rollback boundary shared with local packs. The lesson catalog reads only `modules/`, so the visual `assets/` directory cannot add lessons. The current Android reader uses a restricted platform WebView for sanitized static SVG display and renders the text equivalent alongside it; JavaScript, DOM storage, and file access are disabled. Web uses a digest-named Cache Storage entry, while IndexedDB remains the separate learner/content-state store. Deleting the visual pack removes only its visual cache/files and registry row, never lessons or learning records.
+
+No audio/video, streaming, arbitrary user media, remote visual catalog, visual HTTPS downloader, signing key, public host, OBB, Media3 dependency, or PAD dependency is part of this slice. PAD remains a future Play-only optimization and not the canonical delivery path for open-source, sideloaded, or user-selected packs.

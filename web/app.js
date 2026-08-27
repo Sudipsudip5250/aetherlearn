@@ -1,8 +1,11 @@
-import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=14";
+import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=17";
 
 const CONTENT_MANIFEST = "./content/manifest.json";
+const VISUAL_MANIFEST_URL = "./visuals/visual-foundations/manifest.json";
+const VISUAL_CACHE_PREFIX = "aetherlearn-visuals-v1-";
+const VISUAL_ACTIVE_KEY = "aetherlearn-visual-active";
 const DEFAULT_STATE = { version: 2, progress: {}, notes: {}, bookmarks: {}, quiz: {}, startingLevel: null, startingLevelDismissed: false };
-const state = { lessons: [], learning: { ...DEFAULT_STATE }, activePack: null };
+const state = { lessons: [], learning: { ...DEFAULT_STATE }, activePack: null, visualPack: null };
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -206,6 +209,149 @@ function setCacheStatus(message, tone = "ready") {
   $("#cache-dot").className = `status-dot ${tone === "ready" ? "" : tone}`;
 }
 
+function setVisualPackStatus(message) {
+  const element = $("#visual-pack-status");
+  if (element) element.textContent = message;
+}
+
+function visualCacheName(version, digest = "") { return `${VISUAL_CACHE_PREFIX}${version}-${digest || "active"}`; }
+function visualStagingCacheName(version, token) { return `${VISUAL_CACHE_PREFIX}staging-${version}-${token}`; }
+
+async function sha256Hex(bytes) {
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)].map((value) => value.toString(16).padStart(2, "0")).join("");
+}
+
+function visualAssetUrl(asset) {
+  if (!asset || typeof asset.path !== "string" || !/^assets\/[a-z0-9-]+\.svg$/.test(asset.path)) return null;
+  return `./visuals/visual-foundations/${asset.path.split("/").map(encodeURIComponent).join("/")}`;
+}
+
+function validateVisualManifest(manifest) {
+  if (!manifest || manifest.schema_version !== 1 || manifest.pack_id !== "visual-foundations" || manifest.pack_kind !== "visuals") throw new Error("Unsupported visual pack manifest.");
+  if (typeof manifest.name !== "string" || !manifest.name.trim() || typeof manifest.description !== "string" || !manifest.description.trim() || typeof manifest.created_at !== "string" || !manifest.created_at.trim() || (manifest.expires_at !== null && typeof manifest.expires_at !== "string")) throw new Error("Visual pack descriptive metadata is invalid.");
+  if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(manifest.pack_version || "")) throw new Error("Visual pack version is invalid.");
+  if (manifest.revocation_status !== "not-revoked" || manifest.distribution_status !== "unsigned-development" || manifest.signature !== null) throw new Error("Only the unsigned, non-revoked development visual fixture is accepted locally.");
+  if (!Array.isArray(manifest.module_ids) || manifest.module_ids.length !== 3 || new Set(manifest.module_ids).size !== manifest.module_ids.length) throw new Error("Visual pack module associations are invalid.");
+  if (!Array.isArray(manifest.assets) || manifest.assets.length !== 3) throw new Error("Unsupported or incomplete visual pack manifest.");
+  const ids = new Set();
+  const paths = new Set();
+  let installedTotal = 0;
+  let compressedTotal = 0;
+  for (const asset of manifest.assets) {
+    if (!asset || typeof asset.asset_id !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)+$/.test(asset.asset_id) || ids.has(asset.asset_id)) throw new Error("Visual asset IDs are invalid or duplicated.");
+    if (typeof asset.module_id !== "string" || !manifest.module_ids.includes(asset.module_id) || !state.lessons.some((lesson) => lesson.id === asset.module_id)) throw new Error(`Unknown visual module association: ${asset.module_id || "missing"}.`);
+    if (typeof asset.path !== "string" || !/^assets\/[a-z0-9-]+\.svg$/.test(asset.path) || paths.has(asset.path)) throw new Error("Visual asset paths are invalid or duplicated.");
+    if (typeof asset.kind !== "string" || !asset.kind.trim() || asset.mime !== "image/svg+xml" || typeof asset.alt_text !== "string" || !asset.alt_text.trim() || typeof asset.caption !== "string" || !asset.caption.trim() || typeof asset.text_equivalent !== "string" || !asset.text_equivalent.trim() || typeof asset.license !== "string" || !asset.license.trim() || typeof asset.attribution !== "string" || !asset.attribution.trim() || typeof asset.author !== "string" || !asset.author.trim() || typeof asset.locale !== "string" || !asset.locale.trim() || typeof asset.reduced_motion_alternative !== "string" || !asset.reduced_motion_alternative.trim()) throw new Error(`Visual metadata is incomplete for ${asset.asset_id}.`);
+    if (asset.source_url !== null && (typeof asset.source_url !== "string" || !asset.source_url.startsWith("https://"))) throw new Error(`Visual source URL is invalid for ${asset.asset_id}.`);
+    if (!Number.isInteger(asset.installed_bytes) || !Number.isInteger(asset.compressed_bytes) || asset.installed_bytes < 0 || asset.compressed_bytes < 0 || asset.installed_bytes > 256 * 1024) throw new Error(`Visual size metadata is invalid for ${asset.asset_id}.`);
+    if (typeof asset.sha256 !== "string" || !/^[0-9a-f]{64}$/.test(asset.sha256)) throw new Error(`Visual checksum metadata is invalid for ${asset.asset_id}.`);
+    ids.add(asset.asset_id); paths.add(asset.path); installedTotal += asset.installed_bytes; compressedTotal += asset.compressed_bytes;
+  }
+  if (manifest.installed_bytes !== installedTotal || manifest.compressed_bytes !== compressedTotal || installedTotal > 2 * 1024 * 1024) throw new Error("Visual pack size metadata is invalid.");
+  return manifest;
+}
+
+async function readVisualPackFromCache(cacheName) {
+  if (!cacheName || !("caches" in window)) return null;
+  const cache = await caches.open(cacheName);
+  const manifestResponse = await cache.match(VISUAL_MANIFEST_URL);
+  if (!manifestResponse) return null;
+  const manifest = validateVisualManifest(await manifestResponse.json());
+  for (const asset of manifest.assets) {
+    const url = visualAssetUrl(asset);
+    if (!url || !(await cache.match(url))) return null;
+  }
+  return { cacheName, manifest };
+}
+
+async function loadVisualPack() {
+  const activeName = localStorage.getItem(VISUAL_ACTIVE_KEY);
+  if (!activeName || !activeName.startsWith(VISUAL_CACHE_PREFIX)) {
+    state.visualPack = null;
+    setVisualPackStatus("Not installed. Core lessons remain complete without optional diagrams.");
+    return;
+  }
+  try {
+    state.visualPack = await readVisualPackFromCache(activeName);
+    if (!state.visualPack) throw new Error("The visual pack cache is incomplete.");
+    setVisualPackStatus(`Installed locally · ${state.visualPack.manifest.assets.length} diagrams available offline.`);
+  } catch (error) {
+    state.visualPack = null;
+    localStorage.removeItem(VISUAL_ACTIVE_KEY);
+    setVisualPackStatus(`Visual pack unavailable; core lessons are unaffected. ${error.message}`);
+  }
+}
+
+async function installVisualPack() {
+  if (!("caches" in window) || !window.crypto?.subtle) throw new Error("This browser does not support the visual-pack safety checks.");
+  const installButton = $("#install-visual-pack");
+  if (installButton) installButton.disabled = true;
+  setVisualPackStatus("Validating and installing optional diagrams…");
+  let stagingName = null;
+  try {
+    const manifestResponse = await fetch(VISUAL_MANIFEST_URL, { cache: "no-store" });
+    if (!manifestResponse.ok) throw new Error(`Could not load visual manifest (${manifestResponse.status}).`);
+    const manifestBytes = new Uint8Array(await manifestResponse.clone().arrayBuffer());
+    const manifest = JSON.parse(new TextDecoder().decode(manifestBytes));
+    validateVisualManifest(manifest);
+    const manifestDigest = await sha256Hex(manifestBytes);
+    stagingName = visualStagingCacheName(manifest.pack_version, manifestDigest);
+
+    await caches.delete(stagingName);
+    const staging = await caches.open(stagingName);
+    await staging.put(VISUAL_MANIFEST_URL, new Response(manifestBytes, { headers: { "Content-Type": "application/json" } }));
+    for (const asset of manifest.assets) {
+      const url = visualAssetUrl(asset);
+      if (!url || asset.mime !== "image/svg+xml" || !asset.module_id || !asset.alt_text || !asset.caption || !asset.text_equivalent || !asset.license || !asset.attribution) throw new Error(`Visual metadata is incomplete for ${asset.asset_id || "unknown asset"}.`);
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) throw new Error(`Could not load visual asset ${asset.asset_id}.`);
+      const bytes = new Uint8Array(await response.arrayBuffer());
+      if (bytes.length !== asset.installed_bytes || bytes.length > 256 * 1024) throw new Error(`Visual asset size is invalid for ${asset.asset_id}.`);
+      if (await sha256Hex(bytes) !== asset.sha256) throw new Error(`Visual asset checksum is invalid for ${asset.asset_id}.`);
+      const text = new TextDecoder().decode(bytes).toLowerCase();
+      if (text.includes("<script") || text.includes("javascript:") || text.includes("onload=") || text.includes("onclick=") || text.includes("<foreignobject")) throw new Error(`Visual asset contains active content: ${asset.asset_id}.`);
+      await staging.put(url, new Response(bytes, { headers: { "Content-Type": asset.mime, "Cache-Control": "no-store" } }));
+    }
+    const activeName = visualCacheName(manifest.pack_version, `${manifestDigest}-${Date.now()}`);
+    const active = await caches.open(activeName);
+    for (const request of await staging.keys()) {
+      const response = await staging.match(request);
+      if (response) await active.put(request, response);
+    }
+    await caches.delete(stagingName);
+    const previousName = localStorage.getItem(VISUAL_ACTIVE_KEY);
+    localStorage.setItem(VISUAL_ACTIVE_KEY, activeName);
+    if (previousName && previousName !== activeName) await caches.delete(previousName);
+    await loadVisualPack();
+    renderRoute();
+  } catch (error) {
+    if (stagingName) await caches.delete(stagingName);
+    setVisualPackStatus(`Visual pack install failed; any previous pack was kept. ${error.message}`);
+    throw error;
+  } finally {
+    if (installButton) installButton.disabled = false;
+  }
+}
+
+async function deleteVisualPack() {
+  if (!window.confirm("Delete the optional visual diagrams from this browser? Core lessons and learning data will be kept.")) return;
+  const activeName = localStorage.getItem(VISUAL_ACTIVE_KEY);
+  if (activeName && "caches" in window) await caches.delete(activeName);
+  localStorage.removeItem(VISUAL_ACTIVE_KEY);
+  state.visualPack = null;
+  setVisualPackStatus("Optional visual diagrams deleted. Core lessons and learning data were kept.");
+  renderRoute();
+}
+
+function renderOptionalVisuals(lesson) {
+  const pack = state.visualPack;
+  if (!pack) return "";
+  const assets = pack.manifest.assets.filter((asset) => asset.module_id === lesson.id);
+  if (!assets.length) return "";
+  return `<section class="lesson-section visual-pack-section" aria-labelledby="optional-visuals-title"><h2 id="optional-visuals-title">Optional visual aid</h2><p>These diagrams are supplementary. The lesson explanation and text equivalents remain complete without this pack.</p>${assets.map((asset) => `<figure class="visual-figure"><img src="${escapeHtml(visualAssetUrl(asset))}" alt="${escapeHtml(asset.alt_text)}" loading="lazy" /><figcaption>${escapeHtml(asset.caption)}</figcaption><p class="visual-text-equivalent"><strong>Text equivalent:</strong> ${escapeHtml(asset.text_equivalent)}</p><small>License: ${escapeHtml(asset.license)} · ${escapeHtml(asset.attribution)}</small></figure>`).join("")}</section>`;
+}
+
 function getRecommendedLesson() {
   const completed = new Set(state.lessons.filter((lesson) => statusLabel(lesson.id) === "completed").map((lesson) => lesson.id));
   const inProgress = state.lessons.find((lesson) => statusLabel(lesson.id) === "in progress");
@@ -292,12 +438,20 @@ function renderLessonList() {
 function renderReader(lesson) {
   if (statusLabel(lesson.id) === "not started") updateProgress(lesson.id, "in progress");
   const objectives = Array.isArray(lesson.objectives) ? lesson.objectives : [];
-  const sections = lesson.sections.filter((section) => section.title.toLowerCase() !== "objectives" && section.title.toLowerCase() !== "knowledge check").map((section) => `<section class="lesson-section" aria-labelledby="section-${cssId(section.title)}"><h2 id="section-${cssId(section.title)}">${escapeHtml(section.title)}</h2><div>${renderMarkdown(section.body)}</div></section>`).join("");
+  const sections = lesson.sections
+    .filter((section) => section.title.toLowerCase() !== "objectives" && section.title.toLowerCase() !== "knowledge check")
+    .map((section) => `<section class="lesson-section" aria-labelledby="section-${cssId(section.title)}"><h2 id="section-${cssId(section.title)}">${escapeHtml(section.title)}</h2><div>${renderMarkdown(section.body)}</div></section>`)
+    .join("");
+  const optionalVisuals = renderOptionalVisuals(lesson);
   const questions = lessonQuiz(lesson);
   const quizState = state.learning.quiz[lesson.id] || { attempts: 0, best: 0 };
   const termuxNote = lesson.availability === "termux-optional" ? `<aside class="termux-note"><strong>Termux is Android-only.</strong><span>This browser fallback includes the lesson and offline practice, but not the native terminal handoff.</span></aside>` : "";
   const bookmarkText = state.learning.bookmarks[lesson.id] ? "Bookmarked" : "Bookmark lesson";
-  $("#reader-content").innerHTML = `<div class="reader-kicker">${escapeHtml(lesson.strand)} · ${escapeHtml(lesson.level)}</div><h1 id="reader-title">${escapeHtml(lesson.title)}</h1><p class="reader-summary">${escapeHtml(preview(lesson))}</p><div class="reader-meta"><span class="pill">${escapeHtml(lesson.availability)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} minutes</span><span class="pill">${escapeHtml(lesson.risk_tier)}</span><span class="pill status-pill">${escapeHtml(statusLabel(lesson.id))}</span><span class="pill">Completion: explicit learner choice</span></div>${objectives.length ? `<section class="lesson-section objectives-section"><h2>Objectives</h2><ul>${objectives.map((objective) => `<li>${escapeHtml(objective)}</li>`).join("")}</ul></section>` : ""}${termuxNote}${sections}${questions.length ? `<section class="lesson-section quiz-section"><div class="section-heading"><div><h2>Knowledge check</h2><p>Answer locally for feedback. Your best result is kept in this browser.</p></div><span class="module-count">${quizState.attempts} attempt${quizState.attempts === 1 ? "" : "s"} · best ${quizState.best}%</span></div><form id="quiz-form">${questions.map((question, index) => `<label class="quiz-question" for="quiz-${index}"><span>${index + 1}. ${escapeHtml(question.question)}</span><input id="quiz-${index}" name="quiz-${index}" autocomplete="off" required /></label>`).join("")}<button class="primary-button purple-button" type="submit">Check answers</button><div id="quiz-feedback" class="feedback" aria-live="polite"></div><div id="quiz-review" class="quiz-review" aria-live="polite"></div></form></section>` : ""}<section class="lesson-section local-tools"><div class="section-heading"><div><h2>Your local study tools</h2><p>Notes and bookmarks stay in this browser and are never synced.</p></div><button id="bookmark-toggle" class="secondary-button" type="button">${bookmarkText}</button></div><label class="search-label" for="lesson-note">Private note</label><textarea id="lesson-note" rows="5" placeholder="Write a note about this lesson…">${escapeHtml(state.learning.notes[lesson.id] || "")}</textarea><div class="tool-row"><button id="save-note" class="secondary-button" type="button">Save note</button><button id="complete-lesson" class="primary-button purple-button" type="button">${statusLabel(lesson.id) === "completed" ? "Completed" : "Mark lesson complete"}</button></div><div id="note-status" class="module-count" role="status" aria-live="polite"></div></section>`;
+  const objectivesHtml = objectives.length ? `<section class="lesson-section objectives-section"><h2>Objectives</h2><ul>${objectives.map((objective) => `<li>${escapeHtml(objective)}</li>`).join("")}</ul></section>` : "";
+  const quizHtml = questions.length ? `<section class="lesson-section quiz-section"><div class="section-heading"><div><h2>Knowledge check</h2><p>Answer locally for feedback. Your best result is kept in this browser.</p></div><span class="module-count">${quizState.attempts} attempt${quizState.attempts === 1 ? "" : "s"} · best ${quizState.best}%</span></div><form id="quiz-form">${questions.map((question, index) => `<label class="quiz-question" for="quiz-${index}"><span>${index + 1}. ${escapeHtml(question.question)}</span><input id="quiz-${index}" name="quiz-${index}" autocomplete="off" required /></label>`).join("")}<button class="primary-button purple-button" type="submit">Check answers</button><div id="quiz-feedback" class="feedback" aria-live="polite"></div><div id="quiz-review" class="quiz-review" aria-live="polite"></div></form></section>` : "";
+  const localTools = `<section class="lesson-section local-tools"><div class="section-heading"><div><h2>Your local study tools</h2><p>Notes and bookmarks stay in this browser and are never synced.</p></div><button id="bookmark-toggle" class="secondary-button" type="button">${bookmarkText}</button></div><label class="search-label" for="lesson-note">Private note</label><textarea id="lesson-note" rows="5" placeholder="Write a note about this lesson…">${escapeHtml(state.learning.notes[lesson.id] || "")}</textarea><div class="tool-row"><button id="save-note" class="secondary-button" type="button">Save note</button><button id="complete-lesson" class="primary-button purple-button" type="button">${statusLabel(lesson.id) === "completed" ? "Completed" : "Mark lesson complete"}</button></div><div id="note-status" class="module-count" role="status" aria-live="polite"></div></section>`;
+  const header = `<div class="reader-kicker">${escapeHtml(lesson.strand)} · ${escapeHtml(lesson.level)}</div><h1 id="reader-title">${escapeHtml(lesson.title)}</h1><p class="reader-summary">${escapeHtml(preview(lesson))}</p><div class="reader-meta"><span class="pill">${escapeHtml(lesson.availability)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} minutes</span><span class="pill">${escapeHtml(lesson.risk_tier)}</span><span class="pill status-pill">${escapeHtml(statusLabel(lesson.id))}</span><span class="pill">Completion: explicit learner choice</span></div>`;
+  $("#reader-content").innerHTML = [header, objectivesHtml, optionalVisuals, termuxNote, sections, quizHtml, localTools].join("");
   attachReaderEvents(lesson, questions);
 }
 
@@ -543,6 +697,8 @@ async function start() {
   $("#import-learning-file")?.addEventListener("change", (event) => { importLearningData(event.target.files?.[0]).catch((error) => { $("#browser-data-status").textContent = `Import rejected: ${error.message}`; }).finally(() => { event.target.value = ""; }); });
   $("#clear-browser-cache")?.addEventListener("click", clearBrowserCache);
   $("#clear-browser-learning")?.addEventListener("click", () => { clearBrowserLearning().catch((error) => { $("#browser-data-status").textContent = `Could not delete browser data: ${error.message}`; }); });
+  $("#install-visual-pack")?.addEventListener("click", () => { installVisualPack().catch(() => {}); });
+  $("#delete-visual-pack")?.addEventListener("click", () => { deleteVisualPack().catch((error) => { setVisualPackStatus(`Could not delete visual pack: ${error.message}`); }); });
   $("#reader-back")?.addEventListener("click", () => { window.location.hash = "#/learn"; });
   $("#search-input")?.addEventListener("input", (event) => renderSearchResults(event.target.value));
   window.addEventListener("hashchange", () => { renderRoute(); requestAnimationFrame(() => focusRouteHeading(readRoute())); });
@@ -550,6 +706,7 @@ async function start() {
   try {
     state.learning = normalizeLearningState(await readLearningState());
     await loadInitialContent();
+    await loadVisualPack();
     renderLessonList(); renderPractice(); renderProgress(); renderSearchResults(); renderRoute();
     if (!state.learning.startingLevelDismissed) window.setTimeout(openStartingLevelDialog, 0);
   } catch (error) {

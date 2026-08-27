@@ -34,6 +34,17 @@ jobs:
       - name: Check Android bundled content mirrors canonical lessons
         run: python scripts/check_android_content.py
 
+      - name: Check optional visual-pack mirrors
+        run: python scripts/check_visual_pack_mirrors.py
+
+      - name: Validate optional visual pack and deterministic archive
+        run: |
+          python scripts/validate_visual_pack.py media/visuals/visual-foundations
+          python scripts/validate_visual_pack.py docs/sample-pack/aetherlearn-visual-foundations-1.0.0.zip
+          sha256sum -c docs/sample-pack/aetherlearn-visual-foundations-1.0.0.zip.SHA256SUMS
+          python scripts/build_visual_pack.py --source-dir media/visuals/visual-foundations --output build/visual-pack.zip
+          cmp build/visual-pack.zip docs/sample-pack/aetherlearn-visual-foundations-1.0.0.zip
+
       - name: Check Android manifest security boundary
         run: python scripts/check_android_manifest.py
 

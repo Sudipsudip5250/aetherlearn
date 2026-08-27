@@ -1,10 +1,10 @@
-const CACHE_NAME = "aetherlearn-shell-v14";
+const CACHE_NAME = "aetherlearn-shell-v17";
 const SHELL_ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
-  "./app.js?v=14",
-  "./idb.js?v=14",
+  "./app.js?v=17",
+  "./idb.js?v=17",
   "./manifest.webmanifest",
   "./content/manifest.json",
 ];
@@ -25,8 +25,9 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+  const cachedResponse = request.cache === "no-store" ? Promise.resolve(undefined) : caches.match(request);
   event.respondWith(
-    caches.match(request).then((cached) => cached || fetch(request).then((response) => {
+    cachedResponse.then((cached) => cached || fetch(request).then((response) => {
       if (response.ok && (url.pathname.endsWith(".md") || url.pathname.endsWith(".json"))) {
         const copy = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));

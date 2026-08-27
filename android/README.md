@@ -28,12 +28,15 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 
 The first launch displays the local privacy screen and an optional starting-level choice: new to computing, familiar with digital basics, or have tried programming. This choice changes recommendations only and can be changed or cleared in Settings. After continuing, the app opens the offline learning shell. Progress, quiz attempts, notes, bookmarks, pack status, first-run state, theme preference, and the starting-level choice are stored in app-private SQLite storage. The metadata schema is migrated non-destructively; existing learner records are retained. The manifest permits only the normal network permissions needed for explicit HTTPS pack downloads plus the Termux RUN_COMMAND permission; no broad external-storage permission is requested, and cleartext traffic is denied. The Termux pilot never grants its integration permission automatically.
 
+The bundled `visual-foundations` pack is an optional, three-asset static SVG pack for DL-01, DL-02, and WEB-01. Settings installs it into `filesDir/optional_packs` through the same staging/activation/delete boundary as other local packs; its `assets/` directory is intentionally ignored by `ModuleCatalog`, so it cannot add or replace lessons. The reader displays an associated diagram in a restricted Android WebView with JavaScript, DOM storage, and file access disabled, and also presents its caption, text equivalent, license, and attribution. This is not a native SVG renderer and must still be checked on Android devices with large text and TalkBack. Deleting the visual pack does not delete the core lessons or SQLite learning records. The current fixture is unsigned development metadata; remote visual downloads, publisher signing, audio/video, Media3, and Play Asset Delivery are not implemented.
+
 ## Checks
 
 From the repository root, the content and repository checks remain:
 
 ```bash
-python3 scripts/check_markdown_links.py
+python3 scripts/check_android_manifest.py
+python3 scripts/check_visual_pack_mirrors.py
 python3 scripts/check_secrets.py
 python3 scripts/build_pack.py --content-dir content/core --output-dir build/core-pack
 python3 scripts/validate_content.py --content-dir content/core --manifest build/core-pack/manifest.json

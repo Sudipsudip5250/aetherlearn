@@ -13,8 +13,13 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.viewinterop.AndroidView
+import android.graphics.Color
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.aetherlearn.app.data.*
@@ -63,6 +68,7 @@ internal fun LessonReaderScreen(
                     BulletList(lesson.objectives)
                 }
             }
+            OptionalVisualSection(store = store, lessonId = lesson.id)
             if (lesson.prerequisites.isNotEmpty()) {
                 LessonSection("Prerequisites") {
                     Text(lesson.prerequisites.joinToString())
@@ -144,6 +150,36 @@ internal fun LessonReaderScreen(
                 Text(noteStatus, style = MaterialTheme.typography.bodyMedium)
             }
         }
+    }
+}
+
+@Composable
+private fun OptionalVisualSection(store: LocalStore, lessonId: String) {
+    val packVersion = remember { store.getInstalledPacks().firstOrNull { it.id == "visual-foundations" }?.version }
+    val asset = remember(lessonId, packVersion) { VisualPackCatalog.findForLesson(store, lessonId) } ?: return
+    val svg = remember(asset.file.absolutePath, asset.file.lastModified()) { runCatching { asset.file.readText(Charsets.UTF_8) }.getOrNull() } ?: return
+    LessonSection("Optional visual aid") {
+        AndroidView(
+            factory = { context ->
+                WebView(context).apply {
+                    settings.javaScriptEnabled = false
+                    settings.domStorageEnabled = false
+                    settings.allowFileAccess = false
+                    settings.allowContentAccess = false
+                    webViewClient = WebViewClient()
+                    setNetworkAvailable(false)
+                    setBackgroundColor(Color.TRANSPARENT)
+                }
+            },
+            update = { webView -> webView.loadDataWithBaseURL(null, svg, "image/svg+xml", "UTF-8", null) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp)
+                .semantics { contentDescription = asset.altText },
+        )
+        Text(asset.caption, fontWeight = FontWeight.SemiBold)
+        Text("Text equivalent: ${asset.textEquivalent}")
+        Text("License: ${asset.license} · ${asset.attribution}", style = MaterialTheme.typography.bodySmall)
     }
 }
 

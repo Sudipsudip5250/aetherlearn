@@ -14,6 +14,10 @@ python scripts/build_pack.py --content-dir content/core --output-dir build/core-
 
 The resulting ZIP is a test artifact, not an approved public distribution URL. This repository does not currently publish a public pack host, so the URL field is intentionally user-provided rather than silently pointed at an unreviewed server.
 
+## Separate visual-pack proof of concept
+
+`docs/sample-pack/aetherlearn-visual-foundations-1.0.0.zip` is a separate local validation artifact for the optional static-SVG visual-pack contract. It is not produced by `scripts/build_pack.py`, is not an Android network lesson pack, and is not accepted by the current HTTPS lesson downloader. The three diagrams are bundled as client fixtures and are installed through the Android app-private local-pack path or the Web About route’s same-origin Cache Storage flow. The visual contract requires explicit accessibility text, text equivalents, licensing/attribution, safe paths, static SVG content, sizes, and SHA-256 digests; it currently permits only `unsigned-development` metadata. No public host, publisher signature, audio/video, streaming, Media3, or Play Asset Delivery path is implemented.
+
 ## Download behavior
 
 Only HTTPS URLs without embedded credentials or fragments are accepted. Cleartext HTTP, URL credentials, and fragments are rejected before a request starts. Requests use bounded connection and read timeouts, do not follow redirects, and send no cookies or authentication headers. Downloads are streamed into app-private storage and are capped at 25 MiB overall and 512 KiB per lesson.

@@ -215,3 +215,15 @@ button, .open-card, .secondary-button, .primary-button { min-height: 44px; }
   .status-dot, .privacy-icon, .termux-note, .feedback, .pill { forced-color-adjust: none; border: 1px solid CanvasText; }
   button:focus-visible, a:focus-visible { outline: 3px solid Highlight; }
 }
+
+
+.visual-pack-section { background: color-mix(in srgb, var(--purple-soft) 42%, var(--card)); padding: 22px; border-radius: 16px; }
+.visual-figure { margin: 18px 0 0; padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+.visual-figure img { display: block; width: 100%; height: auto; max-height: 360px; object-fit: contain; background: var(--paper); border-radius: 8px; }
+.visual-figure figcaption { margin-top: 11px; font-weight: 800; }
+.visual-text-equivalent { margin: 8px 0 0; color: var(--muted); }
+.visual-figure small { display: block; margin-top: 10px; color: var(--muted); }
+#visual-pack-status { margin-top: 12px; }
+@media (prefers-contrast: more) {
+  .visual-figure, .data-controls, .catalog-filters { border-width: 2px; }
+}

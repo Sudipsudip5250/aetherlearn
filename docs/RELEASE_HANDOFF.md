@@ -103,6 +103,12 @@ The deterministic builder emits `pack_id: core`. The Android installer intention
 
 A successful optional-pack activation requires an authorized non-core pack containing only approved, not-yet-bundled IDs and a controlled HTTPS host. The repository does not generate or publish such a pack automatically.
 
+### Optional visual-pack proof of concept
+
+The separate local fixture [`sample-pack/aetherlearn-visual-foundations-1.0.0.zip`](sample-pack/aetherlearn-visual-foundations-1.0.0.zip) contains exactly four files: `manifest.json` and three static SVG assets for DL-01, DL-02, and WEB-01. Validate it with `python3 scripts/validate_visual_pack.py docs/sample-pack/aetherlearn-visual-foundations-1.0.0.zip` and verify `sha256sum -c docs/sample-pack/aetherlearn-visual-foundations-1.0.0.zip.SHA256SUMS`. It is not a replacement for the `pack_id: core` lesson sample, is not accepted by the Android HTTPS lesson downloader, and is not a signed or public release pack.
+
+On Android, use **Settings → Storage & content packs → Visual Foundations → Install local pack** when the fixture is bundled. Confirm the installed pack does not add lessons, then open DL-01, DL-02, and WEB-01 to inspect the optional diagrams, text equivalents, and attribution. Delete it and confirm the core pack and learning records remain. On Web, serve `web/` locally, use **About → Optional visual pack**, and follow the visual steps in [`DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md). The Web flow stores only same-origin Cache Storage entries; the Android flow uses app-private files. The fixture has unsigned-development metadata and no remote visual download, publisher signing, audio/video, streaming, Media3, OBB, or PAD path.
+
 ### Temporary hosting
 
 Android accepts HTTPS only. A plain local server is useful for Web/PWA testing but is correctly rejected by Android:
@@ -142,7 +148,7 @@ The downloader is foreground and user-controlled. It does not create an account,
 
 ## 5. Required human verification
 
-Complete [`DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) in order; its final Stage 5 section contains the specialized content, historical/cultural, career-framing, safety, and public-distribution review. It covers fresh install and privacy, navigation and discovery of the 37 current lessons, complete offline lessons, quizzes, progress, notes, bookmarks, force-stop persistence, Markdown/JSON exports, local packs, network-pack controls and interruption recovery, Termux variants, desktop and Android-browser PWA caching, accessibility basics, privacy boundaries, defect recording, and cleanup. The 20-lesson MVP baseline remains a useful comparison point; the three Stage 1, four Stage 2, four Stage 3, four Stage 4, and two Stage 5 lessons must also be sampled, with the Stage 3 safety boundary, Stage 4 offline/privacy/accessibility boundary, and Stage 5 historical/cultural/source/career-framing boundary reviewed explicitly.
+Complete [`DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) in order; its final Stage 5 section contains the specialized content, historical/cultural, career-framing, safety, and public-distribution review. It covers fresh install and privacy, navigation and discovery of the 37 current lessons, complete offline lessons, quizzes, progress, notes, bookmarks, force-stop persistence, Markdown/JSON exports, local packs, the optional visual-pack install/render/delete flow, network-pack controls and interruption recovery, Termux variants, desktop and Android-browser PWA caching, accessibility basics, privacy boundaries, defect recording, and cleanup. The 20-lesson MVP baseline remains a useful comparison point; the three Stage 1, four Stage 2, four Stage 3, four Stage 4, and two Stage 5 lessons must also be sampled, with the Stage 3 safety boundary, Stage 4 offline/privacy/accessibility boundary, and Stage 5 historical/cultural/source/career-framing boundary reviewed explicitly.
 
 Mark unavailable environments **Not tested**. Desktop source checks do not prove Android-device behavior, and a successful build does not prove accessibility, Termux, low-storage, process-death, or interrupted-network behavior.
 
