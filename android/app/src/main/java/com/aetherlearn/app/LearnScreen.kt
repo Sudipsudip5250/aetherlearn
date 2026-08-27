@@ -37,13 +37,13 @@ internal fun LearnScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Read the eleven-module core pack, practice at your pace, and keep learning data on this device.",
+                text = "Read the current core lessons, practice at your pace, and keep learning data on this device.",
                 style = MaterialTheme.typography.bodyLarge,
             )
             Spacer(modifier = Modifier.height(8.dp))
             val completed = progress.values.count { it.state == LearningState.COMPLETED }
             Text(
-                text = "$completed of ${lessons.size} modules completed",
+                text = "$completed of ${lessons.size} lessons completed",
                 style = MaterialTheme.typography.labelLarge,
             )
             Spacer(modifier = Modifier.height(6.dp))
@@ -51,7 +51,7 @@ internal fun LearnScreen(
                 progress = { if (lessons.isEmpty()) 0f else completed.toFloat() / lessons.size },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .semantics { contentDescription = "Overall progress: $completed of ${lessons.size} modules completed" },
+                    .semantics { contentDescription = "Overall progress: $completed of ${lessons.size} lessons completed" },
             )
         }
         items(lessons, key = { it.id }) { module ->

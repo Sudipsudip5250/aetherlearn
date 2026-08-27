@@ -56,7 +56,7 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Implement a local, pre-bundled optional-pack listing and install/delete lifecycle.
 - [x] Validate optional-pack checksum, schema version, manifest ID, version, and name before activation.
 - [x] Implement staging, atomic activation, and last-known-good rollback for local optional packs.
-- [x] Protect the core eleven-module pack and preserve learning data when an optional pack is deleted.
+- [x] Protect the bundled core pack and preserve learning data when an optional pack is deleted.
 - [x] Add Settings storage accounting and core/optional-pack status UI.
 - [x] Implement real user-initiated HTTPS network download, pause, resume, retry, cancellation, and re-download flows in the Android Settings surface.
 - [x] Stream downloads into app-private partial storage, resume with HTTP Range when supported, reject cleartext/credentialed URLs, cap transfer sizes, validate ZIP paths/manifest/lesson hashes, and activate atomically with last-known-good rollback.
@@ -123,7 +123,7 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Prepare release notes, installation instructions, content-pack recovery instructions, and contributor handoff in `docs/RELEASE_HANDOFF.md`, `docs/NETWORK_PACKS.md`, and `docs/SIGNING.md`.
 - [x] Create the human tester handoff in [`docs/RELEASE_HANDOFF.md`](RELEASE_HANDOFF.md), including local/CI APK acquisition, ADB/file-transfer installation, safe unknown-source handling, sample-pack hosting limits, and exact network-pack controls.
 - [x] Generate and checksum the deterministic 37-lesson sample core ZIP at `docs/sample-pack/`; document that its protected `pack_id: core` is suitable for transport/rejection testing, not optional-pack activation.
-- [x] Create [`docs/STAGE5_HUMAN_REVIEW_CHECKLIST.md`](STAGE5_HUMAN_REVIEW_CHECKLIST.md) covering Stage 5 content, source, historical/cultural, career-framing, safety, accessibility, device, privacy, signing, distribution, and final decision gates.
+- [x] Consolidate the Stage 5 content, source, historical/cultural, career-framing, safety, accessibility, device, privacy, signing, distribution, and final decision gates into [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md).
 - [x] Create the human-operated signing guide in [`docs/SIGNING.md`](SIGNING.md) without creating or storing a keystore, password, or private key.
 - [ ] Publish signed release metadata; unsigned release artifacts and checksums are verified, but no authorized signing key or public pack host is configured.
 - [ ] **Checkpoint M7:** Static and CI gates pass; the exact remaining human-only and operational gates are the device/emulator matrix, Android-browser matrix, manual assistive-technology review, final pedagogical/safety approval, authorized network inspection for the pack path, authorized signing and signed metadata, and production distribution/pack-host setup. Use [`docs/RELEASE_HANDOFF.md`](RELEASE_HANDOFF.md) and [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) as the required handoff path.

@@ -1,8 +1,8 @@
 # Future content roadmap and source plan
 
-**Status:** Stage 1 and Stage 2 automated checkpoints are complete; Stage 3 is approved and implemented as a four-lesson safety-bounded slice; the original `mvp-20` baseline remains stable and Stages 4–5 remain gated.
+**Status:** Stages 1–5 automated checkpoints are complete; the original `mvp-20` baseline remains stable, while all post-MVP stages remain draft until human technical, pedagogical, accessibility, source, safety, privacy, historical/cultural, and career-framing review is recorded.
 
-AetherLearn’s original MVP curriculum is intentionally frozen at 20 modules. It provides a coherent foundation in digital literacy, Python, basic algorithms, and developer practice. The approved Stage 1 expansion adds three bundled, offline history/systems lessons, Stage 2 adds four software-engineering lessons, and Stage 3 adds four high-level defensive security-ethics lessons, without renumbering or replacing that baseline. It does not attempt to cover every programming language, operating system, organization, security topic, or career path. This document records what could come next so future contributors do not expand the product ad hoc or turn historical and security material into unsafe operational instruction.
+AetherLearn’s original MVP curriculum is intentionally frozen at 20 modules. It provides a coherent foundation in digital literacy, Python, basic algorithms, and developer practice. The approved Stage 1 expansion adds three bundled, offline history/systems lessons; Stage 2 adds four software-engineering lessons; Stage 3 adds four high-level defensive security-ethics lessons; Stage 4 adds four Web/data foundations lessons; and Stage 5 adds two historical/career lessons. These additions preserve the baseline rather than renumbering or replacing it. The catalog still does not attempt to cover every programming language, operating system, organization, security topic, or career path. This document records what could come next so future contributors do not expand the product ad hoc or turn historical and security material into unsafe operational instruction.
 
 ## 1. Coverage assessment
 
@@ -103,7 +103,7 @@ A release candidate should keep unapproved content outside `content/curriculum.y
 
 ## 5. Recommended order after release gates
 
-The first post-MVP content increment should be a small, non-operational **computing history and systems vocabulary** set. The second should be **software engineering and open-source practice**. The third should be **ethical security, disclosure, and organization literacy**. Historical security case studies and career pathways should follow only after the project has a named human reviewer for source quality, safety framing, and local-law sensitivity.
+The completed post-MVP increments already follow the bounded order of **computing history and systems vocabulary**, **software engineering and open-source practice**, **ethical security and organization literacy**, **Web/data foundations**, and **historical security/career orientation**. Any future increment should begin only after a named human reviewer is available for source quality, safety framing, accessibility, cultural context, and local-law sensitivity; no Stage 6 scope is currently authorized.
 
 The immediate content priority is the human technical, pedagogical, accessibility, source, safety, privacy, historical, cultural, and career-framing review of Stage 5 without claiming that repository checks replace human approval. Stage 5 is authorized under D-038 and its automated checkpoint is complete under D-039 for exactly two lessons. The roadmap is successful when each increment remains bounded, source-backed, safety-reviewed, and reversible.
 
@@ -234,7 +234,6 @@ A Termux-optional lesson additionally requires a fixed wrapper ID, immutable exe
 ## Current action and later gate
 
 Stages 1–5 are approved and implemented one bounded lesson slice at a time under their exact scopes. All five stages have passed their automated, parity, browser, pack, commit/push, and hosted-CI checkpoints, while human technical, pedagogical, accessibility, source, safety, privacy, cultural, and career-framing review remains open. Stage 5 closed under D-039 with exactly two lessons; no Stage 6 scope is authorized. Approval to continue later does not waive any per-stage gate.
-
 
 ## References
 

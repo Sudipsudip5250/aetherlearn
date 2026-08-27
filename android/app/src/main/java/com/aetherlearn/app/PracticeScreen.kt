@@ -24,7 +24,7 @@ internal fun PracticeScreen(
         item {
             Text("Practice", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Offline exercises from the eleven core lessons. Interactive code runners are intentionally deferred.")
+            Text("Offline exercises from all ${lessons.size} current lessons. Interactive code runners are intentionally deferred.")
         }
         lessons.forEach { lesson ->
             item(key = "${lesson.id}-practice") {

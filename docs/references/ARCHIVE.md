@@ -10,7 +10,7 @@ The removed historical files remain recoverable from the local backup branch `ba
 | Architecture and safety boundaries | [`../ARCHITECTURE.md`](../ARCHITECTURE.md) and [`../SAFETY.md`](../SAFETY.md) |
 | Stage source and browser evidence | [`STAGE_EVIDENCE.md`](STAGE_EVIDENCE.md) |
 | Network-pack behavior and recovery | [`../NETWORK_PACKS.md`](../NETWORK_PACKS.md) |
-| Human testing and release gates | [`../DEVICE_TEST_CHECKLIST.md`](../DEVICE_TEST_CHECKLIST.md), [`../STAGE5_HUMAN_REVIEW_CHECKLIST.md`](../STAGE5_HUMAN_REVIEW_CHECKLIST.md), and [`../RELEASE_HANDOFF.md`](../RELEASE_HANDOFF.md) |
+| Human testing and release gates | [`../DEVICE_TEST_CHECKLIST.md`](../DEVICE_TEST_CHECKLIST.md) and [`../RELEASE_HANDOFF.md`](../RELEASE_HANDOFF.md) |
 | Future curriculum and implementation governance | [`../FUTURE_PLAN.md`](../FUTURE_PLAN.md) |
 
 New evidence belongs in the relevant current checklist, source/evidence file, release handoff, or decision log. Do not use removed or archived notes as evidence of current behavior.

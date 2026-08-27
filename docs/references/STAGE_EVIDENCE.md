@@ -308,3 +308,19 @@ The cached route `#/lesson/sec-05-morris-worm-history-and-response` opened succe
 ## SEC-06 reader smoke
 
 The cached route `#/lesson/sec-06-cybersecurity-career-role-families` opened successfully. The reader displayed the S0/offline metadata, objectives, prerequisites, NIST NICE explanation, broad role-lens tables, fictional task-card practice, four knowledge-check inputs, accessibility notes, privacy safeguards, and the explicit statement that the lesson does not promise employment, compensation, legal outcomes, or regional portability. Console inspection after the route load reported no console output.
+
+## Local UI Search smoke — 2026-08-27
+
+After the Web shell refresh, `#/search` rendered the improved helper text and a native search input. Entering `scope` returned 11 matching lessons, including both Stage 5 lessons, and exposed a `Read lesson` action for each result. This confirms the normalized in-memory search path works for current content in Chromium desktop; it does not close Android-browser, screen-reader, or network-disabled reload gates.
+
+The reader route rendered the full PY-06 content and exposed its back button, external reading links, four quiz inputs, bookmark, note, and completion controls. A browser click on the back button did not visibly change the URL in that automation step, so the event binding was flagged for targeted diagnosis before treating back navigation as verified. This may be a browser interaction timing issue; no state was cleared.
+
+Follow-up diagnosis found `#reader-back` present and enabled, but a programmatic click did not change the route hash. The active page therefore did not have the intended new handler bound (or the page was still running an older module); console inspection and a cache-busted reload are required before considering back navigation fixed.
+
+A cache-busted fetch of `./app.js` returned HTTP 200 and confirmed the working-tree source contains both the normalized-search and reader-back changes. The discrepancy is confined to the already-open document/module instance; a fresh document load is required for a valid retest.
+
+The cache-busted document still rendered the reader back control but did not change the hash when clicked, even though a no-store fetch showed the new app.js source. To make shell invalidation deterministic, the next change versions the app.js shell URL in both `index.html` and the service-worker precache list; this is a cache-delivery fix, not a change to route state or IndexedDB keys.
+
+A first attempt to reload via a console expression had a syntax error; no repository or browser state was changed by that failed expression. A subsequent cache-busted navigation loaded the reader normally. The back-button retest remains pending because the browser output still showed the reader route after the click.
+
+After converting `#reader-back` to a semantic `#/learn` anchor and versioning the shell module URL, a fresh reader load exposed it as an anchor and clicking it returned to `#/learn`. The Learn view reported `37 lessons · not cached for offline use` and retained the local in-progress states, confirming the intended route and cache-provenance copy.

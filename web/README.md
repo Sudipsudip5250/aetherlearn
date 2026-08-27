@@ -48,6 +48,6 @@ node --check web/idb.js
 node --check web/sw.js
 ```
 
-Current browser evidence is recorded in [`../docs/references/`](../docs/references/), including the Stage 1–5 smoke logs and source matrices. Early M6 and content-batch notes are summarized in [`../docs/references/ARCHIVE.md`](../docs/references/ARCHIVE.md) for provenance. M4 network-pack setup and recovery are documented in [`../docs/NETWORK_PACKS.md`](../docs/NETWORK_PACKS.md); release gates and human limitations are in [`../docs/RELEASE_HANDOFF.md`](../docs/RELEASE_HANDOFF.md) and [`../docs/STAGE5_HUMAN_REVIEW_CHECKLIST.md`](../docs/STAGE5_HUMAN_REVIEW_CHECKLIST.md).
+Current browser evidence is recorded in [`../docs/references/`](../docs/references/), including the Stage 1–5 smoke logs and source matrices. Early M6 and content-batch notes are summarized in [`../docs/references/ARCHIVE.md`](../docs/references/ARCHIVE.md) for provenance. M4 network-pack setup and recovery are documented in [`../docs/NETWORK_PACKS.md`](../docs/NETWORK_PACKS.md); release, Stage 5 review, and human limitations are in [`../docs/RELEASE_HANDOFF.md`](../docs/RELEASE_HANDOFF.md) and [`../docs/DEVICE_TEST_CHECKLIST.md`](../docs/DEVICE_TEST_CHECKLIST.md).
 
 The core content source remains the repository’s validated Markdown contract in [`../content/README.md`](../content/README.md).

@@ -24,6 +24,7 @@ internal fun LessonReaderScreen(
     var quizAnswers by remember(lesson.id) { mutableStateOf(List(lesson.quizQuestions.size) { "" }) }
     var quizResult by remember(lesson.id) { mutableStateOf<Pair<Int, Int>?>(null) }
     var isBookmarked by remember(lesson.id, bookmarked) { mutableStateOf(bookmarked) }
+    var noteStatus by remember(lesson.id) { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -122,11 +123,15 @@ internal fun LessonReaderScreen(
             Button(
                 onClick = {
                     store.saveNote(lesson.id, noteText)
+                    noteStatus = "Saved privately on this device."
                     onChanged()
                 },
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text("Save note on this device")
+            }
+            if (noteStatus.isNotBlank()) {
+                Text(noteStatus, style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

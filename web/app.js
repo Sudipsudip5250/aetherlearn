@@ -76,7 +76,7 @@ function parseSections(body) {
 function lessonFromMarkdown(markdown, path) {
   const parsed = parseFrontmatter(markdown);
   const metadata = parsed.metadata;
-  return { ...metadata, path, sections: parseSections(parsed.body), searchText: `${metadata.title || ""} ${parsed.body}`.toLowerCase() };
+  return { ...metadata, path, sections: parseSections(parsed.body), searchText: normalizeText(`${metadata.title || ""} ${parsed.body}`) };
 }
 
 async function fetchNetworkPack() {
@@ -188,7 +188,7 @@ function setCacheStatus(message, tone = "ready") {
 }
 
 function renderLessonList() {
-  $("#module-count").textContent = `${state.lessons.length} modules · ${state.activePack ? "cached core pack" : "shared Markdown source"}`;
+  $("#module-count").textContent = `${state.lessons.length} lessons · ${state.activePack ? "cached core pack" : "not cached for offline use"}`;
   $("#lesson-list").innerHTML = state.lessons.map((lesson, index) => `
     <article class="lesson-card">
       <div class="card-top"><span class="lesson-index">${String(index + 1).padStart(2, "0")}</span><span class="pill">${escapeHtml(lesson.availability)}</span></div>
@@ -328,6 +328,7 @@ async function loadInitialContent() {
 async function start() {
   setupTheme();
   $("#cache-button").addEventListener("click", cacheCorePack);
+  $("#reader-back")?.addEventListener("click", () => { window.location.hash = "#/learn"; });
   $("#search-input")?.addEventListener("input", (event) => renderSearchResults(event.target.value));
   window.addEventListener("hashchange", () => { renderRoute(); requestAnimationFrame(() => focusRouteHeading(readRoute())); });
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch((error) => console.warn("Service worker unavailable", error));

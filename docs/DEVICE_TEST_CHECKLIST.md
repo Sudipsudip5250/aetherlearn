@@ -281,6 +281,56 @@ A **release candidate** may be called repository-ready only when automated check
 
 At the end of the test, remove only test artifacts and test accounts created for this checklist. Do not clear app storage until persistence evidence has been recorded. If the release owner requests a clean rerun, use a separate test profile or uninstall/reinstall after exporting no private data. Remove test ZIPs from any server and revoke temporary URLs when the authorized test window ends.
 
+## 18. Stage 5 content and public-distribution review
+
+This section is the specialized human review for the two Stage 5 lessons. It supplements Sections 1–16, [`CONTENT_REVIEW.md`](CONTENT_REVIEW.md), [`SAFETY.md`](SAFETY.md), [`SIGNING.md`](SIGNING.md), and [`RELEASE_HANDOFF.md`](RELEASE_HANDOFF.md). Automated checkpoint D-039 is complete, but every human gate below remains open until a named reviewer records evidence. Record **Pass**, **Fail**, **Not tested**, or **Needs revision**; “Not tested” is not a pass.
+
+### 18.1 Review record and lesson matrix
+
+Record the release candidate commit, content version (expected: 37 lessons), review lead, technical, pedagogical, accessibility, safety/privacy, historical/cultural, career-framing, device/browser, and signing owners, review environments, and final decision. Use fictional learner data only. Never place private notes, passwords, private URLs, identity documents, keystore details, or personal career information in evidence.
+
+Read the canonical files and Android/Web mirrors side by side: [`sec-05-morris-worm-history-and-response.md`](../content/core/sec-05-morris-worm-history-and-response.md) and [`sec-06-cybersecurity-career-role-families.md`](../content/core/sec-06-cybersecurity-career-role-families.md). Render both lessons in each client; Markdown inspection alone is insufficient.
+
+| Gate | SEC-05: Morris worm | SEC-06: career role families |
+|---|---|---|
+| Frontmatter, title, objectives, prerequisites, body sections, review date, and draft status agree |  |  |
+| Objectives are observable, answerable, and beginner-appropriate |  |  |
+| Explanation separates documented evidence from interpretation |  |  |
+| Examples are fictional and do not imply authorization |  |  |
+| Practice is paper/text-based, offline, and uses no personal data |  |  |
+| Knowledge checks have defensible answers and accurate explanations |  |  |
+| Accessibility alternatives support text, audio, large print, speech-to-text, and non-visual completion |  |  |
+| Safety wording appears before sensitive interpretation and no operational capability is added |  |  |
+| Further-reading links are current, relevant, reachable, and accurately described |  |  |
+
+For SEC-05, verify that the lesson separates **intent, impact, response, accountability, and learning**; cross-check the November 2, 1988 date, broad disruption, affected institutions, CERT/CC response history, and legal-accountability statements against [`STAGE_EVIDENCE.md`](references/STAGE_EVIDENCE.md). Record disagreements among FBI, CMU SEI, and Computer History Museum accounts rather than silently harmonizing them. Reject any framing that turns affected systems into a scorecard, treats unauthorized experimentation as harmless, glorifies an actor, or exposes service names, commands, source code, concealment methods, replication steps, or real incident-response instructions. The acceptable learner output is a source-labeled timeline and defensive learning brief, not a forensic report, legal conclusion, reproduction guide, or notoriety ranking.
+
+For SEC-06, verify that the NIST NICE Framework is presented as a vocabulary for work and skills—not a universal taxonomy, ranking system, qualification decision, employment prediction, or legal authority. Check for regional, cultural, disability, language, education, device-access, and socioeconomic assumptions, and ensure that no single educational route is presented as the only legitimate path. The exercise must request no résumé, identity document, employer contact, account, assessment answer, personal profile, or sensitive career goal, and must not promise employment, salary, compensation, immigration, legal, certification, or regional-portability outcomes. A learner artifact is evidence of reflection, not proof of competence or production readiness.
+
+### 18.2 Source, historical, cultural, and maintenance review
+
+Use [`STAGE_EVIDENCE.md`](references/STAGE_EVIDENCE.md) as the claims inventory. For every material statement, record the inspected source, publication/update date when available, confidence, uncertainty, and maintenance owner. Check the following before approval:
+
+| Source/review gate | Owner | Result/evidence |
+|---|---|---|
+| CMU SEI, FBI, and Computer History Museum claims are accurately scoped and their differing perspectives are visible | Historical/source reviewer |  |
+| ACM principles are treated as ethical guidance, not a complete legal or cultural framework | Safety/ethics reviewer |  |
+| NIST NICE statements use a current version and are limited to framework purposes | Career/source reviewer |  |
+| Dates, names, institutions, and legal references are rechecked against the source pages | Technical/source reviewer |  |
+| Historical, cultural, disability, language, and access assumptions are reviewed | Historical/cultural reviewer |  |
+| Source links resolve from the packaged clients or are clearly labeled as external reading | Release owner |  |
+| A maintainer owns source-freshness checks, correction triggers, and future updates | Project maintainer |  |
+
+Rewrite before release if the lesson depends on hero/villain framing, erases affected communities, uses only a law-enforcement or Western perspective, contains ableist/class-based assumptions, or treats unauthorized experimentation as admirable.
+
+### 18.3 Stage 5 safety, privacy, and distribution gates
+
+Both lessons must remain `availability: offline`, `risk_tier: S0`, and `review_status: draft` until human approval. Reject the candidate if either lesson contains malware, exploit construction, payloads, credentials, target lists, scanning steps, persistence, evasion, bypass, concealment, arbitrary execution, live targets, external contact, real incident data, or personal career data. Confirm that fictional fixtures are visibly fictional, Stage 5 IDs are not in the remote-pack allowlist, Android/Web privacy notes remain visible, and notes, quiz attempts, bookmarks, exports, and browser state remain local.
+
+Follow the Android, Web, accessibility, network, export, signing, and distribution procedures in Sections 2–16 and record the exact device/browser, text scale, screen-reader configuration, network state, artifact commit, and checksum. The release owner must additionally confirm that the release APK is signed by the authorized identity, `apksigner verify --verbose --print-certs` passes, the signer fingerprint matches the private inventory, and the public artifact page identifies the commit, content version, checksum, release status, distribution channel, TLS, access controls, and rollback path. Never create or store a real key, password, or private signing material in this repository.
+
+Automated validation proves repository invariants; it does not prove historical completeness, cultural appropriateness, pedagogical effectiveness, device accessibility, safety for every learner, authorized signing, or public-distribution readiness. Keep the last-known-good artifact and record a correction owner if any factual or safety issue is found after review.
+
 ## References
 
 [1]: https://www.w3.org/WAI/standards-guidelines/wcag/ "W3C Web Content Accessibility Guidelines overview"

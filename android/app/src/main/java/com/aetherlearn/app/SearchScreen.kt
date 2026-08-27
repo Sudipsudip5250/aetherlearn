@@ -36,10 +36,18 @@ internal fun SearchScreen(
                 onValueChange = { query = it },
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Search module titles and lesson text") },
+                placeholder = { Text("Try a concept such as scope or passwords") },
                 singleLine = true,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(if (query.isBlank()) "Search works from the local content assets with no network." else "${matches.size} result(s)")
+            Text(
+                when {
+                    query.isBlank() -> "Search works from the local content assets with no network."
+                    matches.isEmpty() -> "No lessons match \"${query.trim()}\". Try a broader term."
+                    else -> "${matches.size} result(s)"
+                },
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
         items(matches, key = { it.id }) { lesson ->
             Card(

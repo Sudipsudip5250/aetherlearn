@@ -27,8 +27,7 @@ This directory is organized by purpose. **Start with the current documents** bel
 | Document | Use it for |
 |---|---|
 | [`CONTENT_REVIEW.md`](CONTENT_REVIEW.md) | Current lesson consistency review and draft status |
-| [`DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) | Android, Web/PWA, Termux, persistence, privacy, and accessibility testing |
-| [`STAGE5_HUMAN_REVIEW_CHECKLIST.md`](STAGE5_HUMAN_REVIEW_CHECKLIST.md) | Stage 5 historical, career, safety, accessibility, signing, and distribution gates |
+| [`DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) | Android, Web/PWA, Termux, persistence, privacy, accessibility, Stage 5 content, signing, and distribution testing |
 | [`FUTURE_PLAN.md`](FUTURE_PLAN.md) | Approved stage sequencing, governance, longer-term topic analysis, and intentionally gated future ideas; no Stage 6 scope is authorized |
 
 

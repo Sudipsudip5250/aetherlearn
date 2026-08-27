@@ -1,9 +1,9 @@
-const CACHE_NAME = "aetherlearn-shell-v8";
+const CACHE_NAME = "aetherlearn-shell-v9";
 const SHELL_ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
-  "./app.js",
+  "./app.js?v=9",
   "./idb.js",
   "./manifest.webmanifest",
   "./content/manifest.json",
