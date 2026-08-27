@@ -1,4 +1,4 @@
-import { readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js";
+import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=11";
 
 const CONTENT_MANIFEST = "./content/manifest.json";
 const DEFAULT_STATE = { version: 1, progress: {}, notes: {}, bookmarks: {}, quiz: {} };
@@ -187,15 +187,50 @@ function setCacheStatus(message, tone = "ready") {
   $("#cache-dot").className = `status-dot ${tone === "ready" ? "" : tone}`;
 }
 
+function getRecommendedLesson() {
+  const completed = new Set(state.lessons.filter((lesson) => statusLabel(lesson.id) === "completed").map((lesson) => lesson.id));
+  const inProgress = state.lessons.find((lesson) => statusLabel(lesson.id) === "in progress");
+  if (inProgress) return inProgress;
+  return state.lessons.find((lesson) => statusLabel(lesson.id) !== "completed" && (lesson.prerequisites || []).every((prerequisite) => completed.has(prerequisite)))
+    || state.lessons.find((lesson) => statusLabel(lesson.id) !== "completed");
+}
+
+function recommendationReason(lesson) {
+  if (statusLabel(lesson.id) === "in progress") return "You started this lesson already, so it is the easiest place to continue.";
+  if (!(lesson.prerequisites || []).length) return "It has no prerequisites, so it is a calm place to start.";
+  return "Its prerequisites are complete, so it is a sensible next step.";
+}
+
+function renderGuidedPath() {
+  const container = $("#guided-path");
+  if (!container) return;
+  const lesson = getRecommendedLesson();
+  if (!lesson) {
+    container.innerHTML = `<div class="guided-card"><div><span class="eyebrow">Guided path</span><h3>Core path complete</h3><p>You can revisit any lesson or use Search and Practice for review.</p></div></div>`;
+    return;
+  }
+  container.innerHTML = `<div class="guided-card"><div><span class="eyebrow">Guided path</span><h3>${escapeHtml(statusLabel(lesson.id) === "in progress" ? "Continue learning" : "Recommended next")}</h3><p class="guided-title">${escapeHtml(lesson.title)}</p><p>${escapeHtml(recommendationReason(lesson))}</p><div class="card-meta"><span class="pill">${escapeHtml(lesson.strand)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span><span class="pill">${escapeHtml(lesson.availability)}</span></div></div><button class="primary-button purple-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Open lesson</button></div>`;
+  container.querySelector("[data-open-lesson]")?.addEventListener("click", () => { window.location.hash = `#/lesson/${lesson.id}`; });
+}
+
 function renderLessonList() {
   $("#module-count").textContent = `${state.lessons.length} lessons · ${state.activePack ? "cached core pack" : "not cached for offline use"}`;
-  $("#lesson-list").innerHTML = state.lessons.map((lesson, index) => `
-    <article class="lesson-card">
+  const cards = [];
+  let previousStrand = null;
+  state.lessons.forEach((lesson, index) => {
+    if (lesson.strand !== previousStrand) {
+      previousStrand = lesson.strand;
+      cards.push(`<h3 class="strand-heading">${escapeHtml(lesson.strand)}</h3>`);
+    }
+    cards.push(`<article class="lesson-card">
       <div class="card-top"><span class="lesson-index">${String(index + 1).padStart(2, "0")}</span><span class="pill">${escapeHtml(lesson.availability)}</span></div>
       <h3>${escapeHtml(lesson.title)}</h3><p>${escapeHtml(preview(lesson))}</p>
       <div class="card-meta"><span class="pill">${escapeHtml(lesson.strand)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span><span class="pill status-pill">${escapeHtml(statusLabel(lesson.id))}</span><button class="open-card" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Read lesson →</button></div>
-    </article>`).join("");
-  document.querySelectorAll("[data-open-lesson]").forEach((button) => button.addEventListener("click", () => { window.location.hash = `#/lesson/${button.dataset.openLesson}`; }));
+    </article>`);
+  });
+  $("#lesson-list").innerHTML = cards.join("");
+  document.querySelectorAll("#lesson-list [data-open-lesson]").forEach((button) => button.addEventListener("click", () => { window.location.hash = `#/lesson/${button.dataset.openLesson}`; }));
+  renderGuidedPath();
 }
 
 function renderReader(lesson) {
@@ -285,6 +320,29 @@ function renderRoute() {
   else if (route.type === "progress") renderProgress();
 }
 
+async function clearBrowserCache() {
+  if (!window.confirm("Clear the cached lesson pack from this browser? Learning data will be kept.")) return;
+  try {
+    await clearActivePack();
+    state.activePack = null;
+    const pack = await fetchNetworkPack();
+    state.lessons = lessonsFromPack(pack);
+    renderLessonList(); renderPractice(); renderProgress(); renderRoute();
+    $("#browser-data-status").textContent = "Cached content cleared; the shared source is visible until you cache it again.";
+    setCacheStatus("Core lessons loaded. Cache them for offline use.", "warning");
+  } catch (error) {
+    $("#browser-data-status").textContent = `Could not clear cached content safely: ${error.message}`;
+  }
+}
+
+async function clearBrowserLearning() {
+  if (!window.confirm("Delete all browser-local progress, notes, bookmarks, and quiz attempts? This cannot be undone from this client.")) return;
+  await clearLearningState();
+  state.learning = normalizeLearningState(null);
+  renderLessonList(); renderProgress(); renderGuidedPath(); renderRoute();
+  $("#browser-data-status").textContent = "Browser-local learning data deleted. Cached content was kept.";
+}
+
 function setupTheme() {
   const saved = localStorage.getItem("aetherlearn-web-theme");
   if (saved === "dark") document.documentElement.dataset.theme = "dark";
@@ -328,6 +386,8 @@ async function loadInitialContent() {
 async function start() {
   setupTheme();
   $("#cache-button").addEventListener("click", cacheCorePack);
+  $("#clear-browser-cache")?.addEventListener("click", clearBrowserCache);
+  $("#clear-browser-learning")?.addEventListener("click", () => { clearBrowserLearning().catch((error) => { $("#browser-data-status").textContent = `Could not delete browser data: ${error.message}`; }); });
   $("#reader-back")?.addEventListener("click", () => { window.location.hash = "#/learn"; });
   $("#search-input")?.addEventListener("input", (event) => renderSearchResults(event.target.value));
   window.addEventListener("hashchange", () => { renderRoute(); requestAnimationFrame(() => focusRouteHeading(readRoute())); });

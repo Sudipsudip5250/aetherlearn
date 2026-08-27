@@ -18,6 +18,7 @@ internal fun ProgressScreen(
     bookmarks: Set<String>,
     notes: List<NoteSummary>,
     onLessonClick: (String) -> Unit,
+    onDeleteNote: (String) -> Unit,
 ) {
     val completed = progress.values.count { it.state == LearningState.COMPLETED }
     val started = progress.values.count { it.state != LearningState.NOT_STARTED }
@@ -66,6 +67,7 @@ internal fun ProgressScreen(
                     Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(titles[note.moduleId]?.title ?: note.moduleId, fontWeight = FontWeight.SemiBold)
                         Text(note.body)
+                        TextButton(onClick = { onDeleteNote(note.moduleId) }, modifier = Modifier.fillMaxWidth()) { Text("Delete note") }
                     }
                 }
             }

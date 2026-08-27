@@ -9,6 +9,8 @@ data class ModuleSummary(
     val title: String,
     val availability: String,
     val estimatedMinutes: Int,
+    val strand: String = "",
+    val prerequisites: List<String> = emptyList(),
 )
 
 class ModuleCatalog(
@@ -35,6 +37,8 @@ class ModuleCatalog(
             title = lesson.title,
             availability = lesson.availability,
             estimatedMinutes = lesson.estimatedMinutes,
+            strand = lesson.strand,
+            prerequisites = lesson.prerequisites,
         )
     }
 

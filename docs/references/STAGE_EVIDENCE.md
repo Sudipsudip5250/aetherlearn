@@ -324,3 +324,14 @@ The cache-busted document still rendered the reader back control but did not cha
 A first attempt to reload via a console expression had a syntax error; no repository or browser state was changed by that failed expression. A subsequent cache-busted navigation loaded the reader normally. The back-button retest remains pending because the browser output still showed the reader route after the click.
 
 After converting `#reader-back` to a semantic `#/learn` anchor and versioning the shell module URL, a fresh reader load exposed it as an anchor and clicking it returned to `#/learn`. The Learn view reported `37 lessons · not cached for offline use` and retained the local in-progress states, confirming the intended route and cache-provenance copy.
+
+
+## 2026-08-27 — Attached improvement prompt, first safe slice
+
+The repository was audited against `MANUS_AI_IMPROVEMENT_PROMPT.md` before changes. A local recovery branch `backup/pre-prompt-guided-learning-2026-08-27` was created at commit `9b8d519`; no remote history or branch was changed.
+
+Implemented locally: deterministic prerequisite-aware Continue/Recommended guidance and strand grouping in Android/Web Learn; Android per-note deletion; confirmed Android deletion of learner records while retaining preferences and content-pack metadata; separate Web controls for clearing cached content and deleting browser-local learning state; and Web shell/module cache versioning through `aetherlearn-shell-v11`, `app.js?v=11`, and `idb.js?v=11`.
+
+Web verification used the local Chromium shell at `http://127.0.0.1:4173/`. The fresh version-11 document loaded the existing 37-lesson cached pack, showed the guided-path card and strand-grouped lesson catalog, exposed the About data controls, and emitted no console output in the final check. A transient startup failure caused by an older cached `idb.js` module was reproduced and fixed by versioning the changed module; the corrected shell then loaded successfully.
+
+Automated repository checks passed: 37 canonical lessons, Android/Web byte parity, 135 Markdown links, secrets, dependency pins, Android manifest boundary, Web JavaScript syntax, JSON syntax, 8 Python regression tests, deterministic sample-pack checksum, and `git diff --check`. The Android Gradle unit-test attempt remains blocked because the sandbox has no Android SDK (`SDK location not found`); no device, emulator, TalkBack, Android-browser, Termux, signing, or human-review gate is claimed as complete.

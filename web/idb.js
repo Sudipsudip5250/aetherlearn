@@ -73,7 +73,24 @@ export async function replaceActivePack(pack) {
 export async function clearActivePack() {
   const database = await openDatabase();
   try {
-    await requestResult(database.transaction("packs", "readwrite").objectStore("packs").delete(ACTIVE_PACK_KEY));
+    const transaction = database.transaction("packs", "readwrite");
+    const store = transaction.objectStore("packs");
+    store.delete(ACTIVE_PACK_KEY);
+    store.delete(STAGING_PACK_KEY);
+    await new Promise((resolve, reject) => {
+      transaction.oncomplete = resolve;
+      transaction.onerror = () => reject(transaction.error || new Error("Content cache could not be cleared."));
+      transaction.onabort = () => reject(transaction.error || new Error("Content cache clear was aborted."));
+    });
+  } finally {
+    database.close();
+  }
+}
+
+export async function clearLearningState() {
+  const database = await openDatabase();
+  try {
+    await requestResult(database.transaction("state", "readwrite").objectStore("state").delete(STATE_KEY));
   } finally {
     database.close();
   }

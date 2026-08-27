@@ -73,7 +73,14 @@ private fun AppShell(
     val lessons = remember(contentRevision) { ModuleCatalog(context, localStore).loadLessons() }
     val summaries = remember(lessons) {
         lessons.map { lesson ->
-            ModuleSummary(lesson.id, lesson.title, lesson.availability, lesson.estimatedMinutes)
+            ModuleSummary(
+                id = lesson.id,
+                title = lesson.title,
+                availability = lesson.availability,
+                estimatedMinutes = lesson.estimatedMinutes,
+                strand = lesson.strand,
+                prerequisites = lesson.prerequisites,
+            )
         }
     }
     var destination by rememberSaveable { mutableStateOf(Destination.LEARN.name) }
@@ -84,6 +91,7 @@ private fun AppShell(
         localStore.getAllProgress(lessons.map { it.id })
     }
     val bookmarks = remember(refreshToken) { localStore.getBookmarkedIds() }
+    val recommended = remember(refreshToken, summaries) { recommendedLesson(summaries, progress) }
     val selectedLesson = lessons.firstOrNull { it.id == selectedLessonId }
 
     if (settingsOpen) {
@@ -92,7 +100,7 @@ private fun AppShell(
             lessons = lessons,
             themeMode = themeMode,
             onThemeModeChanged = onThemeModeChanged,
-            onContentChanged = { contentRevision++ },
+            onContentChanged = { contentRevision++; refreshToken++ },
             onBack = { settingsOpen = false },
         )
         return
@@ -153,6 +161,7 @@ private fun AppShell(
                     lessons = summaries,
                     progress = progress,
                     bookmarks = bookmarks,
+                    recommended = recommended,
                     onLessonClick = { lessonId ->
                         localStore.markInProgress(lessonId)
                         refreshToken++
@@ -184,6 +193,7 @@ private fun AppShell(
                     progress = progress,
                     bookmarks = bookmarks,
                     notes = localStore.getNotes(),
+                    onDeleteNote = { lessonId -> localStore.deleteNote(lessonId); refreshToken++ },
                     onLessonClick = { lessonId ->
                         localStore.markInProgress(lessonId)
                         refreshToken++

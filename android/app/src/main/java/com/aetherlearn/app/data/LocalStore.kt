@@ -149,6 +149,26 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         null,
     ).use { cursor -> if (cursor.moveToFirst()) cursor.toNote() else null }
 
+    fun deleteNote(moduleId: String) {
+        writableDatabase.delete(TABLE_NOTES, "$COLUMN_MODULE_ID = ?", arrayOf(moduleId))
+    }
+
+    /** Clears learner records only; theme, first-run state, and content-pack metadata remain. */
+    fun clearLearningData() {
+        val database = writableDatabase
+        database.beginTransaction()
+        try {
+            database.delete(TABLE_PROGRESS, null, null)
+            database.delete(TABLE_QUIZ_ATTEMPTS, null, null)
+            database.delete(TABLE_NOTES, null, null)
+            database.delete(TABLE_BOOKMARKS, null, null)
+            database.delete(TABLE_EXERCISE_PROGRESS, null, null)
+            database.setTransactionSuccessful()
+        } finally {
+            database.endTransaction()
+        }
+    }
+
     fun getNotes(): List<NoteSummary> = readableDatabase.query(
         TABLE_NOTES,
         arrayOf(COLUMN_MODULE_ID, COLUMN_BODY, COLUMN_UPDATED_AT),

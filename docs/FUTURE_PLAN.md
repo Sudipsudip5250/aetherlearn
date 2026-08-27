@@ -244,3 +244,12 @@ Stages 1–5 are approved and implemented one bounded lesson slice at a time und
 [5]: https://certcc.github.io/CERT-Guide-to-CVD/ "CERT/CC: Guide to Coordinated Vulnerability Disclosure"
 [6]: https://attack.mitre.org/ "MITRE: ATT&CK Knowledge Base"
 [7]: https://www.nist.gov/itl/applied-cybersecurity/nice/nice-framework-resource-center "NIST: NICE Framework Resource Center"
+
+
+## Attached prompt: staged candidates beyond Stage 5
+
+The attached improvement prompt proposes a future beginner-programming bridge (`py-08` through `py-10`), systems and networking foundations (`sys-01` through `sys-02`, `net-01` through `net-02`), data and software-engineering lessons (`data-01` through `data-02`, `dev-08` through `dev-09`), Web application foundations (`web-05` through `web-08`), responsible-AI literacy (`ai-01` through `ai-03`), and additional defensive-security foundations (`sec-07` through `sec-09`). These are **user-proposed candidates only**. They are not in `content/curriculum.yml`, are not mirrored into either client, and do not change the current 37-lesson release payload.
+
+Before any candidate becomes a new stage, the maintainer must select an exact bounded module list, write a source matrix with claim freshness and update triggers, classify safety and privacy risk, identify a reviewer and maintainer, define prerequisites and parity behavior, and obtain explicit approval. Security and AI candidates require an additional safety review; no candidate may introduce live targets, real credentials or personal data, arbitrary execution, remote learner-data transmission, employment or legal promises, or a dependency on an AI service. The prompt’s visual/media proposal is similarly deferred until an asset schema, local-storage budget, alt-text/text-equivalent rules, licensing/attribution record, and both-client rendering/test plan are approved.
+
+The current recommended next content decision is **not to open Stage 6 yet**. First close the open human review and runtime gates for the existing 37 lessons, then choose whether the highest-value next batch is the beginner Python bridge or systems/network foundations. That choice must be recorded as a new decision-log entry before authoring begins.

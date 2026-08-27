@@ -34,6 +34,8 @@ internal fun SettingsScreen(
     var packMessage by remember { mutableStateOf<String?>(null) }
     var exportWarning by rememberSaveable { mutableStateOf<String?>(null) }
     var exportMessage by remember { mutableStateOf<String?>(null) }
+    var clearDataWarning by rememberSaveable { mutableStateOf(false) }
+    var dataMessage by remember { mutableStateOf<String?>(null) }
     var networkUrl by rememberSaveable { mutableStateOf("") }
     var networkProgress by remember { mutableStateOf<NetworkDownloadProgress?>(null) }
     var networkHandle by remember { mutableStateOf<NetworkDownloadHandle?>(null) }
@@ -55,6 +57,23 @@ internal fun SettingsScreen(
             }
         }
         exportWarning = null
+    }
+
+    if (clearDataWarning) {
+        AlertDialog(
+            onDismissRequest = { clearDataWarning = false },
+            title = { Text("Delete local learning data?") },
+            text = { Text("This removes progress, quiz attempts, notes, bookmarks, and Termux exercise completion from this device. It does not remove the bundled or installed content packs, your theme, or the first-run privacy setting. This cannot be undone unless you have an export.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    store.clearLearningData()
+                    dataMessage = "Local learning data deleted. Content packs and settings were kept."
+                    clearDataWarning = false
+                    onContentChanged()
+                }) { Text("Delete learning data") }
+            },
+            dismissButton = { TextButton(onClick = { clearDataWarning = false }) { Text("Cancel") } },
+        )
     }
 
     if (exportWarning != null) {
@@ -102,8 +121,13 @@ internal fun SettingsScreen(
             }
             exportMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
             HorizontalDivider()
+            Text("Local data controls", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+            Text("Learning records stay in app-private storage. Export first if you may want to restore them later; plain exports are not encrypted backups.")
+            OutlinedButton(onClick = { clearDataWarning = true }, modifier = Modifier.fillMaxWidth()) { Text("Delete all local learning data") }
+            dataMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+            HorizontalDivider()
             Text("Storage & content packs", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
-            Text("Core pack: ${ModuleCatalog(context).loadLessons().size} modules, ${formatBytes(packManager.coreSizeBytes())}, always available offline and protected from deletion.")
+            Text("Core pack: ${ModuleCatalog(context).loadLessons().size} lessons, ${formatBytes(packManager.coreSizeBytes())}, always available offline and protected from deletion.")
             Text("Learning data and installed optional packs: approximately ${formatBytes(packManager.learningDataSizeBytes())}.")
             packManager.availablePacks().forEach { available ->
                 OptionalPackCard(

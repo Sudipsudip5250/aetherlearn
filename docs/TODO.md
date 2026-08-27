@@ -150,6 +150,15 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Complete Stage 5 authoring, parity, documentation, deterministic 37-lesson pack refresh, browser smoke, commit/push, and hosted Quality checkpoint; human historical/cultural, accessibility, source, safety, privacy, and career-framing review remains open.
 - [ ] Approve each later stage only after the preceding stage is validated, reviewed, documented, committed, and pushed; do not treat the user’s sequential authorization as a waiver of per-stage safety or release gates.
 
+## Attached improvement prompt — first safe slice
+
+- [x] Reconcile the prompt with the live 37-lesson repository and preserve the pre-prompt recovery branch.
+- [x] Add deterministic prerequisite-aware Continue/Recommended guidance and strand grouping to Android Learn and the Web Learn route without changing lesson IDs or learner-state keys.
+- [x] Add Android per-note deletion and confirmed deletion of learner records while retaining preferences and content packs.
+- [x] Add separate Web controls for clearing cached content and deleting browser-local learning data, with explicit confirmation and honest export limitations.
+- [x] Add focused recommendation unit coverage and Web startup/cache-version checks; retain human Android, Android-browser, screen-reader, and device evidence gates.
+- [ ] Implement richer assessment schemas, onboarding preferences, import/restore, rich cross-client Markdown rendering, diagrams/media, or new curriculum only after separate migration, asset, source, safety, parity, and human-review decisions.
+
 ## Deferred backlog
 
 - [ ] Portable encrypted backup with tested key ownership and recovery.
