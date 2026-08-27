@@ -132,4 +132,4 @@ The project maintainer owns product-scope decisions. A designated Android mainta
 
 ## References
 
-The architecture decision is supported by Android’s documentation on network connections, offline-first data layers, and unsafe download-manager risks, in addition to the existing intents/deep-links and Termux references. See the reference lists in [`ARCHITECTURE.md`](ARCHITECTURE.md), [`NETWORK_PACKS.md`](NETWORK_PACKS.md), and [`M7_RELEASE_NOTES.md`](M7_RELEASE_NOTES.md). The M2 build-tool findings are recorded in [`references/android_m2_build_notes.md`](references/android_m2_build_notes.md).
+The architecture decision is supported by Android’s documentation on network connections, offline-first data layers, and unsafe download-manager risks, in addition to the existing intents/deep-links and Termux references. See the reference lists in [`ARCHITECTURE.md`](ARCHITECTURE.md), [`NETWORK_PACKS.md`](NETWORK_PACKS.md), and [`RELEASE_HANDOFF.md`](RELEASE_HANDOFF.md). Early M2 build-tool findings are retained in [`references/archive/android_m2_build_notes.md`](references/archive/android_m2_build_notes.md).
