@@ -27,12 +27,14 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         putValue(db, KEY_SCHEMA_VERSION, DATABASE_VERSION.toString())
         putValue(db, KEY_FIRST_RUN_COMPLETE, "false")
         putValue(db, KEY_THEME_MODE, ThemeMode.SYSTEM.name)
+        putValue(db, KEY_STARTING_LEVEL, "")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         if (oldVersion < 2) createLearningTables(db)
         if (oldVersion < 3) createPackTable(db)
         if (oldVersion < 4) createExerciseTable(db)
+        if (oldVersion < 5) putValue(db, KEY_STARTING_LEVEL, "")
         putValue(db, KEY_SCHEMA_VERSION, newVersion.toString())
     }
 
@@ -45,6 +47,15 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
     }.getOrDefault(ThemeMode.SYSTEM)
 
     fun setThemeMode(mode: ThemeMode) = putValue(KEY_THEME_MODE, mode.name)
+
+    fun getStartingLevel(): StartingLevel? = getValue(KEY_STARTING_LEVEL)?.takeIf { it.isNotBlank() }?.let { value ->
+        runCatching { StartingLevel.valueOf(value) }.getOrNull()
+    }
+
+    fun setStartingLevel(level: StartingLevel?) {
+        if (level == null) writableDatabase.delete(TABLE_METADATA, "$COLUMN_KEY = ?", arrayOf(KEY_STARTING_LEVEL))
+        else putValue(KEY_STARTING_LEVEL, level.name)
+    }
 
     fun getProgress(moduleId: String): ModuleProgress = readableDatabase.query(
         TABLE_PROGRESS,
@@ -151,6 +162,10 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
 
     fun deleteNote(moduleId: String) {
         writableDatabase.delete(TABLE_NOTES, "$COLUMN_MODULE_ID = ?", arrayOf(moduleId))
+    }
+
+    fun clearAllNotes() {
+        writableDatabase.delete(TABLE_NOTES, null, null)
     }
 
     /** Clears learner records only; theme, first-run state, and content-pack metadata remain. */
@@ -418,7 +433,7 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
 
     companion object {
         private const val DATABASE_NAME = "aetherlearn_local.db"
-        private const val DATABASE_VERSION = 4
+        private const val DATABASE_VERSION = 5
         private const val TABLE_METADATA = "app_metadata"
         private const val TABLE_PROGRESS = "module_progress"
         private const val TABLE_QUIZ_ATTEMPTS = "quiz_attempts"
@@ -452,6 +467,7 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         private const val KEY_SCHEMA_VERSION = "schema_version"
         private const val KEY_FIRST_RUN_COMPLETE = "first_run_complete"
         private const val KEY_THEME_MODE = "theme_mode"
+        private const val KEY_STARTING_LEVEL = "starting_level"
         private val PROGRESS_COLUMNS = arrayOf(COLUMN_MODULE_ID, COLUMN_STATE, COLUMN_UPDATED_AT, COLUMN_BEST_SCORE, COLUMN_ATTEMPT_COUNT)
         private val PACK_COLUMNS = arrayOf(COLUMN_PACK_ID, COLUMN_VERSION, COLUMN_NAME, COLUMN_DESCRIPTION, COLUMN_CHECKSUM, COLUMN_SIZE_BYTES, COLUMN_INSTALL_PATH, COLUMN_INSTALLED_AT)
     }

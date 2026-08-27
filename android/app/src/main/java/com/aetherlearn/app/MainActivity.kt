@@ -35,6 +35,7 @@ fun AetherLearnApp() {
     val localStore = remember { LocalStore(context.applicationContext) }
     var firstRunComplete by remember { mutableStateOf(localStore.isFirstRunComplete()) }
     var themeMode by remember { mutableStateOf(localStore.getThemeMode()) }
+    var startingLevel by remember { mutableStateOf(localStore.getStartingLevel()) }
 
     DisposableEffect(localStore) {
         onDispose { localStore.close() }
@@ -43,7 +44,9 @@ fun AetherLearnApp() {
     AetherLearnTheme(themeMode = themeMode) {
         if (!firstRunComplete) {
             PrivacyWelcomeScreen(
-                onContinue = {
+                onContinue = { level ->
+                    localStore.setStartingLevel(level)
+                    startingLevel = level
                     localStore.markFirstRunComplete()
                     firstRunComplete = true
                 },
@@ -52,6 +55,11 @@ fun AetherLearnApp() {
             AppShell(
                 localStore = localStore,
                 themeMode = themeMode,
+                startingLevel = startingLevel,
+                onStartingLevelChanged = { level ->
+                    localStore.setStartingLevel(level)
+                    startingLevel = level
+                },
                 onThemeModeChanged = { mode ->
                     localStore.setThemeMode(mode)
                     themeMode = mode
@@ -66,6 +74,8 @@ fun AetherLearnApp() {
 private fun AppShell(
     localStore: LocalStore,
     themeMode: ThemeMode,
+    startingLevel: StartingLevel?,
+    onStartingLevelChanged: (StartingLevel?) -> Unit,
     onThemeModeChanged: (ThemeMode) -> Unit,
 ) {
     val context = LocalContext.current
@@ -91,7 +101,7 @@ private fun AppShell(
         localStore.getAllProgress(lessons.map { it.id })
     }
     val bookmarks = remember(refreshToken) { localStore.getBookmarkedIds() }
-    val recommended = remember(refreshToken, summaries) { recommendedLesson(summaries, progress) }
+    val recommended = remember(refreshToken, summaries, startingLevel) { recommendedLesson(summaries, progress, startingLevel) }
     val selectedLesson = lessons.firstOrNull { it.id == selectedLessonId }
 
     if (settingsOpen) {
@@ -99,6 +109,8 @@ private fun AppShell(
             store = localStore,
             lessons = lessons,
             themeMode = themeMode,
+            startingLevel = startingLevel,
+            onStartingLevelChanged = onStartingLevelChanged,
             onThemeModeChanged = onThemeModeChanged,
             onContentChanged = { contentRevision++; refreshToken++ },
             onBack = { settingsOpen = false },
@@ -162,6 +174,7 @@ private fun AppShell(
                     progress = progress,
                     bookmarks = bookmarks,
                     recommended = recommended,
+                    startingLevel = startingLevel,
                     onLessonClick = { lessonId ->
                         localStore.markInProgress(lessonId)
                         refreshToken++
@@ -171,6 +184,7 @@ private fun AppShell(
                 Destination.PRACTICE -> PracticeScreen(
                     padding = padding,
                     lessons = lessons,
+                    progress = progress,
                     onLessonClick = { lessonId ->
                         localStore.markInProgress(lessonId)
                         refreshToken++

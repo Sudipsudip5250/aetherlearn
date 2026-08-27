@@ -1,12 +1,21 @@
 package com.aetherlearn.app
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.aetherlearn.app.data.*
 
@@ -48,6 +57,7 @@ internal fun LessonReaderScreen(
                 style = MaterialTheme.typography.labelLarge,
             )
             Text("Risk tier: ${lesson.riskTier}", style = MaterialTheme.typography.bodySmall)
+            Text("Completion: mark the lesson complete yourself; checks provide feedback and do not block completion.", style = MaterialTheme.typography.bodySmall)
             if (lesson.objectives.isNotEmpty()) {
                 LessonSection("Objectives") {
                     BulletList(lesson.objectives)
@@ -76,7 +86,7 @@ internal fun LessonReaderScreen(
                     },
                     onCheck = {
                         val score = lesson.quizQuestions.indices.count { index ->
-                            matchesExpected(quizAnswers[index], lesson.quizQuestions[index].expectedAnswer)
+                            matchesExpected(quizAnswers[index], lesson.quizQuestions[index])
                         }
                         quizResult = score to lesson.quizQuestions.size
                         store.saveQuizAttempt(lesson.id, score, lesson.quizQuestions.size)
@@ -154,20 +164,117 @@ private fun BulletList(items: List<String>) {
 
 @Composable
 private fun MarkdownBody(body: String) {
-    val cleaned = body
-        .replace(Regex("\\[([^]]+)]\\([^)]*\\)"), "$1")
-        .replace("**", "")
-        .replace("`", "")
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        cleaned.split(Regex("\\n\\s*\\n"))
-            .map(String::trim)
-            .filter(String::isNotEmpty)
-            .forEach { paragraph ->
-                val display = paragraph.lines().joinToString("\n") { line ->
-                    if (line.trimStart().startsWith("- ")) "• ${line.trimStart().removePrefix("- ").trim()}" else line
-                }
-                Text(display, style = MaterialTheme.typography.bodyLarge)
+    val clipboard = LocalClipboardManager.current
+    var copiedCode by remember(body) { mutableStateOf<String?>(null) }
+    val blocks = mutableListOf<MarkdownBlock>()
+    val paragraph = StringBuilder()
+    var inCode = false
+    val tableRows = mutableListOf<List<String>>()
+    val flushTable = {
+        if (tableRows.isNotEmpty()) {
+            val header = tableRows.first()
+            val rows = tableRows.drop(1).filterNot { row -> row.all { cell -> cell.matches(Regex(":?-{3,}:?")) } }
+            blocks += MarkdownBlock.Table(header, rows)
+            tableRows.clear()
+        }
+    }
+    val flushParagraph = {
+        val value = paragraph.toString().trim()
+        if (value.isNotEmpty()) blocks += MarkdownBlock.Text(value)
+        paragraph.clear()
+    }
+    body.lines().forEach { line ->
+        if (line.trimStart().startsWith("```")) {
+            if (inCode) {
+                blocks += MarkdownBlock.Code(paragraph.toString().trimEnd())
+                paragraph.clear()
+            } else {
+                flushTable()
+                flushParagraph()
             }
+            inCode = !inCode
+        } else if (inCode) {
+            paragraph.append(line).append('\n')
+        } else if (line.trimStart().startsWith("|") && line.trimEnd().endsWith("|")) {
+            flushParagraph()
+            tableRows += line.trim().removePrefix("|").removeSuffix("|").split("|").map(String::trim)
+        } else if (line.isBlank()) {
+            flushTable()
+            flushParagraph()
+        } else {
+            flushTable()
+            if (paragraph.isNotEmpty()) paragraph.append('\n')
+            paragraph.append(line)
+        }
+    }
+    if (inCode) blocks += MarkdownBlock.Code(paragraph.toString().trimEnd()) else { flushTable(); flushParagraph() }
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        blocks.forEach { block ->
+            when (block) {
+                is MarkdownBlock.Text -> Text(inlineMarkdown(block.value), style = MaterialTheme.typography.bodyLarge)
+                is MarkdownBlock.Table -> Surface(color = MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.small) {
+                    Column(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+                        TableRow(block.header, header = true)
+                        block.rows.forEach { row -> TableRow(row, header = false) }
+                    }
+                }
+                is MarkdownBlock.Code -> Surface(color = MaterialTheme.colorScheme.surfaceVariant, shape = MaterialTheme.shapes.small) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                            Text("Code example", style = MaterialTheme.typography.labelMedium)
+                            TextButton(onClick = { clipboard.setText(AnnotatedString(block.value)); copiedCode = block.value }) { Text(if (copiedCode == block.value) "Copied" else "Copy code") }
+                        }
+                        Row(modifier = Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 12.dp, vertical = 4.dp)) {
+                            Text(block.value, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private sealed interface MarkdownBlock {
+    data class Text(val value: String) : MarkdownBlock
+    data class Table(val header: List<String>, val rows: List<List<String>>) : MarkdownBlock
+    data class Code(val value: String) : MarkdownBlock
+}
+
+@Composable
+private fun TableRow(cells: List<String>, header: Boolean) {
+    Row {
+        cells.forEach { cell ->
+            Text(
+                text = inlineMarkdown(cell),
+                modifier = Modifier
+                    .widthIn(min = 120.dp)
+                    .border(1.dp, MaterialTheme.colorScheme.outline)
+                    .padding(8.dp),
+                fontWeight = if (header) FontWeight.Bold else FontWeight.Normal,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+}
+
+private fun inlineMarkdown(value: String): AnnotatedString {
+    val cleaned = value.replace(Regex("\\[([^]]+)]\\([^)]*\\)"), "$1").lines().joinToString("\n") { line ->
+        if (line.trimStart().startsWith("- ")) "• ${line.trimStart().removePrefix("- ").trim()}" else line
+    }
+    val pattern = Regex("(\\*\\*[^*]+\\*\\*|`[^`]+`)")
+    return buildAnnotatedString {
+        var cursor = 0
+        pattern.findAll(cleaned).forEach { match ->
+            append(cleaned.substring(cursor, match.range.first))
+            val token = match.value
+            when {
+                token.startsWith("**") -> withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(token.removeSurrounding("**")) }
+                token.startsWith("`") -> withStyle(SpanStyle(fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Medium)) { append(token.removeSurrounding("`")) }
+            }
+            cursor = match.range.last + 1
+        }
+        append(cleaned.substring(cursor))
     }
 }
 
@@ -193,7 +300,7 @@ private fun QuizSection(
                 minLines = 2,
             )
             if (result != null) {
-                val correct = matchesExpected(answers.getOrElse(index) { "" }, question.expectedAnswer)
+                val correct = matchesExpected(answers.getOrElse(index) { "" }, question)
                 Text(if (correct) "Correct" else "Review: ${question.expectedAnswer}", fontWeight = FontWeight.SemiBold)
                 if (question.explanation.isNotBlank()) Text(question.explanation)
             }
@@ -208,13 +315,14 @@ private fun QuizSection(
     }
 }
 
-private fun matchesExpected(answer: String, expected: String): Boolean {
-    val normalizedAnswer = answer.lowercase().replace(Regex("[^a-z0-9 ]"), " ").replace(Regex("\\s+"), " ").trim()
-    val normalizedExpected = expected.lowercase().replace(Regex("[^a-z0-9 ]"), " ").replace(Regex("\\s+"), " ").trim()
-    if (normalizedAnswer.isBlank() || normalizedExpected.isBlank()) return false
-    if (normalizedAnswer == normalizedExpected || normalizedAnswer.contains(normalizedExpected) || normalizedExpected.contains(normalizedAnswer)) return true
-    val alternatives = expected.split(",", " or ")
-        .map { it.lowercase().replace(Regex("[^a-z0-9 ]"), " ").trim() }
-        .filter { it.length >= 4 }
-    return alternatives.any { normalizedAnswer.contains(it) }
+private fun matchesExpected(answer: String, question: QuizQuestion): Boolean {
+    val normalizedAnswer = normalizeAnswer(answer)
+    if (normalizedAnswer.isBlank()) return false
+    return question.acceptedAnswers.any { normalizeAnswer(it) == normalizedAnswer }
 }
+
+private fun normalizeAnswer(value: String): String = value
+    .lowercase()
+    .replace(Regex("[^a-z0-9 ]"), " ")
+    .replace(Regex("\\s+"), " ")
+    .trim()

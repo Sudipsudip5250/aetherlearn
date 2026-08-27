@@ -5,6 +5,8 @@ data class QuizQuestion(
     val prompt: String,
     val expectedAnswer: String,
     val explanation: String,
+    val type: ExerciseType = ExerciseType.SHORT_ANSWER,
+    val acceptedAnswers: List<String> = listOf(expectedAnswer),
 )
 
 data class LessonDocument(
@@ -32,6 +34,10 @@ data class LessonDocument(
                 append('\n')
             }
         }
+}
+
+enum class ExerciseType(val version: String) {
+    SHORT_ANSWER("short-answer-v1"),
 }
 
 enum class LearningState {

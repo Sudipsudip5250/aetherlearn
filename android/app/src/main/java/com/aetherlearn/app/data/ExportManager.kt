@@ -54,6 +54,7 @@ object ExportManager {
             .put("format", "aetherlearn-learning-export")
             .put("format_version", 1)
             .put("contains_personal_notes", store.getNotes().isNotEmpty())
+            .put("starting_level", store.getStartingLevel()?.name ?: JSONObject.NULL)
         val modules = JSONArray()
         val bookmarks = store.getBookmarkedIds()
         lessons.forEach { lesson ->

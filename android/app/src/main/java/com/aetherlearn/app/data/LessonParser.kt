@@ -89,16 +89,26 @@ class LessonParser(private val context: Context) {
             val content = numbered.groupValues[2].trim()
             val answer = ANSWER_PATTERN.matchEntire(content)
             if (answer == null) {
-                QuizQuestion(number, content, "", "")
+                QuizQuestion(number, content, "", "", acceptedAnswers = emptyList())
             } else {
+                val expected = answer.groupValues[2].trim()
                 QuizQuestion(
                     number = number,
                     prompt = answer.groupValues[1].trim(),
-                    expectedAnswer = answer.groupValues[2].trim(),
+                    expectedAnswer = expected,
                     explanation = answer.groupValues[3].trim(),
+                    acceptedAnswers = acceptedAnswerVariants(expected),
                 )
             }
         }
+
+    private fun acceptedAnswerVariants(expected: String): List<String> = buildList {
+        add(expected)
+        expected.split(Regex(",\\s*|\\s+or\\s+"))
+            .map(String::trim)
+            .filter { it.length >= 4 }
+            .forEach(::add)
+    }.distinct()
 
     private fun scalar(value: String): String = value.trim().removeSurrounding("\"", "'")
 

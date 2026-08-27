@@ -20,6 +20,7 @@ internal fun LearnScreen(
     progress: Map<String, ModuleProgress>,
     bookmarks: Set<String>,
     recommended: ModuleSummary?,
+    startingLevel: StartingLevel?,
     onLessonClick: (String) -> Unit,
 ) {
     LazyColumn(
@@ -47,6 +48,10 @@ internal fun LearnScreen(
             Text(
                 text = "$completed of ${lessons.size} lessons completed",
                 style = MaterialTheme.typography.labelLarge,
+            )
+            Text(
+                text = startingLevel?.let { "Starting point: ${it.label}" } ?: "Choose a starting point in Settings for a gentler recommendation.",
+                style = MaterialTheme.typography.bodySmall,
             )
             Spacer(modifier = Modifier.height(6.dp))
             LinearProgressIndicator(

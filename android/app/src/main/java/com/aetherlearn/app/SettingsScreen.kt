@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -24,6 +25,8 @@ internal fun SettingsScreen(
     store: LocalStore,
     lessons: List<LessonDocument>,
     themeMode: ThemeMode,
+    startingLevel: StartingLevel?,
+    onStartingLevelChanged: (StartingLevel?) -> Unit,
     onThemeModeChanged: (ThemeMode) -> Unit,
     onContentChanged: () -> Unit,
     onBack: () -> Unit,
@@ -35,6 +38,7 @@ internal fun SettingsScreen(
     var exportWarning by rememberSaveable { mutableStateOf<String?>(null) }
     var exportMessage by remember { mutableStateOf<String?>(null) }
     var clearDataWarning by rememberSaveable { mutableStateOf(false) }
+    var clearNotesWarning by rememberSaveable { mutableStateOf(false) }
     var dataMessage by remember { mutableStateOf<String?>(null) }
     var networkUrl by rememberSaveable { mutableStateOf("") }
     var networkProgress by remember { mutableStateOf<NetworkDownloadProgress?>(null) }
@@ -57,6 +61,23 @@ internal fun SettingsScreen(
             }
         }
         exportWarning = null
+    }
+
+    if (clearNotesWarning) {
+        AlertDialog(
+            onDismissRequest = { clearNotesWarning = false },
+            title = { Text("Delete all notes?") },
+            text = { Text("This removes every private note stored on this device. Progress, quiz attempts, bookmarks, preferences, and content packs are kept. This cannot be undone unless you have an export.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    store.clearAllNotes()
+                    dataMessage = "All local notes deleted. Other learning data was kept."
+                    clearNotesWarning = false
+                    onContentChanged()
+                }) { Text("Delete all notes") }
+            },
+            dismissButton = { TextButton(onClick = { clearNotesWarning = false }) { Text("Cancel") } },
+        )
     }
 
     if (clearDataWarning) {
@@ -112,6 +133,12 @@ internal fun SettingsScreen(
             ThemeMode.entries.forEach { mode ->
                 ThemeOptionRow(mode, mode == themeMode) { onThemeModeChanged(mode) }
             }
+            Text("Learning path", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+            Text("This optional choice changes the recommended next lesson only. It never locks content or records identity.")
+            StartingLevel.entries.forEach { level ->
+                StartingLevelOptionRow(level, level == startingLevel) { onStartingLevelChanged(level) }
+            }
+            TextButton(onClick = { onStartingLevelChanged(null) }, modifier = Modifier.fillMaxWidth()) { Text("Clear starting-point choice") }
             HorizontalDivider()
             Text("Export", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
             Text("Export your progress, quiz attempts, notes, and bookmarks offline. You choose the destination with the Android file picker.")
@@ -123,6 +150,7 @@ internal fun SettingsScreen(
             HorizontalDivider()
             Text("Local data controls", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
             Text("Learning records stay in app-private storage. Export first if you may want to restore them later; plain exports are not encrypted backups.")
+            OutlinedButton(onClick = { clearNotesWarning = true }, modifier = Modifier.fillMaxWidth()) { Text("Delete all notes") }
             OutlinedButton(onClick = { clearDataWarning = true }, modifier = Modifier.fillMaxWidth()) { Text("Delete all local learning data") }
             dataMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
             HorizontalDivider()
@@ -244,6 +272,24 @@ private fun formatBytes(bytes: Long): String = when {
     bytes < 1024L -> "$bytes B"
     bytes < 1024L * 1024L -> "${bytes / 1024L} KB"
     else -> "${bytes / (1024L * 1024L)} MB"
+}
+
+@Composable
+private fun StartingLevelOptionRow(level: StartingLevel, selected: Boolean, onSelected: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .selectable(selected = selected, role = Role.RadioButton, onClick = onSelected)
+            .padding(vertical = 4.dp)
+            .semantics { contentDescription = "Starting level: ${level.label}. ${level.description}" },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RadioButton(selected = selected, onClick = null)
+        Column(modifier = Modifier.padding(start = 12.dp)) {
+            Text(level.label, fontWeight = FontWeight.SemiBold)
+            Text(level.description, style = MaterialTheme.typography.bodySmall)
+        }
+    }
 }
 
 @Composable

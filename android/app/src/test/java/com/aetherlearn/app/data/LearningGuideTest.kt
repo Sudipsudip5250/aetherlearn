@@ -34,6 +34,28 @@ class LearningGuideTest {
     }
 
     @Test
+    fun startingLevelPrefersDigitalFoundationsWithoutBlockingOtherLessons() {
+        val result = recommendedLesson(
+            lessons,
+            emptyMap(),
+            StartingLevel.NEW_TO_COMPUTING,
+        )
+
+        assertEquals("intro", result?.id)
+    }
+
+    @Test
+    fun startingLevelCanPreferPythonWhenThatPathIsReady() {
+        val result = recommendedLesson(
+            lessons,
+            mapOf("intro" to ModuleProgress("intro", LearningState.COMPLETED, 1L)),
+            StartingLevel.TRIED_PROGRAMMING,
+        )
+
+        assertEquals("python", result?.id)
+    }
+
+    @Test
     fun fallsBackToFirstUnfinishedLessonWhenReadinessIsUnknown() {
         val blockedLessons = listOf(
             ModuleSummary("blocked", "Blocked", "offline", 20, "digital-literacy", listOf("missing")),

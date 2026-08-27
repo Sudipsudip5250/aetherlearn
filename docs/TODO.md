@@ -146,7 +146,7 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Begin Stage 2 only after the Stage 1 checkpoint, with its exact four-lesson scope and source matrix recorded in D-032.
 - [x] Begin Stage 3 only after the Stage 2 checkpoint, with its exact four-lesson scope and source/safety matrix recorded in D-034.
 - [x] Begin Stage 4 only after the Stage 3 automated checkpoint, with its exact four-lesson scope and source matrix recorded in D-036; retain bundled-only and offline/privacy boundaries.
-- [x] Complete Stage 4 parity, documentation, deterministic 35-lesson pack refresh, browser smoke, commit/push, and hosted Quality checkpoint; this records the prior Stage 4 artifact, while human Web/data accessibility, pedagogical, source, and privacy review remains open.
+- [x] Complete Stage 4 parity, documentation, deterministic then-current 35-lesson pack refresh, browser smoke, commit/push, and hosted Quality checkpoint; this records the prior Stage 4 artifact, while human Web/data accessibility, pedagogical, source, and privacy review remains open.
 - [x] Complete Stage 5 authoring, parity, documentation, deterministic 37-lesson pack refresh, browser smoke, commit/push, and hosted Quality checkpoint; human historical/cultural, accessibility, source, safety, privacy, and career-framing review remains open.
 - [ ] Approve each later stage only after the preceding stage is validated, reviewed, documented, committed, and pushed; do not treat the user’s sequential authorization as a waiver of per-stage safety or release gates.
 
@@ -157,7 +157,16 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Add Android per-note deletion and confirmed deletion of learner records while retaining preferences and content packs.
 - [x] Add separate Web controls for clearing cached content and deleting browser-local learning data, with explicit confirmation and honest export limitations.
 - [x] Add focused recommendation unit coverage and Web startup/cache-version checks; retain human Android, Android-browser, screen-reader, and device evidence gates.
-- [ ] Implement richer assessment schemas, onboarding preferences, import/restore, rich cross-client Markdown rendering, diagrams/media, or new curriculum only after separate migration, asset, source, safety, parity, and human-review decisions.
+
+## Attached follow-up prompt — safe local slice
+
+- [x] Add optional first-use starting-level selection and Settings editing on Android, plus the equivalent Web dialog; keep it local, optional, and recommendation-only.
+- [x] Add Learn filters for strand, level, status, and availability while retaining browse-all behavior and clear empty states.
+- [x] Introduce the bounded `short-answer-v1` exercise label and explicit normalized accepted-answer variants in both clients without changing existing quiz-attempt records.
+- [x] Improve both readers with safe emphasis/inline-code/list rendering; add non-executing copy-code actions and bounded Web code blocks.
+- [x] Add Android clear-all-notes as a distinct confirmed action and include starting-level metadata in Android JSON export.
+- [x] Add validated Web JSON export/import with explicit replacement confirmation, 1 MB limit, known-ID validation, allowed state checks, and cached-content isolation.
+- [ ] Add richer assessment types, completion-policy fields in lesson frontmatter, diagrams/media assets, or new curriculum only after separate schema, pack, parity, source, safety, and human-review decisions.
 
 ## Deferred backlog
 

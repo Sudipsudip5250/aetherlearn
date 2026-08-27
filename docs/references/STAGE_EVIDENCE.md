@@ -335,3 +335,33 @@ Implemented locally: deterministic prerequisite-aware Continue/Recommended guida
 Web verification used the local Chromium shell at `http://127.0.0.1:4173/`. The fresh version-11 document loaded the existing 37-lesson cached pack, showed the guided-path card and strand-grouped lesson catalog, exposed the About data controls, and emitted no console output in the final check. A transient startup failure caused by an older cached `idb.js` module was reproduced and fixed by versioning the changed module; the corrected shell then loaded successfully.
 
 Automated repository checks passed: 37 canonical lessons, Android/Web byte parity, 135 Markdown links, secrets, dependency pins, Android manifest boundary, Web JavaScript syntax, JSON syntax, 8 Python regression tests, deterministic sample-pack checksum, and `git diff --check`. The Android Gradle unit-test attempt remains blocked because the sandbox has no Android SDK (`SDK location not found`); no device, emulator, TalkBack, Android-browser, Termux, signing, or human-review gate is claimed as complete.
+
+
+## 2026-08-27 — Follow-up prompt Web onboarding and filtering smoke
+
+A fresh local Web shell at `http://127.0.0.1:4173/?followup=12-20260827#/learn` loaded the cached 37-lesson pack, exposed the optional starting-level dialog, and showed dynamic filter options for all six current strands, the beginner level, three progress states, and two availability values. Selecting `python-fundamentals` narrowed the catalog to 7 of 37 lessons without a network request and retained the full-catalog clear-filter path.
+
+The browser screenshot showed the onboarding choices and controls are present and keyboard-addressable, but the compact viewport annotation made the three radio-choice descriptions visually crowded. Add an explicit small-screen width/min-width rule for the choice rows before treating the dialog visual pass as complete. This browser smoke does not claim Android runtime, Android-browser, screen-reader, or human accessibility approval.
+
+
+The follow-up Web shell was reloaded after the responsive dialog fix. The current 37-lesson catalog, guided card, filter controls, and cached-pack status remained visible. Dismissing the optional starting-level dialog with **Skip for now** returned the normal Learn route without changing the existing in-browser learning state. The visual annotation still appears crowded around the choice labels in the sandbox screenshot, so manual narrow-width/large-text review remains required even though the CSS now constrains dialog width, choice-row width, wrapping, and dialog height.
+
+
+## 2026-08-27 — Follow-up local data-control smoke
+
+The Web About route exposed four distinct controls: export learning data, import learning data, clear cached content, and delete learning data. Triggering export produced the explicit status `Learning data export created. Store it carefully; it may contain private notes.` No learning state was changed. The export is intentionally plain JSON and is not described as encrypted backup. File-selection/import replacement and negative validation cases remain suitable for a follow-up browser test and are not claimed complete by this smoke.
+
+
+## 2026-08-27 — Follow-up Web reader and code presentation smoke
+
+The refreshed Web reader for `py-06-functions-scope-reusable-code` showed the semantic back link, two non-executing **Copy code** controls, safe escaped fenced code, inline bold/code styling, local quiz inputs, and the explicit learner-choice completion policy. Activating a copy control did not change the route or learner state; the browser interaction remained on the reader. The current lightweight renderer still presents Markdown tables as pipe-delimited text rather than a responsive table, so table rendering remains a documented bounded follow-up rather than an unverified claim.
+
+
+The version-14 Web reader quiz was filled with four intentionally incorrect answers and submitted. The reader displayed `0% — 0 of 4 correct`, persisted the attempt summary, and rendered per-question **Review** feedback with the expected key answer and lesson explanation. The route stayed offline and the completion policy remained explicit: quiz score does not block lesson completion. This smoke does not claim Android runtime parity until an Android SDK/device test is available.
+
+
+## 2026-08-27 — Follow-up implementation validation
+
+The final local repository matrix passed: 37 canonical lessons, Android/Web byte parity, 135 Markdown links, secret scan, dependency pins, Android manifest boundary, Web JavaScript syntax, JSON parsing, 8 Python regression tests, deterministic sample-pack SHA-256 `c075b489b5ab697c2aadb77a56bfc8e00f18451ee975cdcc0aa6ff846bea8403`, and `git diff --check`. The canonical lesson trees, registry, and Web manifest had an empty diff.
+
+The final Android Gradle unit-test attempt was blocked before compilation because the sandbox has no Android SDK (`SDK location not found`). No fake `local.properties`, SDK path, device result, emulator result, TalkBack result, or Android runtime claim is made.
