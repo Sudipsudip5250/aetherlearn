@@ -1,6 +1,6 @@
 # AetherLearn documentation index
 
-This directory is organized by purpose. **Start with the current documents** below; files under `references/` are evidence records, and files under `references/archive/` are historical notes retained for provenance rather than current instructions.
+This directory is organized by purpose. **Start with the current documents** below; files under `references/` are evidence records, and `references/ARCHIVE.md` summarizes superseded notes retained for provenance rather than current instructions.
 
 ## Read first
 
@@ -29,14 +29,13 @@ This directory is organized by purpose. **Start with the current documents** bel
 | [`CONTENT_REVIEW.md`](CONTENT_REVIEW.md) | Current lesson consistency review and draft status |
 | [`DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) | Android, Web/PWA, Termux, persistence, privacy, and accessibility testing |
 | [`STAGE5_HUMAN_REVIEW_CHECKLIST.md`](STAGE5_HUMAN_REVIEW_CHECKLIST.md) | Stage 5 historical, career, safety, accessibility, signing, and distribution gates |
-| [`FUTURE_IMPLEMENTATION_PLAN.md`](FUTURE_IMPLEMENTATION_PLAN.md) | Approved stage sequencing and governance; no Stage 6 scope is authorized |
-| [`FUTURE_CONTENT_ROADMAP.md`](FUTURE_CONTENT_ROADMAP.md) | Longer-term topic analysis and intentionally gated future ideas |
-| [`VISION.md`](VISION.md) | Long-term mission and differentiators |
+| [`FUTURE_PLAN.md`](FUTURE_PLAN.md) | Approved stage sequencing, governance, longer-term topic analysis, and intentionally gated future ideas; no Stage 6 scope is authorized |
+
 
 ## Evidence and references
 
-Current source matrices and browser evidence are in [`references/`](references/). They include stage-specific source and smoke records and should be read alongside the relevant decision in [`PLAN.md`](PLAN.md). Early research, build notes, and superseded observations are in [`references/archive/`](references/archive/), with an explanation in [`references/archive/README.md`](references/archive/README.md).
+Current source matrices and browser evidence are in [`references/STAGE_EVIDENCE.md`](references/STAGE_EVIDENCE.md) and should be read alongside the relevant decision in [`PLAN.md`](PLAN.md). Early research, build notes, dated network-contract notes, and superseded observations are summarized in [`references/ARCHIVE.md`](references/ARCHIVE.md); the original files remain recoverable from the local pre-consolidation backup branch.
 
 ## Documentation rule
 
-If a document describes a current requirement, release procedure, or decision, keep it in the `docs/` root and link it from this index. If it records a completed investigation or superseded observation, place it under `references/` or `references/archive/` and label it as historical. Do not use an archived note as evidence of current behavior.
+If a document describes a current requirement, release procedure, or decision, keep it in the `docs/` root and link it from this index. If it records a completed investigation or superseded observation, place it under `references/` and label it as historical. Do not use an archived note as evidence of current behavior.

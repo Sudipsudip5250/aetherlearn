@@ -51,7 +51,7 @@ Read the canonical files and the Android/Web mirrors side by side. The canonical
 
 ### 2.1 Morris worm history and response
 
-The historical reviewer should verify that the lesson separates **intent, impact, response, accountability, and learning** rather than presenting a single heroic or villainous narrative. Cross-check the November 2, 1988 date, broad disruption, affected institutions, CERT/CC response history, and legal-accountability statements against the sources listed in [`stage5_sources.md`](references/stage5_sources.md). Record any disagreement between the FBI, CMU SEI, and Computer History Museum accounts instead of silently harmonizing it.
+The historical reviewer should verify that the lesson separates **intent, impact, response, accountability, and learning** rather than presenting a single heroic or villainous narrative. Cross-check the November 2, 1988 date, broad disruption, affected institutions, CERT/CC response history, and legal-accountability statements against the sources listed in [`STAGE_EVIDENCE.md`](references/STAGE_EVIDENCE.md). Record any disagreement between the FBI, CMU SEI, and Computer History Museum accounts instead of silently harmonizing it.
 
 Confirm that the lesson does not turn the affected systems into a scorecard, treat an experiment as harmless merely because intent was described that way, or imply that one historical event explains all later security practice. Check that the language names affected communities and institutional consequences without exposing operational mechanisms, vulnerable-service names, commands, source code, concealment methods, replication steps, or real incident-response instructions.
 
@@ -67,7 +67,7 @@ Check that a learner can create a safe artifact from fictional data, understand 
 
 ## 3. Source, historical, cultural, and maintenance review
 
-Use [`stage5_sources.md`](references/stage5_sources.md) as the claims inventory. For each material statement, record the source actually inspected, publication or update date when available, the reviewer’s confidence, and any uncertainty. A source’s presence in the lesson does not prove that it supports every nearby sentence.
+Use [`STAGE_EVIDENCE.md`](references/STAGE_EVIDENCE.md) as the claims inventory. For each material statement, record the source actually inspected, publication or update date when available, the reviewer’s confidence, and any uncertainty. A source’s presence in the lesson does not prove that it supports every nearby sentence.
 
 | Source-review gate | Owner | Result/evidence |
 |---|---|---|

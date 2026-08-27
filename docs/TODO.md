@@ -102,7 +102,7 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] **Checkpoint content expansion batch 2:** all twenty frozen MVP modules now exist and validate in the canonical source tree and both client payloads.
 - [x] Stage 1: add and validate `dl-06`, `dl-07`, and `dl-08`, synchronize Android/Web payloads, and preserve the stable `mvp-20` baseline.
 - [x] Stage 1: record the source matrix, update schema-v2 registry governance, run parity and hosted Quality checks, and push commit `ed18406`.
-- [x] Record the exact Stage 2 scope and source matrix for `dev-04` through `dev-07` in decision D-032 and `docs/references/stage2_sources.md`.
+- [x] Record the exact Stage 2 scope and source matrix for `dev-04` through `dev-07` in decision D-032 and `docs/references/STAGE_EVIDENCE.md`.
 - [x] Draft and register the four Stage 2 lessons; initial canonical validation and Android/Web parity pass.
 - [x] Complete the Stage 2 full static/pack/hosted-CI checkpoint, content-review update, commit/push, and browser reader/cache smoke; human technical/pedagogical/accessibility/supply-chain review remains open.
 - [x] Stage 3: record D-034, add the four source-backed security-ethics lessons, extend the validator to the explicit `sec-` strand, and synchronize canonical/Android/Web content.
@@ -138,8 +138,8 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 
 - [x] Remove the unreferenced raw requirements transcript `docs/references/revised_requirements.txt`; its maintained requirements are represented in `PRODUCT_SPEC.md`, `ARCHITECTURE.md`, `SAFETY.md`, `PLAN.md`, and `TODO.md`.
 - [x] Retain substantive historical review and evidence notes under `docs/references/` because they support architectural decisions, browser/build evidence, or milestone recovery.
-- [x] Add [`docs/FUTURE_CONTENT_ROADMAP.md`](FUTURE_CONTENT_ROADMAP.md) with source-backed planning for historical languages, systems, software engineering, ethical security, organizations, and career orientation.
-- [x] Add [`docs/FUTURE_IMPLEMENTATION_PLAN.md`](FUTURE_IMPLEMENTATION_PLAN.md) with staged batches, acceptance criteria, source-maintenance rules, and safety boundaries.
+- [x] Add [`docs/FUTURE_PLAN.md`](FUTURE_PLAN.md) with source-backed planning for historical languages, systems, software engineering, ethical security, organizations, and career orientation.
+- [x] Add [`docs/FUTURE_PLAN.md`](FUTURE_PLAN.md) with staged batches, acceptance criteria, source-maintenance rules, and safety boundaries.
 - [x] Keep the roadmap and implementation plan as governance documents while allowing only decision-approved stage IDs into `content/curriculum.yml`; the original frozen 20-module MVP remains immutable.
 - [x] Record the user-approved Stage 1 transition in decision D-031 with the exact three-lesson scope, schema-v2 registry policy, S0 safety boundary, source requirements, and sequential later-stage gate.
 - [x] Complete Stage 1 implementation, client parity, full automated validation, commit, push, and hosted Quality checkpoint for `dl-06`, `dl-07`, and `dl-08`; human pedagogical/safety review remains open.

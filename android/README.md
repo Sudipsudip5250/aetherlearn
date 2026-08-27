@@ -8,7 +8,7 @@ The Android UI is organized by responsibility while sharing the existing app-she
 
 ## Requirements
 
-Install Android Studio or the Android command-line tools, JDK 17 or newer, Android SDK Platform 37, and Android SDK Build Tools 36.0.0 or newer. The project targets Android API 37 and supports Android API 26 or newer. The Gradle wrapper pins Gradle 9.4.1. These version choices follow the current Android Compose and Android Gradle Plugin documentation; early build observations are retained in [`../docs/references/archive/android_m2_build_notes.md`](../docs/references/archive/android_m2_build_notes.md).
+Install Android Studio or the Android command-line tools, JDK 17 or newer, Android SDK Platform 37, and Android SDK Build Tools 36.0.0 or newer. The project targets Android API 37 and supports Android API 26 or newer. The Gradle wrapper pins Gradle 9.4.1. These version choices follow the current Android Compose and Android Gradle Plugin documentation; early build observations are summarized in [`../docs/references/ARCHIVE.md`](../docs/references/ARCHIVE.md).
 
 ## Build
 

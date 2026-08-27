@@ -125,6 +125,18 @@ The official project remains free to users and does not create paid features. Su
 
 The first public release is done when a new user can install the Android app, download the core pack, complete the first curriculum strand in airplane mode, search lessons offline, take a quiz, save a note and bookmark, view progress, export local data, and complete at least one safe optional Termux exercise or its fallback. The release must pass the acceptance criteria above, include the companion documents in this specification set, publish build and contribution instructions, and document known limitations and recovery steps.
 
+## 12. Long-term vision and principles
+
+AetherLearn’s long-term mission is to make rigorous computer and digital-technology education available without advertising, surveillance, forced accounts, or continuous connectivity. The product should help learners move from digital literacy through programming, systems understanding, responsible security research, and advanced computer-science study without becoming an encyclopedic content dump.
+
+The non-negotiable principles are free access, open source, local-first privacy, offline continuity, phone-first practice, Termux as optional rather than required, human-readable content, responsible dual-use education, and accessibility by design. Progress, notes, bookmarks, quiz scores, and learning preferences remain on the device by default, and sensitive topics use safer abstractions, explicit authorization boundaries, controlled labs, and fictional examples.
+
+The long-term product shape has separable layers: a coherent curriculum, an offline-capable learning client, browser-safe visualizations, optional real-world terminal practice, and transparent community contribution. Future topics may include computing history, programming, algorithms, operating systems, networks, databases, distributed systems, computer architecture, AI, security, scientific computing, graphics, HCI, embedded systems, robotics, and other technologies. This is a roadmap, not approval for first-release scope; any expansion requires a new decision record and review.
+
+The project’s sustainability direction is community-funded infrastructure through donations, sponsorships, grants, educational partnerships, and volunteer maintenance. Funding must not create a paid learning tier or make the core path dependent on an account. If official hosting stops, downloaded applications and content should continue to work and community mirrors should remain possible.
+
+The success condition is a learner installing the Android app, downloading a modest core pack once, completing a coherent path privately and offline, taking notes and quizzes, exporting work, and optionally moving from explanation to an authorized local terminal exercise without losing context or being forced into a cloud account.
+
 ## References
 
 [1]: https://developer.android.com/guide/components/intents-filters "Android Developers: Intents and intent filters"
