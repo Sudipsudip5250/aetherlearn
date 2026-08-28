@@ -41,7 +41,7 @@ jobs:
         run: |
           python scripts/validate_visual_pack.py media/visuals/visual-foundations
           python scripts/validate_visual_pack.py docs/sample-pack/aetherlearn-visual-foundations-1.1.0.zip
-          sha256sum -c docs/sample-pack/aetherlearn-visual-foundations-1.1.0.zip.SHA256SUMS
+          (cd docs/sample-pack && sha256sum -c aetherlearn-visual-foundations-1.1.0.zip.SHA256SUMS)
           python scripts/build_visual_pack.py --source-dir media/visuals/visual-foundations --output build/visual-pack.zip
           cmp build/visual-pack.zip docs/sample-pack/aetherlearn-visual-foundations-1.1.0.zip
 
