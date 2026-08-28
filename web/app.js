@@ -1,4 +1,4 @@
-import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=17";
+import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=18";
 
 const CONTENT_MANIFEST = "./content/manifest.json";
 const VISUAL_MANIFEST_URL = "./visuals/visual-foundations/manifest.json";
@@ -232,8 +232,8 @@ function validateVisualManifest(manifest) {
   if (typeof manifest.name !== "string" || !manifest.name.trim() || typeof manifest.description !== "string" || !manifest.description.trim() || typeof manifest.created_at !== "string" || !manifest.created_at.trim() || (manifest.expires_at !== null && typeof manifest.expires_at !== "string")) throw new Error("Visual pack descriptive metadata is invalid.");
   if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(manifest.pack_version || "")) throw new Error("Visual pack version is invalid.");
   if (manifest.revocation_status !== "not-revoked" || manifest.distribution_status !== "unsigned-development" || manifest.signature !== null) throw new Error("Only the unsigned, non-revoked development visual fixture is accepted locally.");
-  if (!Array.isArray(manifest.module_ids) || manifest.module_ids.length !== 3 || new Set(manifest.module_ids).size !== manifest.module_ids.length) throw new Error("Visual pack module associations are invalid.");
-  if (!Array.isArray(manifest.assets) || manifest.assets.length !== 3) throw new Error("Unsupported or incomplete visual pack manifest.");
+  if (!Array.isArray(manifest.module_ids) || manifest.module_ids.length < 1 || manifest.module_ids.length > 48 || new Set(manifest.module_ids).size !== manifest.module_ids.length) throw new Error("Visual pack module associations are invalid.");
+  if (!Array.isArray(manifest.assets) || manifest.assets.length < 1 || manifest.assets.length > 48) throw new Error("Unsupported or incomplete visual pack manifest.");
   const ids = new Set();
   const paths = new Set();
   let installedTotal = 0;
@@ -243,6 +243,7 @@ function validateVisualManifest(manifest) {
     if (typeof asset.module_id !== "string" || !manifest.module_ids.includes(asset.module_id) || !state.lessons.some((lesson) => lesson.id === asset.module_id)) throw new Error(`Unknown visual module association: ${asset.module_id || "missing"}.`);
     if (typeof asset.path !== "string" || !/^assets\/[a-z0-9-]+\.svg$/.test(asset.path) || paths.has(asset.path)) throw new Error("Visual asset paths are invalid or duplicated.");
     if (typeof asset.kind !== "string" || !asset.kind.trim() || asset.mime !== "image/svg+xml" || typeof asset.alt_text !== "string" || !asset.alt_text.trim() || typeof asset.caption !== "string" || !asset.caption.trim() || typeof asset.text_equivalent !== "string" || !asset.text_equivalent.trim() || typeof asset.license !== "string" || !asset.license.trim() || typeof asset.attribution !== "string" || !asset.attribution.trim() || typeof asset.author !== "string" || !asset.author.trim() || typeof asset.locale !== "string" || !asset.locale.trim() || typeof asset.reduced_motion_alternative !== "string" || !asset.reduced_motion_alternative.trim()) throw new Error(`Visual metadata is incomplete for ${asset.asset_id}.`);
+    if (!asset.practical || asset.practical.mode !== "observe-and-trace" || typeof asset.practical.prompt !== "string" || !asset.practical.prompt.trim() || !Array.isArray(asset.practical.steps) || asset.practical.steps.length < 1 || asset.practical.steps.length > 5 || asset.practical.steps.some((step) => typeof step !== "string" || !step.trim()) || typeof asset.practical.success_criteria !== "string" || !asset.practical.success_criteria.trim()) throw new Error(`Visual practical metadata is incomplete for ${asset.asset_id}.`);
     if (asset.source_url !== null && (typeof asset.source_url !== "string" || !asset.source_url.startsWith("https://"))) throw new Error(`Visual source URL is invalid for ${asset.asset_id}.`);
     if (!Number.isInteger(asset.installed_bytes) || !Number.isInteger(asset.compressed_bytes) || asset.installed_bytes < 0 || asset.compressed_bytes < 0 || asset.installed_bytes > 256 * 1024) throw new Error(`Visual size metadata is invalid for ${asset.asset_id}.`);
     if (typeof asset.sha256 !== "string" || !/^[0-9a-f]{64}$/.test(asset.sha256)) throw new Error(`Visual checksum metadata is invalid for ${asset.asset_id}.`);
@@ -303,7 +304,7 @@ async function installVisualPack() {
     await staging.put(VISUAL_MANIFEST_URL, new Response(manifestBytes, { headers: { "Content-Type": "application/json" } }));
     for (const asset of manifest.assets) {
       const url = visualAssetUrl(asset);
-      if (!url || asset.mime !== "image/svg+xml" || !asset.module_id || !asset.alt_text || !asset.caption || !asset.text_equivalent || !asset.license || !asset.attribution) throw new Error(`Visual metadata is incomplete for ${asset.asset_id || "unknown asset"}.`);
+      if (!url || asset.mime !== "image/svg+xml" || !asset.module_id || !asset.alt_text || !asset.caption || !asset.text_equivalent || !asset.license || !asset.attribution || !asset.practical?.prompt || !Array.isArray(asset.practical?.steps) || !asset.practical?.success_criteria) throw new Error(`Visual metadata is incomplete for ${asset.asset_id || "unknown asset"}.`);
       const response = await fetch(url, { cache: "no-store" });
       if (!response.ok) throw new Error(`Could not load visual asset ${asset.asset_id}.`);
       const bytes = new Uint8Array(await response.arrayBuffer());
@@ -349,7 +350,7 @@ function renderOptionalVisuals(lesson) {
   if (!pack) return "";
   const assets = pack.manifest.assets.filter((asset) => asset.module_id === lesson.id);
   if (!assets.length) return "";
-  return `<section class="lesson-section visual-pack-section" aria-labelledby="optional-visuals-title"><h2 id="optional-visuals-title">Optional visual aid</h2><p>These diagrams are supplementary. The lesson explanation and text equivalents remain complete without this pack.</p>${assets.map((asset) => `<figure class="visual-figure"><img src="${escapeHtml(visualAssetUrl(asset))}" alt="${escapeHtml(asset.alt_text)}" loading="lazy" /><figcaption>${escapeHtml(asset.caption)}</figcaption><p class="visual-text-equivalent"><strong>Text equivalent:</strong> ${escapeHtml(asset.text_equivalent)}</p><small>License: ${escapeHtml(asset.license)} · ${escapeHtml(asset.attribution)}</small></figure>`).join("")}</section>`;
+  return `<section class="lesson-section visual-pack-section" aria-labelledby="optional-visuals-title"><h2 id="optional-visuals-title">Optional visual aid</h2><p>These diagrams and trace prompts are supplementary. The lesson explanation and text equivalents remain complete without this pack.</p>${assets.map((asset) => `<figure class="visual-figure"><img src="${escapeHtml(visualAssetUrl(asset))}" alt="${escapeHtml(asset.alt_text)}" loading="lazy" /><figcaption>${escapeHtml(asset.caption)}</figcaption><p class="visual-text-equivalent"><strong>Text equivalent:</strong> ${escapeHtml(asset.text_equivalent)}</p><details class="visual-practice"><summary>Try it: trace the idea</summary><p>${escapeHtml(asset.practical.prompt)}</p><ol>${asset.practical.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol><p><strong>Self-check:</strong> ${escapeHtml(asset.practical.success_criteria)}</p></details><small>License: ${escapeHtml(asset.license)} · ${escapeHtml(asset.attribution)}</small></figure>`).join("")}</section>`;
 }
 
 function getRecommendedLesson() {
@@ -474,11 +475,13 @@ function cssId(value) { return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").r
 function displayState(value) { return value === "in progress" ? "In progress" : value.replace(/^./, (letter) => letter.toUpperCase()); }
 
 function renderPractice() {
-  $("#practice-list").innerHTML = state.lessons.map((lesson) => {
+  const corePractice = state.lessons.map((lesson) => {
     const section = lesson.sections.find((candidate) => candidate.title.toLowerCase() === "offline practice");
     const questionCount = lessonQuiz(lesson).length;
     return `<article class="practice-card"><div><span class="lesson-index">${escapeHtml(lesson.id)}</span><h3>${escapeHtml(lesson.title)}</h3><div>${renderMarkdown(section?.body || "Practice content is included in the reader.")}</div><div class="card-meta"><span class="pill">short-answer-v1</span><span class="pill">${questionCount} checks</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span><span class="pill">${escapeHtml(lesson.availability)}</span><span class="pill status-pill">${escapeHtml(statusLabel(lesson.id))}</span></div></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Open lesson</button></article>`;
   }).join("");
+  const visualPractice = state.visualPack ? `<section class="visual-practice-index" aria-labelledby="visual-practice-title"><div class="section-heading"><div><p class="eyebrow">Optional visual practice</p><h3 id="visual-practice-title">Trace the idea</h3></div><span class="module-count">${state.visualPack.manifest.assets.length} local activities</span></div>${state.visualPack.manifest.assets.map((asset) => { const lesson = state.lessons.find((candidate) => candidate.id === asset.module_id); return `<article class="practice-card visual-practice-card"><div><span class="lesson-index">${escapeHtml(asset.module_id)}</span><h3>${escapeHtml(lesson?.title || asset.module_id)}</h3><p>${escapeHtml(asset.practical.prompt)}</p><div class="card-meta"><span class="pill">visual trace</span><span class="pill">${asset.practical.steps.length} steps</span><span class="pill">optional</span></div></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(asset.module_id)}">Open visual aid</button></article>`; }).join("")}</section>` : `<aside class="loading-card visual-practice-empty"><strong>Optional visual practice is not installed.</strong><span>Install it from About when you want diagrams and trace prompts. Core practice remains available here.</span></aside>`;
+  $("#practice-list").innerHTML = corePractice + visualPractice;
   document.querySelectorAll("#practice-list [data-open-lesson]").forEach((button) => button.addEventListener("click", () => { window.location.hash = `#/lesson/${button.dataset.openLesson}`; }));
 }
 

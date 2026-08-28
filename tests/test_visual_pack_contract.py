@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 import sys
@@ -36,6 +37,13 @@ class VisualPackContractTests(unittest.TestCase):
     def test_repository_visual_pack_is_valid(self) -> None:
         self.assertEqual(validate_directory(FIXTURE), [])
 
+    def test_expanded_pack_covers_all_37_lessons(self) -> None:
+        manifest = self.read_manifest(FIXTURE)
+        self.assertEqual(len(manifest["assets"]), 37)
+        self.assertEqual(len(manifest["module_ids"]), 37)
+        self.assertEqual({asset["module_id"] for asset in manifest["assets"]}, set(manifest["module_ids"]))
+        self.assertTrue(all("practical" in asset for asset in manifest["assets"]))
+
     def test_missing_asset_is_rejected(self) -> None:
         pack_dir = self.copy_fixture()
         (pack_dir / "assets" / "dl-01-bits-bytes.svg").unlink()
@@ -49,6 +57,22 @@ class VisualPackContractTests(unittest.TestCase):
         self.write_manifest(pack_dir, manifest)
         errors = validate_directory(pack_dir)
         self.assertTrue(any("SHA-256 mismatch" in error for error in errors))
+
+    def test_absolute_path_is_rejected(self) -> None:
+        pack_dir = self.copy_fixture()
+        manifest = self.read_manifest(pack_dir)
+        manifest["assets"][0]["path"] = "/absolute/asset.svg"
+        self.write_manifest(pack_dir, manifest)
+        errors = validate_directory(pack_dir)
+        self.assertTrue(any("safe relative path" in error for error in errors))
+
+    def test_duplicate_asset_path_is_rejected(self) -> None:
+        pack_dir = self.copy_fixture()
+        manifest = self.read_manifest(pack_dir)
+        manifest["assets"][1]["path"] = manifest["assets"][0]["path"]
+        self.write_manifest(pack_dir, manifest)
+        errors = validate_directory(pack_dir)
+        self.assertTrue(any("duplicate asset path" in error for error in errors))
 
     def test_unsafe_path_is_rejected(self) -> None:
         pack_dir = self.copy_fixture()
@@ -74,6 +98,44 @@ class VisualPackContractTests(unittest.TestCase):
         errors = validate_directory(pack_dir)
         self.assertTrue(any("alt_text must be non-empty" in error for error in errors))
 
+    def test_missing_text_equivalent_is_rejected(self) -> None:
+        pack_dir = self.copy_fixture()
+        manifest = self.read_manifest(pack_dir)
+        manifest["assets"][0]["text_equivalent"] = ""
+        self.write_manifest(pack_dir, manifest)
+        errors = validate_directory(pack_dir)
+        self.assertTrue(any("text_equivalent must be non-empty" in error for error in errors))
+
+    def test_missing_practical_metadata_is_rejected(self) -> None:
+        pack_dir = self.copy_fixture()
+        manifest = self.read_manifest(pack_dir)
+        manifest["assets"][0]["practical"]["prompt"] = ""
+        self.write_manifest(pack_dir, manifest)
+        errors = validate_directory(pack_dir)
+        self.assertTrue(any("practical prompt and success_criteria" in error for error in errors))
+
+    def test_missing_license_and_attribution_are_rejected(self) -> None:
+        pack_dir = self.copy_fixture()
+        manifest = self.read_manifest(pack_dir)
+        manifest["assets"][0]["license"] = ""
+        manifest["assets"][0]["attribution"] = ""
+        self.write_manifest(pack_dir, manifest)
+        errors = validate_directory(pack_dir)
+        self.assertTrue(any("license must be non-empty" in error for error in errors))
+        self.assertTrue(any("attribution must be non-empty" in error for error in errors))
+
+    def test_oversized_asset_is_rejected(self) -> None:
+        pack_dir = self.copy_fixture()
+        manifest = self.read_manifest(pack_dir)
+        oversized = pack_dir / "assets" / "oversized.svg"
+        oversized.write_bytes(b"<svg>" + b"x" * (256 * 1024) + b"</svg>")
+        manifest["assets"].append({**manifest["assets"][0], "asset_id": "oversized-asset", "module_id": manifest["module_ids"][0], "path": "assets/oversized.svg", "installed_bytes": oversized.stat().st_size, "compressed_bytes": oversized.stat().st_size, "sha256": hashlib.sha256(oversized.read_bytes()).hexdigest()})
+        manifest["installed_bytes"] += oversized.stat().st_size
+        manifest["compressed_bytes"] += oversized.stat().st_size
+        self.write_manifest(pack_dir, manifest)
+        errors = validate_directory(pack_dir)
+        self.assertTrue(any("asset exceeds" in error for error in errors))
+
     def test_active_svg_content_is_rejected(self) -> None:
         pack_dir = self.copy_fixture()
         asset = pack_dir / "assets" / "dl-01-bits-bytes.svg"
@@ -97,6 +159,18 @@ class VisualPackContractTests(unittest.TestCase):
         errors = validate_directory(pack_dir)
         self.assertTrue(any("installed_bytes mismatch" in error for error in errors))
 
+    def test_unexpected_zip_entry_is_rejected(self) -> None:
+        temp_root = Path(tempfile.mkdtemp(prefix="aetherlearn-visual-extra-"))
+        self.addCleanup(shutil.rmtree, temp_root, ignore_errors=True)
+        archive = temp_root / "extra.zip"
+        with zipfile.ZipFile(archive, "w") as handle:
+            for file in sorted(FIXTURE.rglob("*")):
+                if file.is_file():
+                    handle.writestr(file.relative_to(FIXTURE).as_posix(), file.read_bytes())
+            handle.writestr("unexpected.txt", b"unexpected")
+        errors = validate_zip(archive)
+        self.assertTrue(any("undeclared file in pack" in error for error in errors))
+
     def test_unsafe_zip_member_is_rejected(self) -> None:
         temp_root = Path(tempfile.mkdtemp(prefix="aetherlearn-visual-zip-"))
         self.addCleanup(shutil.rmtree, temp_root, ignore_errors=True)
@@ -108,6 +182,15 @@ class VisualPackContractTests(unittest.TestCase):
 
     def test_client_mirrors_are_byte_identical(self) -> None:
         self.assertEqual(check_mirrors(ROOT), [])
+
+    def test_builder_emits_checksum_sidecar(self) -> None:
+        temp_root = Path(tempfile.mkdtemp(prefix="aetherlearn-visual-sidecar-"))
+        self.addCleanup(shutil.rmtree, temp_root, ignore_errors=True)
+        archive = temp_root / "visual.zip"
+        build(FIXTURE, archive)
+        sidecar = archive.with_name(archive.name + ".SHA256SUMS")
+        self.assertEqual(sidecar.read_text(encoding="utf-8"), f"{hashlib.sha256(archive.read_bytes()).hexdigest()}  {archive.name}\n")
+        self.assertEqual(validate_zip(archive), [])
 
     def test_builder_is_deterministic(self) -> None:
         temp_root = Path(tempfile.mkdtemp(prefix="aetherlearn-visual-build-"))

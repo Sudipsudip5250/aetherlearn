@@ -171,11 +171,12 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 
 ## Attached media architecture prompt — local visual-pack proof of concept
 
-- [x] Define the separate `visual-foundations` schema-1 manifest for exactly three optional static SVG diagrams associated with DL-01, DL-02, and WEB-01, including sizes, hashes, accessibility text, text equivalents, reduced-motion text, licensing, attribution, and unsigned-development status.
+- [x] Define the separate `visual-foundations` schema-1 manifest for 37 optional static SVG diagrams and observe-and-trace activities, one for each approved lesson, including sizes, hashes, accessibility text, text equivalents, reduced-motion text, licensing, attribution, and unsigned-development status.
 - [x] Add strict directory/ZIP validation, deterministic visual-pack building, sample ZIP/checksum, and byte-identical Android/Web mirror checks without changing the 37 canonical lesson triplicates.
-- [x] Add Android app-private visual-pack install/delete with staging/rollback, defensive metadata/path/hash checks, lesson-catalog isolation, and restricted local SVG rendering with text equivalent.
-- [x] Add Web About-route install/delete, digest-named Cache Storage activation, core-state isolation, associated-lesson rendering, status text, v17 shell cache-busting, and local Chromium evidence.
+- [x] Add Android app-private visual-pack install/delete with staging/rollback, defensive metadata/path/hash/practice checks, lesson-catalog isolation, restricted local SVG rendering with text equivalent, and per-lesson observe-and-trace steps.
+- [x] Add Web About-route install/delete, digest-named Cache Storage activation, core-state isolation, 37 associated-lesson renderings, Practice-route visual activities, status text, v18 shell cache-busting, and local Chromium evidence.
 - [x] Document the boundary from legacy lesson ZIPs: no visual network downloader, remote catalog, signing, audio/video, streaming, Media3, OBB, or PAD dependency is implemented.
+- [x] Make the deterministic visual builder validate its generated ZIP and emit the adjacent SHA-256 sidecar; extend tests for duplicate paths, absolute paths, unexpected archive entries, oversized assets, missing text/license metadata, and sidecar output.
 - [ ] Run the Android device/emulator visual-pack matrix, including large text, lifecycle, deletion isolation, restricted WebView behavior, and TalkBack/manual accessibility review.
 - [ ] Repeat the visual-pack smoke in an Android browser and complete human visual, source, licensing, privacy, and release-owner review before any public distribution.
 - [ ] Decide separately whether a reviewed native SVG renderer or another platform-safe display path is warranted; do not add a dependency or expand the media scope without a new decision record.

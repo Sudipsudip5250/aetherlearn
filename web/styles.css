@@ -227,3 +227,30 @@ button, .open-card, .secondary-button, .primary-button { min-height: 44px; }
 @media (prefers-contrast: more) {
   .visual-figure, .data-controls, .catalog-filters { border-width: 2px; }
 }
+
+.visual-practice { margin-top: 14px; padding: 12px 14px; background: var(--purple-soft); border: 1px solid var(--line); border-radius: 10px; }
+.visual-practice summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: var(--purple-dark); font-weight: 800; }
+.visual-practice ol { margin: 10px 0 0; padding-left: 24px; }
+.visual-practice li + li { margin-top: 6px; }
+.visual-practice p { margin: 9px 0 0; }
+.visual-practice:focus-within { outline: 3px solid color-mix(in srgb, var(--purple) 30%, transparent); outline-offset: 2px; }
+@media (forced-colors: active) {
+  .visual-practice { border: 2px solid CanvasText; }
+  .visual-practice summary { color: LinkText; }
+}
+@media (max-width: 760px) {
+  .visual-figure { padding: 10px; }
+  .visual-figure img { max-height: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .visual-practice summary { scroll-behavior: auto; }
+}
+
+.visual-practice-index { margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--line); }
+.visual-practice-index .section-heading { margin-bottom: 14px; }
+.visual-practice-index h3 { margin: 0; }
+.visual-practice-card { background: color-mix(in srgb, var(--purple-soft) 30%, var(--card)); }
+.visual-practice-empty { margin-top: 20px; flex-direction: column; align-items: flex-start; }
+@media (max-width: 760px) {
+  .visual-practice-card .secondary-button { width: 100%; }
+}

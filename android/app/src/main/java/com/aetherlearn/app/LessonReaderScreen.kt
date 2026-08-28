@@ -180,6 +180,12 @@ private fun OptionalVisualSection(store: LocalStore, lessonId: String) {
         )
         Text(asset.caption, fontWeight = FontWeight.SemiBold)
         Text("Text equivalent: ${asset.textEquivalent}")
+        Text("Try it", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+        Text(asset.practicePrompt)
+        asset.practiceSteps.forEachIndexed { index, step ->
+            Text("${index + 1}. $step")
+        }
+        Text("Self-check: ${asset.practiceSuccessCriteria}")
         Text("License: ${asset.license} · ${asset.attribution}", style = MaterialTheme.typography.bodySmall)
     }
 }

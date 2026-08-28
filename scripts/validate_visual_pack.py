@@ -19,13 +19,14 @@ SCHEMA_VERSION = 1
 PACK_KIND = "visuals"
 DISTRIBUTION_STATUSES = {"unsigned-development", "signed"}
 ALLOWED_MIME = {"image/svg+xml", "image/png", "image/webp"}
-MAX_ASSETS = 24
+MAX_ASSETS = 48
 MAX_ASSET_BYTES = 256 * 1024
 MAX_INSTALLED_BYTES = 2 * 1024 * 1024
 MAX_ARCHIVE_MEMBERS = MAX_ASSETS + 1
 MAX_ARCHIVE_UNCOMPRESSED_BYTES = MAX_INSTALLED_BYTES + 64 * 1024
 SEMVER = re.compile(r"^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
+PRACTICE_MODES = {"observe-and-trace"}
 PACK_ID = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)+$")
 
 
@@ -83,8 +84,8 @@ def validate_manifest_and_files(
 
     required = {
         "schema_version", "pack_id", "pack_version", "pack_kind", "minimum_app_version",
-        "name", "description", "created_at", "expires_at", "module_ids", "compressed_bytes", "installed_bytes", "assets",
-        "distribution_status", "revocation_status", "signature",
+        "name", "description", "created_at", "expires_at", "module_ids", "compressed_bytes", "installed_bytes", "assets", "distribution_status", "revocation_status", "signature",
+
     }
     errors.extend(f"{source_label}: missing manifest field: {field}" for field in sorted(required - manifest.keys()))
     if manifest.get("schema_version") != SCHEMA_VERSION:
@@ -137,7 +138,7 @@ def validate_manifest_and_files(
         if not isinstance(asset, dict):
             errors.append(f"{label} must be an object")
             continue
-        for field in ("asset_id", "module_id", "path", "kind", "mime", "compressed_bytes", "installed_bytes", "sha256", "required", "alt_text", "caption", "text_equivalent", "license", "attribution", "source_url", "author", "locale", "reduced_motion_alternative"):
+        for field in ("asset_id", "module_id", "path", "kind", "mime", "compressed_bytes", "installed_bytes", "sha256", "required", "alt_text", "caption", "text_equivalent", "license", "attribution", "source_url", "author", "locale", "reduced_motion_alternative", "practical"):
             if field not in asset:
                 errors.append(f"{label} missing field: {field}")
         module_id = asset.get("module_id")
@@ -168,6 +169,17 @@ def validate_manifest_and_files(
             errors.append(f"{label}.source_url must be null or an HTTPS URL")
         if not isinstance(asset.get("required"), bool):
             errors.append(f"{label}.required must be boolean")
+        practical = asset.get("practical")
+        if not isinstance(practical, dict):
+            errors.append(f"{label}.practical must be an object")
+        else:
+            if practical.get("mode") not in PRACTICE_MODES:
+                errors.append(f"{label}.practical.mode must be observe-and-trace")
+            if not nonempty(practical.get("prompt")) or not nonempty(practical.get("success_criteria")):
+                errors.append(f"{label}.practical prompt and success_criteria must be non-empty")
+            steps = practical.get("steps")
+            if not isinstance(steps, list) or not 1 <= len(steps) <= 5 or not all(nonempty(step) for step in steps):
+                errors.append(f"{label}.practical.steps must contain 1 to 5 non-empty steps")
         for field in ("compressed_bytes", "installed_bytes"):
             if not isinstance(asset.get(field), int) or asset.get(field, -1) < 0:
                 errors.append(f"{label}.{field} must be a non-negative integer")

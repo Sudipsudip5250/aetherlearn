@@ -16,7 +16,7 @@ The resulting ZIP is a test artifact, not an approved public distribution URL. T
 
 ## Separate visual-pack proof of concept
 
-`docs/sample-pack/aetherlearn-visual-foundations-1.0.0.zip` is a separate local validation artifact for the optional static-SVG visual-pack contract. It is not produced by `scripts/build_pack.py`, is not an Android network lesson pack, and is not accepted by the current HTTPS lesson downloader. The three diagrams are bundled as client fixtures and are installed through the Android app-private local-pack path or the Web About route’s same-origin Cache Storage flow. The visual contract requires explicit accessibility text, text equivalents, licensing/attribution, safe paths, static SVG content, sizes, and SHA-256 digests; it currently permits only `unsigned-development` metadata. No public host, publisher signature, audio/video, streaming, Media3, or Play Asset Delivery path is implemented.
+`docs/sample-pack/aetherlearn-visual-foundations-1.1.0.zip` is a separate local validation artifact for the optional static-SVG visual-pack contract. It is not produced by `scripts/build_pack.py`, is not an Android network lesson pack, and is not accepted by the current HTTPS lesson downloader. The 37 diagrams and trace prompts are bundled as client fixtures and are installed through the Android app-private local-pack path or the Web About route’s same-origin Cache Storage flow. The visual contract requires explicit accessibility text, text equivalents, licensing/attribution, safe paths, static SVG content, sizes, and SHA-256 digests; it currently permits only `unsigned-development` metadata. No public host, publisher signature, audio/video, streaming, Media3, or Play Asset Delivery path is implemented.
 
 ## Download behavior
 

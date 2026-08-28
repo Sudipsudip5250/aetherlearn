@@ -2,6 +2,10 @@
 
 Date: 2026-08-27
 
+## Foundation-prompt reconciliation
+
+The attached artifact-only prompt was checked against the actual checkout. Its statement that the prior visual implementation was absent is not true for this repository: `HEAD` and `origin/main` are at `f748fc8`, with the visual-pack implementation in `aab375f` and the Android import correction in `f748fc8`. The current task therefore does not recreate or broaden the existing client rendering/install behavior. In particular, the Android restricted WebView, Web Cache Storage flow, and pack-install UI are pre-existing published code and are outside the artifact-foundation delta requested here. This prompt explicitly forbids adding WebView, remote delivery, audio/video, streaming, Media3, PAD, OBB, or a new curriculum stage; no new implementation in those areas is being added.
+
 ## Browser smoke evidence
 
 Environment: local Chromium browser against `http://127.0.0.1:4173`, served from the repository `web/` directory. No remote host or production browser was used.
@@ -41,3 +45,7 @@ No Android SDK/device/emulator, Android browser, TalkBack, network interruption,
 ## Android build limitation
 
 A final `./gradlew :app:compileDebugKotlin --no-daemon` attempt exited with status 1 because this sandbox has no configured Android SDK (`ANDROID_HOME` and `ANDROID_SDK_ROOT` are unset). The failure occurred before compilation; no Android build, emulator, device, WebView, or TalkBack result is claimed.
+
+## Expanded visual-practice pass (2026-08-27)
+
+A local v18 Web shell was served from `127.0.0.1:4173`. After installing the expanded `visual-foundations` fixture, the About route reported `Installed locally · 37 diagrams available offline.` The Practice route displayed `Trace the idea` with `37 local activities` and an `Open visual aid` control for each lesson, alongside the existing core practice cards. The DL-01 reader rendered the optional SVG, caption, alt text, text equivalent, and `Try it: trace the idea` disclosure with three steps and a self-check. The SEC-02 reader likewise rendered its associated diagram and practical disclosure. These checks were performed in sandbox Chromium only; Android device, Android browser, TalkBack, and human visual/accessibility review remain open.

@@ -24,7 +24,7 @@ The service worker caches the static app shell and uses cache-first responses fo
 
 ### Optional visual-pack proof of concept
 
-The About route also provides an explicit local install/delete flow for `visual-foundations`, a three-asset pack containing only the bundled `DL-01`, `DL-02`, and `WEB-01` static SVG diagrams. The client validates the schema, fixed pack identity, known module associations, asset paths, SVG MIME type, accessibility text, license/attribution metadata, declared sizes, SHA-256 digests, and forbidden active-content markers before copying the manifest and SVG bytes into a staging Cache Storage cache. The active cache name includes the manifest digest; a failed install leaves the prior active cache unchanged.
+The About route also provides an explicit local install/delete flow for `visual-foundations`, a version 1.1.0 pack containing one bundled static SVG diagram and trace prompt for each of the 37 current lessons. The client validates the schema, fixed pack identity, known module associations, asset paths, SVG MIME type, accessibility text, license/attribution metadata, declared sizes, SHA-256 digests, and forbidden active-content markers before copying the manifest and SVG bytes into a staging Cache Storage cache. The active cache name includes the manifest digest; a failed install leaves the prior active cache unchanged.
 
 Visual resources are separate from IndexedDB learner state. Deleting the visual pack removes only its Cache Storage entries and local active-cache pointer; it does not clear lessons, progress, notes, bookmarks, quiz attempts, or the core content cache. The reader shows the diagrams only for associated modules and always includes their alt text, caption, text equivalent, and attribution. This proof of concept accepts only the same-origin unsigned development fixture. It has no remote visual catalog, HTTPS visual download, signing, audio/video, streaming, Media3, or Play Asset Delivery implementation. Browser quotas and eviction still apply.
 
@@ -50,7 +50,7 @@ Run the content and payload checks from the repository root:
 python3 scripts/validate_content.py
 python3 scripts/check_web_content.py
 python3 scripts/validate_visual_pack.py media/visuals/visual-foundations
-python3 scripts/validate_visual_pack.py docs/sample-pack/aetherlearn-visual-foundations-1.0.0.zip
+python3 scripts/validate_visual_pack.py docs/sample-pack/aetherlearn-visual-foundations-1.1.0.zip
 python3 scripts/check_visual_pack_mirrors.py
 python3 scripts/build_pack.py
 python3 scripts/check_android_manifest.py

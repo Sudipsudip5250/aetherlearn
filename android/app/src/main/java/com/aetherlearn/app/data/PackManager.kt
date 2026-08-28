@@ -32,9 +32,9 @@ class PackManager(
         ),
         AvailablePack(
             id = VISUAL_PACK_ID,
-            version = "1.0.0",
+            version = "1.1.0",
             name = "Visual Foundations",
-            description = "Three optional, accessible SVG diagrams for digital information, file storage, and semantic Web structure.",
+            description = "Thirty-seven optional accessible diagrams and trace prompts for the current lesson set.",
             assetPath = VISUAL_MANIFEST_ASSET,
             expectedChecksum = VISUAL_MANIFEST_SHA256,
             sizeBytes = VISUAL_PACK_SIZE,
@@ -156,6 +156,11 @@ class PackManager(
             require(asset.optString("alt_text").isNotBlank() && asset.optString("caption").isNotBlank()) { "Visual asset accessibility metadata is incomplete." }
             require(asset.optString("text_equivalent").isNotBlank() && asset.optString("reduced_motion_alternative").isNotBlank()) { "Visual asset text alternative is incomplete." }
             require(asset.optString("license").isNotBlank() && asset.optString("attribution").isNotBlank() && asset.optString("author").isNotBlank() && asset.optString("locale").isNotBlank()) { "Visual asset licensing metadata is incomplete." }
+            val practical = asset.optJSONObject("practical") ?: error("Visual asset practical metadata is missing.")
+            require(practical.optString("mode") == "observe-and-trace") { "Visual asset practical mode is unsupported." }
+            require(practical.optString("prompt").isNotBlank() && practical.optString("success_criteria").isNotBlank()) { "Visual asset practical metadata is incomplete." }
+            val practiceSteps = practical.optJSONArray("steps") ?: error("Visual asset practical steps are missing.")
+            require(practiceSteps.length() in 1..5 && (0 until practiceSteps.length()).all { practiceSteps.optString(it).isNotBlank() }) { "Visual asset practical steps are invalid." }
             val sourceUrl = asset.opt("source_url")
             require(sourceUrl == null || sourceUrl == JSONObject.NULL || sourceUrl.toString().startsWith("https://")) { "Visual asset source URL must be HTTPS or null." }
             val installedBytes = asset.optLong("installed_bytes", -1L)
@@ -220,9 +225,9 @@ class PackManager(
         private const val VISUAL_PACK_ID = "visual-foundations"
         private const val VISUAL_MANIFEST_ASSET = "packs/visual-foundations/manifest.json"
         private const val VISUAL_ASSET_DIRECTORY = "packs/visual-foundations"
-        private const val VISUAL_MANIFEST_SHA256 = "d4fee669353a159d0aca99feafa4f8e98fc831c991f56f63891d11d41b5c501f"
-        private const val VISUAL_PACK_SIZE = 8967L
-        private const val MAX_VISUAL_ASSETS = 24
+        private const val VISUAL_MANIFEST_SHA256 = "ba9d07f713748aeaf12bb9174016b74c0cc6ed16c679245902446553fc118df8"
+        private const val VISUAL_PACK_SIZE = 128107L
+        private const val MAX_VISUAL_ASSETS = 48
         private const val MAX_ASSET_BYTES = 256 * 1024L
         private const val MAX_PACK_BYTES = 2 * 1024 * 1024L
         private val ASSET_ID = Regex("^[a-z0-9]+(?:-[a-z0-9]+)+$")

@@ -14,6 +14,9 @@ data class InstalledVisualAsset(
     val textEquivalent: String,
     val license: String,
     val attribution: String,
+    val practicePrompt: String,
+    val practiceSteps: List<String>,
+    val practiceSuccessCriteria: String,
 )
 
 object VisualPackCatalog {
@@ -42,6 +45,12 @@ object VisualPackCatalog {
         val file = File(root, path).canonicalFile
         if (!file.path.startsWith(root.path + File.separator) || !file.isFile || file.length() > MAX_ASSET_BYTES) return null
         if (asset.optString("mime") != "image/svg+xml") return null
+        val practical = asset.optJSONObject("practical") ?: return null
+        if (practical.optString("mode") != "observe-and-trace") return null
+        val stepsArray = practical.optJSONArray("steps") ?: return null
+        val steps = (0 until stepsArray.length()).map { stepsArray.optString(it) }
+        val practicePrompt = practical.optString("prompt")
+        val practiceSuccessCriteria = practical.optString("success_criteria")
         return InstalledVisualAsset(
             assetId = asset.optString("asset_id"),
             moduleId = asset.optString("module_id"),
@@ -51,6 +60,15 @@ object VisualPackCatalog {
             textEquivalent = asset.optString("text_equivalent"),
             license = asset.optString("license"),
             attribution = asset.optString("attribution"),
-        ).takeIf { it.assetId.isNotBlank() && it.moduleId.isNotBlank() && it.altText.isNotBlank() && it.caption.isNotBlank() && it.textEquivalent.isNotBlank() }
+            practicePrompt = practicePrompt,
+            practiceSteps = steps,
+            practiceSuccessCriteria = practiceSuccessCriteria,
+        ).takeIf {
+            it.assetId.isNotBlank() && it.moduleId.isNotBlank() && it.altText.isNotBlank() &&
+                it.caption.isNotBlank() && it.textEquivalent.isNotBlank() &&
+                it.practicePrompt.isNotBlank() && it.practiceSteps.isNotEmpty() &&
+                it.practiceSteps.size <= 5 && it.practiceSteps.all(String::isNotBlank) &&
+                it.practiceSuccessCriteria.isNotBlank()
+        }
     }
 }
