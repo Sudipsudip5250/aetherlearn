@@ -181,6 +181,12 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [ ] Repeat the visual-pack smoke in an Android browser and complete human visual, source, licensing, privacy, and release-owner review before any public distribution.
 - [ ] Decide separately whether a reviewed native SVG renderer or another platform-safe display path is warranted; do not add a dependency or expand the media scope without a new decision record.
 
+## 2026-09-04 resume — status accuracy
+
+- [x] Confirm `main` `c854c8b` validators, Android/Web parity, visual-pack mirrors, and hosted Quality `33152026294` are green; no CI or content-parity failure to fix.
+- [x] Correct PLAN.md current-status copy that still described the 3-SVG D-041 fixture after D-042 expanded `visual-foundations` 1.1.0 to 37 diagrams.
+- [x] Align README opening and CURRICULUM opening with the implemented 37-lesson product, including Stage 5.
+
 ## Deferred backlog
 
 - [ ] Portable encrypted backup with tested key ownership and recovery.

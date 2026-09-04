@@ -1,6 +1,6 @@
 # AetherLearn MVP Specification
 
-AetherLearn is a working-name concept for a free, open-source, privacy-first computer-science learning platform. This repository contains the bounded v1.0 planning and governance documents for a phone-first native Android MVP with optional Termux integration and a secondary offline-capable web/PWA client.
+AetherLearn is a working-name, free, open-source, privacy-first computer-science learning platform. This repository contains the bounded v1.0 native Android client, the secondary offline-capable web/PWA client, the 37-lesson local content pack, and the planning/governance documents that keep that scope frozen.
 
 ## Start here
 

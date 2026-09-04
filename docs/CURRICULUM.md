@@ -2,7 +2,7 @@
 
 ## Curriculum decision
 
-The original MVP contains **four strands and 20 modules**. It is designed to take a motivated beginner from phone and digital foundations through Python, basic algorithms, and developer workflow. That `mvp-20` baseline remains stable for learner progress and historical release comparison. Approved post-MVP Stage 1 adds three offline digital-literacy lessons, Stage 2 adds four offline developer-foundations lessons, Stage 3 adds four offline security-ethics lessons, and Stage 4 adds four offline Web/data foundations lessons, without renumbering or replacing any MVP module.
+The original MVP contains **four strands and 20 modules**. It is designed to take a motivated beginner from phone and digital foundations through Python, basic algorithms, and developer workflow. That `mvp-20` baseline remains stable for learner progress and historical release comparison. Approved post-MVP Stage 1 adds three offline digital-literacy lessons, Stage 2 adds four offline developer-foundations lessons, Stage 3 adds four offline security-ethics lessons, Stage 4 adds four offline Web/data foundations lessons, and Stage 5 adds two offline historical-security and career-orientation lessons, without renumbering or replacing any MVP module.
 
 The order is recommended rather than compulsory. Prerequisites are explicit, and the learner can choose a diagnostic starting point. Every module is available as offline text and lightweight assets. Only selected practical modules offer an optional Termux exercise.
 
