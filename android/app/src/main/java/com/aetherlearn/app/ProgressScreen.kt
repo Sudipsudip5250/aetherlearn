@@ -39,14 +39,29 @@ internal fun ProgressScreen(
         }
         item { Text("Modules", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold) }
         items(lessons, key = { "progress-${it.id}" }) { lesson ->
+            val state = progress[lesson.id]?.state ?: LearningState.NOT_STARTED
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onLessonClick(lesson.id) },
             ) {
-                Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(lesson.title, modifier = Modifier.weight(1f), fontWeight = FontWeight.SemiBold)
-                    Text(progressLabel(progress[lesson.id]?.state ?: LearningState.NOT_STARTED))
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Text(lesson.title, fontWeight = FontWeight.SemiBold)
+                        Text(lesson.id, style = MaterialTheme.typography.bodySmall)
+                    }
+                    Text(
+                        text = progressLabel(state),
+                        color = when (state) {
+                            LearningState.COMPLETED -> MaterialTheme.colorScheme.secondary
+                            LearningState.IN_PROGRESS -> MaterialTheme.colorScheme.primary
+                            LearningState.NOT_STARTED -> MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        fontWeight = FontWeight.SemiBold,
+                    )
                 }
             }
         }
