@@ -3,8 +3,10 @@ package com.aetherlearn.app
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -23,6 +25,9 @@ internal fun LearnScreen(
     startingLevel: StartingLevel?,
     onLessonClick: (String) -> Unit,
 ) {
+    val completed = progress.values.count { it.state == LearningState.COMPLETED }
+    val inProgress = progress.values.count { it.state == LearningState.IN_PROGRESS }
+    val remaining = (lessons.size - completed).coerceAtLeast(0)
     LazyColumn(
         contentPadding = PaddingValues(
             start = 20.dp,
@@ -44,9 +49,8 @@ internal fun LearnScreen(
                 style = MaterialTheme.typography.bodyLarge,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            val completed = progress.values.count { it.state == LearningState.COMPLETED }
             Text(
-                text = "$completed of ${lessons.size} lessons completed",
+                text = "$completed completed · $inProgress in progress · $remaining remaining",
                 style = MaterialTheme.typography.labelLarge,
             )
             Text(
@@ -99,26 +103,39 @@ private fun RecommendedCard(
     reason: String,
     onClick: () -> Unit,
 ) {
+    val continuing = progress.state == LearningState.IN_PROGRESS
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(role = Role.Button, onClick = onClick)
-            .semantics { contentDescription = "Open recommended lesson ${lesson.title}" },
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+            .semantics {
+                contentDescription = if (continuing) {
+                    "Continue learning ${lesson.title}"
+                } else {
+                    "Open recommended lesson ${lesson.title}"
+                }
+            },
+        colors = CardDefaults.cardColors(
+            containerColor = if (continuing) {
+                MaterialTheme.colorScheme.secondaryContainer
+            } else {
+                MaterialTheme.colorScheme.primaryContainer
+            },
+        ),
     ) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
             Text(
-                text = if (progress.state == LearningState.IN_PROGRESS) "Continue learning" else "Recommended next",
+                text = if (continuing) "Continue learning" else "Recommended next",
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold,
             )
             Text(lesson.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Text(reason, style = MaterialTheme.typography.bodyMedium)
-            Text(
-                text = "${lesson.strand} · ${progressLabel(progress.state)} · ${lesson.estimatedMinutes} min",
-                style = MaterialTheme.typography.labelLarge,
-            )
-            Text("Open lesson", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                StatusBadge(progress.state)
+                Text("${lesson.strand} · ${lesson.estimatedMinutes} min", style = MaterialTheme.typography.labelLarge)
+            }
+            Text(if (continuing) "Resume lesson" else "Open lesson", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -134,7 +151,14 @@ private fun ModuleCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(role = Role.Button, onClick = onClick)
-            .semantics { contentDescription = "Open lesson ${module.title}" },
+            .semantics { contentDescription = "Open lesson ${module.title}, ${progressLabel(progress.state)}" },
+        colors = CardDefaults.cardColors(
+            containerColor = when (progress.state) {
+                LearningState.COMPLETED -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.45f)
+                LearningState.IN_PROGRESS -> MaterialTheme.colorScheme.primaryContainer
+                LearningState.NOT_STARTED -> MaterialTheme.colorScheme.surface
+            },
+        ),
     ) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(7.dp)) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -144,15 +168,37 @@ private fun ModuleCard(
                 }
                 if (bookmarked) Text("Saved", style = MaterialTheme.typography.labelMedium)
             }
-            Text(
-                text = "${progressLabel(progress.state)} · ${module.estimatedMinutes} min · ${availabilityLabel(module.availability)}",
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                StatusBadge(progress.state)
+                Text(
+                    text = "${module.estimatedMinutes} min · ${availabilityLabel(module.availability)}",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
             LinearProgressIndicator(
                 progress = { if (progress.state == LearningState.COMPLETED) 1f else if (progress.state == LearningState.IN_PROGRESS) 0.5f else 0f },
                 modifier = Modifier.fillMaxWidth(),
             )
         }
+    }
+}
+
+@Composable
+internal fun StatusBadge(state: LearningState) {
+    val colors = MaterialTheme.colorScheme
+    val (label, container, content) = when (state) {
+        LearningState.COMPLETED -> Triple("Completed", colors.secondaryContainer, colors.onSecondaryContainer)
+        LearningState.IN_PROGRESS -> Triple("In progress", colors.primaryContainer, colors.onPrimaryContainer)
+        LearningState.NOT_STARTED -> Triple("Not started", colors.surfaceVariant, colors.onSurfaceVariant)
+    }
+    Surface(color = container, shape = RoundedCornerShape(999.dp)) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = content,
+        )
     }
 }
 

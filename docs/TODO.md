@@ -195,6 +195,14 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Clarify Learn continue vs recommended, Progress status color, and quiz pass/review feedback without changing lesson IDs or learner-state keys.
 - [ ] Device/emulator, Android-browser, TalkBack, and large-text review of the visual reader and mobile header remain human-only.
 
+## 2026-09-05 polish — Learn/Progress/reader clarity
+
+- [x] Merge PR #2 UI slice onto `main` (`91f56a0`); hosted Quality for that PR passed validate, android, and GitGuardian.
+- [x] Update CONTRIBUTING.md so it describes the implemented 37-lesson Android + Web app, not a specification-only stage, and forbids Stage 6 / new tracks without a decision log.
+- [x] Strengthen local completion hierarchy (completed / in progress / remaining) and Continue vs Recommended presentation on Android and Web.
+- [x] Tighten reader section rhythm and code-example spacing; keep visual-foundations optional, local, and framed with a Diagram caption.
+- [ ] Device/TalkBack/large-text review of the new status badges, Continue card, and reader spacing remain human-only.
+
 ## Deferred backlog
 
 - [ ] Portable encrypted backup with tested key ownership and recovery.
