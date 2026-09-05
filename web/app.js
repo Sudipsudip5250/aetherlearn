@@ -1,4 +1,4 @@
-import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=18";
+import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=19";
 
 const CONTENT_MANIFEST = "./content/manifest.json";
 const VISUAL_MANIFEST_URL = "./visuals/visual-foundations/manifest.json";
@@ -345,12 +345,30 @@ async function deleteVisualPack() {
   renderRoute();
 }
 
+function prefersReducedMotion() {
+  return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches === true;
+}
+
+function statusPillClass(label) {
+  return `pill status-pill pill-${String(label).replace(/\s+/g, "-")}`;
+}
+
 function renderOptionalVisuals(lesson) {
   const pack = state.visualPack;
   if (!pack) return "";
   const assets = pack.manifest.assets.filter((asset) => asset.module_id === lesson.id);
   if (!assets.length) return "";
-  return `<section class="lesson-section visual-pack-section" aria-labelledby="optional-visuals-title"><h2 id="optional-visuals-title">Optional visual aid</h2><p>These diagrams and trace prompts are supplementary. The lesson explanation and text equivalents remain complete without this pack.</p>${assets.map((asset) => `<figure class="visual-figure"><img src="${escapeHtml(visualAssetUrl(asset))}" alt="${escapeHtml(asset.alt_text)}" loading="lazy" /><figcaption>${escapeHtml(asset.caption)}</figcaption><p class="visual-text-equivalent"><strong>Text equivalent:</strong> ${escapeHtml(asset.text_equivalent)}</p><details class="visual-practice"><summary>Try it: trace the idea</summary><p>${escapeHtml(asset.practical.prompt)}</p><ol>${asset.practical.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol><p><strong>Self-check:</strong> ${escapeHtml(asset.practical.success_criteria)}</p></details><small>License: ${escapeHtml(asset.license)} · ${escapeHtml(asset.attribution)}</small></figure>`).join("")}</section>`;
+  const reduceMotion = prefersReducedMotion();
+  return `<section class="lesson-section visual-pack-section" aria-labelledby="optional-visuals-title"><h2 id="optional-visuals-title">See the idea</h2><p>This diagram sits with the explanation. It is supplementary; the text equivalent remains complete without it.</p>${assets.map((asset) => `<figure class="visual-figure"><figcaption class="visual-caption">${escapeHtml(asset.caption)}</figcaption><div class="visual-frame"><img src="${escapeHtml(visualAssetUrl(asset))}" alt="${escapeHtml(asset.alt_text)}" loading="lazy" /></div>${reduceMotion && asset.reduced_motion_alternative ? `<p class="visual-reduced-motion">${escapeHtml(asset.reduced_motion_alternative)}</p>` : ""}<details class="visual-text-details"${reduceMotion ? " open" : ""}><summary>In words</summary><p class="visual-text-equivalent">${escapeHtml(asset.text_equivalent)}</p></details><details class="visual-practice"><summary>Try it: trace the idea</summary><p>${escapeHtml(asset.practical.prompt)}</p><ol>${asset.practical.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol><p><strong>Self-check:</strong> ${escapeHtml(asset.practical.success_criteria)}</p></details><small>License: ${escapeHtml(asset.license)} · ${escapeHtml(asset.attribution)}</small></figure>`).join("")}</section>`;
+}
+
+function renderLessonSection(section) {
+  return `<section class="lesson-section" aria-labelledby="section-${cssId(section.title)}"><h2 id="section-${cssId(section.title)}">${escapeHtml(section.title)}</h2><div>${renderMarkdown(section.body)}</div></section>`;
+}
+
+function visualAnchorIndex(sections) {
+  const match = sections.findIndex((section) => /explanation|concept|introduction/i.test(section.title));
+  return match >= 0 ? match : 0;
 }
 
 function getRecommendedLesson() {
@@ -428,7 +446,7 @@ function renderLessonList() {
     cards.push(`<article class="lesson-card">
       <div class="card-top"><span class="lesson-index">${String(index + 1).padStart(2, "0")}</span><span class="pill">${escapeHtml(lesson.availability)}</span></div>
       <h3>${escapeHtml(lesson.title)}</h3><p>${escapeHtml(preview(lesson))}</p>
-      <div class="card-meta"><span class="pill">${escapeHtml(lesson.strand)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span><span class="pill status-pill">${escapeHtml(statusLabel(lesson.id))}</span><button class="open-card" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Read lesson →</button></div>
+      <div class="card-meta"><span class="pill">${escapeHtml(lesson.strand)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span><span class="${statusPillClass(statusLabel(lesson.id))}">${escapeHtml(statusLabel(lesson.id))}</span><button class="open-card" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Read lesson →</button></div>
     </article>`);
   });
   $("#lesson-list").innerHTML = cards.length ? cards.join("") : `<div class="loading-card"><strong>No lessons match these filters.</strong><span>Clear one or more filters to browse the full catalog.</span></div>`;
@@ -439,10 +457,10 @@ function renderLessonList() {
 function renderReader(lesson) {
   if (statusLabel(lesson.id) === "not started") updateProgress(lesson.id, "in progress");
   const objectives = Array.isArray(lesson.objectives) ? lesson.objectives : [];
-  const sections = lesson.sections
-    .filter((section) => section.title.toLowerCase() !== "objectives" && section.title.toLowerCase() !== "knowledge check")
-    .map((section) => `<section class="lesson-section" aria-labelledby="section-${cssId(section.title)}"><h2 id="section-${cssId(section.title)}">${escapeHtml(section.title)}</h2><div>${renderMarkdown(section.body)}</div></section>`)
-    .join("");
+  const sectionList = lesson.sections.filter((section) => section.title.toLowerCase() !== "objectives" && section.title.toLowerCase() !== "knowledge check");
+  const anchor = visualAnchorIndex(sectionList);
+  const beforeExplanation = sectionList.slice(0, anchor + 1).map(renderLessonSection).join("");
+  const afterExplanation = sectionList.slice(anchor + 1).map(renderLessonSection).join("");
   const optionalVisuals = renderOptionalVisuals(lesson);
   const questions = lessonQuiz(lesson);
   const quizState = state.learning.quiz[lesson.id] || { attempts: 0, best: 0 };
@@ -451,8 +469,8 @@ function renderReader(lesson) {
   const objectivesHtml = objectives.length ? `<section class="lesson-section objectives-section"><h2>Objectives</h2><ul>${objectives.map((objective) => `<li>${escapeHtml(objective)}</li>`).join("")}</ul></section>` : "";
   const quizHtml = questions.length ? `<section class="lesson-section quiz-section"><div class="section-heading"><div><h2>Knowledge check</h2><p>Answer locally for feedback. Your best result is kept in this browser.</p></div><span class="module-count">${quizState.attempts} attempt${quizState.attempts === 1 ? "" : "s"} · best ${quizState.best}%</span></div><form id="quiz-form">${questions.map((question, index) => `<label class="quiz-question" for="quiz-${index}"><span>${index + 1}. ${escapeHtml(question.question)}</span><input id="quiz-${index}" name="quiz-${index}" autocomplete="off" required /></label>`).join("")}<button class="primary-button purple-button" type="submit">Check answers</button><div id="quiz-feedback" class="feedback" aria-live="polite"></div><div id="quiz-review" class="quiz-review" aria-live="polite"></div></form></section>` : "";
   const localTools = `<section class="lesson-section local-tools"><div class="section-heading"><div><h2>Your local study tools</h2><p>Notes and bookmarks stay in this browser and are never synced.</p></div><button id="bookmark-toggle" class="secondary-button" type="button">${bookmarkText}</button></div><label class="search-label" for="lesson-note">Private note</label><textarea id="lesson-note" rows="5" placeholder="Write a note about this lesson…">${escapeHtml(state.learning.notes[lesson.id] || "")}</textarea><div class="tool-row"><button id="save-note" class="secondary-button" type="button">Save note</button><button id="complete-lesson" class="primary-button purple-button" type="button">${statusLabel(lesson.id) === "completed" ? "Completed" : "Mark lesson complete"}</button></div><div id="note-status" class="module-count" role="status" aria-live="polite"></div></section>`;
-  const header = `<div class="reader-kicker">${escapeHtml(lesson.strand)} · ${escapeHtml(lesson.level)}</div><h1 id="reader-title">${escapeHtml(lesson.title)}</h1><p class="reader-summary">${escapeHtml(preview(lesson))}</p><div class="reader-meta"><span class="pill">${escapeHtml(lesson.availability)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} minutes</span><span class="pill">${escapeHtml(lesson.risk_tier)}</span><span class="pill status-pill">${escapeHtml(statusLabel(lesson.id))}</span><span class="pill">Completion: explicit learner choice</span></div>`;
-  $("#reader-content").innerHTML = [header, objectivesHtml, optionalVisuals, termuxNote, sections, quizHtml, localTools].join("");
+  const header = `<div class="reader-kicker">${escapeHtml(lesson.strand)} · ${escapeHtml(lesson.level)}</div><h1 id="reader-title">${escapeHtml(lesson.title)}</h1><p class="reader-summary">${escapeHtml(preview(lesson))}</p><div class="reader-meta"><span class="pill">${escapeHtml(lesson.availability)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} minutes</span><span class="pill">${escapeHtml(lesson.risk_tier)}</span><span class="${statusPillClass(statusLabel(lesson.id))}">${escapeHtml(statusLabel(lesson.id))}</span><span class="pill">Completion: explicit learner choice</span></div>`;
+  $("#reader-content").innerHTML = [header, objectivesHtml, termuxNote, beforeExplanation, optionalVisuals, afterExplanation, quizHtml, localTools].join("");
   attachReaderEvents(lesson, questions);
 }
 
@@ -460,7 +478,7 @@ function attachReaderEvents(lesson, questions) {
   $("#bookmark-toggle")?.addEventListener("click", () => { state.learning.bookmarks[lesson.id] = !state.learning.bookmarks[lesson.id]; persistLearning(); renderReader(lesson); renderProgress(); });
   $("#save-note")?.addEventListener("click", () => { state.learning.notes[lesson.id] = $("#lesson-note").value.trim(); persistLearning(); $("#note-status").textContent = "Saved locally in this browser."; renderProgress(); });
   $("#complete-lesson")?.addEventListener("click", () => { updateProgress(lesson.id, "completed"); renderReader(lesson); });
-  $("#quiz-form")?.addEventListener("submit", (event) => { event.preventDefault(); const answers = questions.map((_, index) => $(`#quiz-${index}`).value); const correct = questions.reduce((total, question, index) => total + (isAnswerCorrect(answers[index], question) ? 1 : 0), 0); const score = Math.round((correct / questions.length) * 100); const previous = state.learning.quiz[lesson.id] || { attempts: 0, best: 0 }; state.learning.quiz[lesson.id] = { attempts: previous.attempts + 1, best: Math.max(previous.best, score), last: score, lastAt: new Date().toISOString() }; persistLearning(); $("#quiz-feedback").innerHTML = `<strong>${score}% — ${correct} of ${questions.length} correct.</strong> ${score === 100 ? "Excellent work." : "Review the explanations in the lesson and try again."}<br /><span>Best result is stored locally; quiz score does not block lesson completion.</span>`; $("#quiz-review").innerHTML = questions.map((question, index) => `<p><strong>${index + 1}. ${isAnswerCorrect(answers[index], question) ? "Correct" : "Review"}</strong>${isAnswerCorrect(answers[index], question) ? "" : ` Expected key answer: ${escapeHtml(question.answer)}.`} ${escapeHtml(question.explanation || "Use the lesson explanation to check your reasoning.")}</p>`).join(""); renderProgress(); });
+  $("#quiz-form")?.addEventListener("submit", (event) => { event.preventDefault(); const answers = questions.map((_, index) => $(`#quiz-${index}`).value); const correct = questions.reduce((total, question, index) => total + (isAnswerCorrect(answers[index], question) ? 1 : 0), 0); const score = Math.round((correct / questions.length) * 100); const previous = state.learning.quiz[lesson.id] || { attempts: 0, best: 0 }; state.learning.quiz[lesson.id] = { attempts: previous.attempts + 1, best: Math.max(previous.best, score), last: score, lastAt: new Date().toISOString() }; persistLearning(); const feedback = $("#quiz-feedback"); feedback.className = `feedback ${score === 100 ? "feedback-pass" : "feedback-review"}`; feedback.innerHTML = `<strong>${score}% — ${correct} of ${questions.length} correct.</strong> ${score === 100 ? "Excellent work." : "Review the explanations in the lesson and try again."}<br /><span>Best result is stored locally; quiz score does not block lesson completion.</span>`; $("#quiz-review").innerHTML = questions.map((question, index) => `<p><strong>${index + 1}. ${isAnswerCorrect(answers[index], question) ? "Correct" : "Review"}</strong>${isAnswerCorrect(answers[index], question) ? "" : ` Expected key answer: ${escapeHtml(question.answer)}.`} ${escapeHtml(question.explanation || "Use the lesson explanation to check your reasoning.")}</p>`).join(""); renderProgress(); });
   document.querySelectorAll("[data-copy-code]").forEach((button) => button.addEventListener("click", async () => { const value = button.dataset.copyCode || ""; try { await navigator.clipboard.writeText(value); button.textContent = "Copied"; } catch { button.textContent = "Copy unavailable"; } }));
 }
 
@@ -478,7 +496,7 @@ function renderPractice() {
   const corePractice = state.lessons.map((lesson) => {
     const section = lesson.sections.find((candidate) => candidate.title.toLowerCase() === "offline practice");
     const questionCount = lessonQuiz(lesson).length;
-    return `<article class="practice-card"><div><span class="lesson-index">${escapeHtml(lesson.id)}</span><h3>${escapeHtml(lesson.title)}</h3><div>${renderMarkdown(section?.body || "Practice content is included in the reader.")}</div><div class="card-meta"><span class="pill">short-answer-v1</span><span class="pill">${questionCount} checks</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span><span class="pill">${escapeHtml(lesson.availability)}</span><span class="pill status-pill">${escapeHtml(statusLabel(lesson.id))}</span></div></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Open lesson</button></article>`;
+    return `<article class="practice-card"><div><span class="lesson-index">${escapeHtml(lesson.id)}</span><h3>${escapeHtml(lesson.title)}</h3><div>${renderMarkdown(section?.body || "Practice content is included in the reader.")}</div><div class="card-meta"><span class="pill">short-answer-v1</span><span class="pill">${questionCount} checks</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span><span class="pill">${escapeHtml(lesson.availability)}</span><span class="${statusPillClass(statusLabel(lesson.id))}">${escapeHtml(statusLabel(lesson.id))}</span></div></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Open lesson</button></article>`;
   }).join("");
   const visualPractice = state.visualPack ? `<section class="visual-practice-index" aria-labelledby="visual-practice-title"><div class="section-heading"><div><p class="eyebrow">Optional visual practice</p><h3 id="visual-practice-title">Trace the idea</h3></div><span class="module-count">${state.visualPack.manifest.assets.length} local activities</span></div>${state.visualPack.manifest.assets.map((asset) => { const lesson = state.lessons.find((candidate) => candidate.id === asset.module_id); return `<article class="practice-card visual-practice-card"><div><span class="lesson-index">${escapeHtml(asset.module_id)}</span><h3>${escapeHtml(lesson?.title || asset.module_id)}</h3><p>${escapeHtml(asset.practical.prompt)}</p><div class="card-meta"><span class="pill">visual trace</span><span class="pill">${asset.practical.steps.length} steps</span><span class="pill">optional</span></div></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(asset.module_id)}">Open visual aid</button></article>`; }).join("")}</section>` : `<aside class="loading-card visual-practice-empty"><strong>Optional visual practice is not installed.</strong><span>Install it from About when you want diagrams and trace prompts. Core practice remains available here.</span></aside>`;
   $("#practice-list").innerHTML = corePractice + visualPractice;
@@ -499,7 +517,10 @@ function renderProgress() {
   const bookmarked = state.lessons.filter((lesson) => state.learning.bookmarks[lesson.id]).length;
   const noted = state.lessons.filter((lesson) => state.learning.notes[lesson.id]).length;
   $("#progress-summary").innerHTML = `<div class="stat"><strong>${completed}/${state.lessons.length}</strong><span>completed</span></div><div class="stat"><strong>${bookmarked}</strong><span>bookmarked</span></div><div class="stat"><strong>${noted}</strong><span>with notes</span></div>`;
-  $("#progress-list").innerHTML = state.lessons.map((lesson) => `<article class="progress-card"><div><span class="lesson-index">${escapeHtml(lesson.id)}</span><h3>${escapeHtml(lesson.title)}</h3><p>${displayState(statusLabel(lesson.id))}${state.learning.bookmarks[lesson.id] ? " · bookmarked" : ""}${state.learning.notes[lesson.id] ? " · note saved" : ""}</p></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Open</button></article>`).join("");
+  $("#progress-list").innerHTML = state.lessons.map((lesson) => {
+    const status = statusLabel(lesson.id);
+    return `<article class="progress-card"><div><span class="lesson-index">${escapeHtml(lesson.id)}</span><h3>${escapeHtml(lesson.title)}</h3><p><span class="${statusPillClass(status)}">${escapeHtml(displayState(status))}</span>${state.learning.bookmarks[lesson.id] ? ' <span class="pill">bookmarked</span>' : ""}${state.learning.notes[lesson.id] ? ' <span class="pill">note saved</span>' : ""}</p></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Open</button></article>`;
+  }).join("");
   document.querySelectorAll("#progress-list [data-open-lesson]").forEach((button) => button.addEventListener("click", () => { window.location.hash = `#/lesson/${button.dataset.openLesson}`; }));
 }
 

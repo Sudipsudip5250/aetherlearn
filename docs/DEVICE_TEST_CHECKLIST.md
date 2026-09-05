@@ -128,7 +128,7 @@ Do not treat the absence of a local optional pack as a failure; record **Not app
 This is a separate proof-of-concept check. It must not add lessons or alter learner records.
 
 1. In **Settings**, install **Visual Foundations** if the build lists it. Confirm the status says it is installed and verified locally, and record the displayed size.
-2. Open DL-01, DL-02, and WEB-01. Confirm each associated reader shows an **Optional visual aid**, the static diagram, a meaningful caption, a text equivalent, and license/attribution text. Confirm a non-associated lesson such as DL-03 has no visual-aid section.
+2. Open DL-01, DL-02, and WEB-01. Confirm each associated reader shows a **See the idea** section after the explanation, the static diagram, a meaningful caption, a text equivalent, and license/attribution text. With visual-foundations 1.1.0 every current lesson has a diagram; there is no remaining non-associated lesson.
 3. Confirm the visual pack is supplementary: the lesson body, practice, knowledge check, note, bookmark, and completion controls remain usable if the visual is ignored or unavailable.
 4. Delete **Visual Foundations**. Confirm only the optional visual aid disappears; the 37 core lessons, progress, notes, bookmarks, quiz attempts, and core pack remain. If deletion or rendering fails, record the exact message and do not treat source-level checks as device evidence.
 5. Record the Android version, device, font-size setting, and whether the SVG appeared in the restricted WebView. Check that JavaScript, external navigation, and file access are not exposed by the visual surface.
@@ -214,7 +214,7 @@ Use a desktop browser that supports service workers and IndexedDB over an HTTP(S
 ### 12.1 Optional visual foundations pack
 
 1. From **About → Optional visual pack**, install the local `visual-foundations` 1.1.0 fixture. Confirm the status reports 37 diagrams available offline and inspect browser Cache Storage if available; no external host should be involved.
-2. Open at least one lesson in each approved strand, including DL-01, PY-01, AL-03, DEV-03, SEC-02, WEB-01, and SEC-06. Confirm the associated static SVG, alt text, caption, text equivalent, attribution, and **Try it** observe-and-trace activity render. Confirm an unassociated lesson is not possible after the full-pack expansion, and verify every current lesson has exactly one association through the manifest validator.
+2. Open at least one lesson in each approved strand, including DL-01, PY-01, AL-03, DEV-03, SEC-02, WEB-01, and SEC-06. Confirm a **See the idea** section appears after the explanation with the associated static SVG, alt text, caption, text equivalent, attribution, and **Try it** observe-and-trace activity. Confirm an unassociated lesson is not possible after the full-pack expansion, and verify every current lesson has exactly one association through the manifest validator.
 3. Stop the local server or use browser offline mode, reload, and reopen DL-01. Confirm the cached SVG and full core lesson still render. This tests desktop Chromium only; it does not prove Android-browser support.
 4. Delete the visual pack through the About control and accept the confirmation. Confirm the visual cache and active visual pointer are removed while the core shell/cache and browser-local learning state remain.
 5. If installation, reload, or deletion fails, retain the previous valid core state, capture the status text, and record the step as **Failed** rather than inferring success from source inspection.

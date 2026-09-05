@@ -187,6 +187,14 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Correct PLAN.md current-status copy that still described the 3-SVG D-041 fixture after D-042 expanded `visual-foundations` 1.1.0 to 37 diagrams.
 - [x] Align README opening and CURRICULUM opening with the implemented 37-lesson product, including Stage 5.
 
+## 2026-09-04 resume — learner UI polish
+
+- [x] Merge PR #1 status-doc correction onto `main` (`ba43093`); hosted Quality for that PR passed validate, android, and GitGuardian.
+- [x] Fix Web header/nav overflow on ~390px: wrap brand/theme on the first row, full-width wrapping nav with 44px targets, `overflow-x: clip` on the document.
+- [x] Place existing visual-foundations diagrams after the explanation in Android and Web readers; keep alt text, text equivalent, local SVG bytes, and no new media system.
+- [x] Clarify Learn continue vs recommended, Progress status color, and quiz pass/review feedback without changing lesson IDs or learner-state keys.
+- [ ] Device/emulator, Android-browser, TalkBack, and large-text review of the visual reader and mobile header remain human-only.
+
 ## Deferred backlog
 
 - [ ] Portable encrypted backup with tested key ownership and recovery.

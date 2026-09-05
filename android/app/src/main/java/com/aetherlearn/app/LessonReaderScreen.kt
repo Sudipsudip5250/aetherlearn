@@ -69,16 +69,26 @@ internal fun LessonReaderScreen(
                     BulletList(lesson.objectives)
                 }
             }
-            OptionalVisualSection(store = store, lessonId = lesson.id)
             if (lesson.prerequisites.isNotEmpty()) {
                 LessonSection("Prerequisites") {
                     Text(lesson.prerequisites.joinToString())
                 }
             }
+            var visualInserted = false
             lesson.sections.forEach { (name, body) ->
                 if (name != "Objectives" && name != "Prerequisites" && name != "Knowledge check") {
                     LessonSection(name) { MarkdownBody(body) }
+                    val isVisualAnchor = name.contains("explanation", ignoreCase = true) ||
+                        name.contains("concept", ignoreCase = true) ||
+                        name.contains("introduction", ignoreCase = true)
+                    if (!visualInserted && isVisualAnchor) {
+                        OptionalVisualSection(store = store, lessonId = lesson.id)
+                        visualInserted = true
+                    }
                 }
+            }
+            if (!visualInserted) {
+                OptionalVisualSection(store = store, lessonId = lesson.id)
             }
             if (lesson.availability == "termux-optional") {
                 TermuxExerciseCard(lesson.id, store, onChanged)
@@ -159,35 +169,47 @@ private fun OptionalVisualSection(store: LocalStore, lessonId: String) {
     val packVersion = remember { store.getInstalledPacks().firstOrNull { it.id == "visual-foundations" }?.version }
     val asset = remember(lessonId, packVersion) { VisualPackCatalog.findForLesson(store, lessonId) } ?: return
     val svg = remember(asset.file.absolutePath, asset.file.lastModified()) { runCatching { asset.file.readText(Charsets.UTF_8) }.getOrNull() } ?: return
-    LessonSection("Optional visual aid") {
-        AndroidView(
-            factory = { context ->
-                WebView(context).apply {
-                    settings.javaScriptEnabled = false
-                    settings.domStorageEnabled = false
-                    settings.allowFileAccess = false
-                    settings.allowContentAccess = false
-                    webViewClient = WebViewClient()
-                    setNetworkAvailable(false)
-                    setBackgroundColor(Color.TRANSPARENT)
+    val document = remember(svg) { wrappedSvgDocument(svg) }
+    LessonSection("See the idea") {
+        Card {
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text(asset.caption, fontWeight = FontWeight.SemiBold)
+                AndroidView(
+                    factory = { context ->
+                        WebView(context).apply {
+                            settings.javaScriptEnabled = false
+                            settings.domStorageEnabled = false
+                            settings.allowFileAccess = false
+                            settings.allowContentAccess = false
+                            webViewClient = WebViewClient()
+                            setNetworkAvailable(false)
+                            setBackgroundColor(Color.parseColor("#F7F5FF"))
+                        }
+                    },
+                    update = { webView -> webView.loadDataWithBaseURL(null, document, "text/html", "UTF-8", null) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(640f / 260f)
+                        .semantics { contentDescription = asset.altText },
+                )
+                Text("In words: ${asset.textEquivalent}", style = MaterialTheme.typography.bodyMedium)
+                Text("Try it", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                Text(asset.practicePrompt)
+                asset.practiceSteps.forEachIndexed { index, step ->
+                    Text("${index + 1}. $step")
                 }
-            },
-            update = { webView -> webView.loadDataWithBaseURL(null, svg, "image/svg+xml", "UTF-8", null) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(220.dp)
-                .semantics { contentDescription = asset.altText },
-        )
-        Text(asset.caption, fontWeight = FontWeight.SemiBold)
-        Text("Text equivalent: ${asset.textEquivalent}")
-        Text("Try it", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-        Text(asset.practicePrompt)
-        asset.practiceSteps.forEachIndexed { index, step ->
-            Text("${index + 1}. $step")
+                Text("Self-check: ${asset.practiceSuccessCriteria}")
+                Text("License: ${asset.license} · ${asset.attribution}", style = MaterialTheme.typography.bodySmall)
+            }
         }
-        Text("Self-check: ${asset.practiceSuccessCriteria}")
-        Text("License: ${asset.license} · ${asset.attribution}", style = MaterialTheme.typography.bodySmall)
     }
+}
+
+private fun wrappedSvgDocument(svg: String): String {
+    val body = svg.trim()
+        .removePrefix("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+        .trim()
+    return """<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>html,body{margin:0;background:#f7f5ff;}svg{display:block;width:100%;height:auto;}</style></head><body>$body</body></html>"""
 }
 
 @Composable
@@ -344,7 +366,11 @@ private fun QuizSection(
             )
             if (result != null) {
                 val correct = matchesExpected(answers.getOrElse(index) { "" }, question)
-                Text(if (correct) "Correct" else "Review: ${question.expectedAnswer}", fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = if (correct) "Correct" else "Review: ${question.expectedAnswer}",
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (correct) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error,
+                )
                 if (question.explanation.isNotBlank()) Text(question.explanation)
             }
         }
