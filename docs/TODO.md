@@ -203,6 +203,15 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Tighten reader section rhythm and code-example spacing; keep visual-foundations optional, local, and framed with a Diagram caption.
 - [ ] Device/TalkBack/large-text review of the new status badges, Continue card, and reader spacing remain human-only.
 
+## 2026-09-06 polish — Practice, quiz feedback, empty states
+
+- [x] Merge PR #3 Learn/Progress/reader slice onto `main` (`6764f9b`); hosted Quality for that PR passed validate, android, and GitGuardian.
+- [x] Practice tab: first-run empty note, obvious Open lesson control, and completion state on each Android/Web item without changing scoring or IDs.
+- [x] Knowledge-check pass vs review/retry distinction with readable explanations; retry clears the form only and does not change stored quiz keys.
+- [x] First-run empty notes on Learn, Search, Progress, bookmarks, and notes; all copy is local-only.
+- [x] Light code-only accessibility: status badge descriptions, Practice/Progress/Search card labels, diagram card description. TalkBack not claimed.
+- [ ] Device/TalkBack/large-text review of Practice, quiz banners, and empty notes remain human-only.
+
 ## Deferred backlog
 
 - [ ] Portable encrypted backup with tested key ownership and recovery.

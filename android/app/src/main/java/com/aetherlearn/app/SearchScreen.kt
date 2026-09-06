@@ -7,6 +7,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aetherlearn.app.data.*
@@ -40,20 +42,28 @@ internal fun SearchScreen(
                 singleLine = true,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                when {
-                    query.isBlank() -> "Search works from the local content assets with no network."
-                    matches.isEmpty() -> "No lessons match \"${query.trim()}\". Try a broader term."
-                    else -> "${matches.size} result(s)"
-                },
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            if (query.isBlank()) {
+                LocalEmptyNote(
+                    title = "Search stays on this device",
+                    body = "Type a word to look through cached lesson titles and bodies. Nothing is sent off this phone.",
+                )
+            } else if (matches.isEmpty()) {
+                LocalEmptyNote(
+                    title = "No lessons match “${query.trim()}”",
+                    body = "Try a broader term. Search only uses the lessons already stored locally.",
+                )
+            } else {
+                Text("${matches.size} result(s)", style = MaterialTheme.typography.bodyMedium)
+            }
         }
         items(matches, key = { it.id }) { lesson ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onLessonClick(lesson.id) },
+                    .clickable { onLessonClick(lesson.id) }
+                    .semantics {
+                        contentDescription = "Open ${lesson.title}, ${progressLabel(progress[lesson.id]?.state ?: LearningState.NOT_STARTED)}"
+                    },
             ) {
                 Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(lesson.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)

@@ -217,9 +217,17 @@ textarea { resize: vertical; }
 .feedback-review { color: #7a3418; background: #ffe8e2; }
 :root[data-theme="dark"] .feedback-review { color: #ffd4c8; background: #3a221c; }
 .feedback span { color: var(--muted); font-size: .86rem; }
-.quiz-review { margin-top: 12px; color: var(--muted); }
-.quiz-review p { margin: 8px 0; }
+.quiz-review { margin-top: 12px; color: var(--muted); display: grid; gap: 10px; }
+.quiz-review p { margin: 0; }
 .quiz-review strong { color: var(--ink); }
+.quiz-item-pass, .quiz-item-review { padding: 12px 14px; border-radius: 10px; }
+.quiz-item-pass { color: #1f6f5f; background: var(--mint-soft); }
+.quiz-item-review { color: #7a3418; background: #ffe8e2; }
+:root[data-theme="dark"] .quiz-item-review { color: #ffd4c8; background: #3a221c; }
+.empty-note { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px; color: var(--muted); background: var(--paper); border: 1px dashed var(--line); border-radius: 14px; margin: 0 0 16px; }
+.empty-note strong { color: var(--ink); }
+.practice-card.is-in-progress { border-color: #c7bdfd; background: color-mix(in srgb, var(--purple-soft) 35%, var(--card)); }
+.practice-card.is-completed { border-color: #b7e4d6; }
 .tool-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 13px; }
 @media (max-width: 760px) {
   .progress-summary { grid-template-columns: 1fr; }

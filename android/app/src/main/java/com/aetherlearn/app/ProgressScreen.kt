@@ -7,6 +7,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aetherlearn.app.data.*
@@ -39,6 +41,13 @@ internal fun ProgressScreen(
                 progress = { if (lessons.isEmpty()) 0f else completed.toFloat() / lessons.size },
                 modifier = Modifier.fillMaxWidth(),
             )
+            if (completed == 0 && inProgress == 0) {
+                Spacer(modifier = Modifier.height(12.dp))
+                LocalEmptyNote(
+                    title = "No progress yet",
+                    body = "Open a lesson when you are ready. Completion, bookmarks, and notes stay on this device and are never synced.",
+                )
+            }
         }
         item { Text("Modules", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold) }
         items(lessons, key = { "progress-${it.id}" }) { lesson ->
@@ -46,7 +55,8 @@ internal fun ProgressScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onLessonClick(lesson.id) },
+                    .clickable { onLessonClick(lesson.id) }
+                    .semantics { contentDescription = "Open ${lesson.title}, ${progressLabel(state)}" },
                 colors = CardDefaults.cardColors(
                     containerColor = when (state) {
                         LearningState.COMPLETED -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.45f)
@@ -70,7 +80,7 @@ internal fun ProgressScreen(
         }
         item { Text("Bookmarks", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold) }
         if (bookmarks.isEmpty()) {
-            item { Text("No bookmarked lessons yet.") }
+            item { LocalEmptyNote(title = "No bookmarks yet", body = "Bookmark a lesson from its reader. The list stays on this device.") }
         } else {
             items(bookmarks.toList().sorted(), key = { "bookmark-$it" }) { moduleId ->
                 TextButton(onClick = { onLessonClick(moduleId) }) { Text(titles[moduleId]?.title ?: moduleId) }
@@ -78,7 +88,7 @@ internal fun ProgressScreen(
         }
         item { Text("Recent notes", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold) }
         if (notes.isEmpty()) {
-            item { Text("No notes yet. Add one from a lesson reader.") }
+            item { LocalEmptyNote(title = "No notes yet", body = "Write a private note from a lesson reader. Notes are stored only on this device.") }
         } else {
             items(notes.take(5), key = { "note-${it.moduleId}" }) { note ->
                 Card(modifier = Modifier.fillMaxWidth()) {

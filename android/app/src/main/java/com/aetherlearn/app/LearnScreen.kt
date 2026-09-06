@@ -64,6 +64,13 @@ internal fun LearnScreen(
                     .fillMaxWidth()
                     .semantics { contentDescription = "Overall progress: $completed of ${lessons.size} lessons completed" },
             )
+            if (completed == 0 && inProgress == 0) {
+                Spacer(modifier = Modifier.height(12.dp))
+                LocalEmptyNote(
+                    title = "Nothing recorded yet",
+                    body = "Choose a starting point or open any lesson. Progress, notes, and quiz attempts stay on this device.",
+                )
+            }
         }
         recommended?.let { lesson ->
             item {
@@ -191,7 +198,11 @@ internal fun StatusBadge(state: LearningState) {
         LearningState.IN_PROGRESS -> Triple("In progress", colors.primaryContainer, colors.onPrimaryContainer)
         LearningState.NOT_STARTED -> Triple("Not started", colors.surfaceVariant, colors.onSurfaceVariant)
     }
-    Surface(color = container, shape = RoundedCornerShape(999.dp)) {
+    Surface(
+        color = container,
+        shape = RoundedCornerShape(999.dp),
+        modifier = Modifier.semantics(mergeDescendants = true) { contentDescription = "Status: $label" },
+    ) {
         Text(
             text = label,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
@@ -213,4 +224,14 @@ internal fun availabilityLabel(value: String): String = when (value) {
     "offline-pack" -> "Optional download"
     "network-optional" -> "Network optional"
     else -> "Offline"
+}
+
+@Composable
+internal fun LocalEmptyNote(title: String, body: String) {
+    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text(body, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
 }
