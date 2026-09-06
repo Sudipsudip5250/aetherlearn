@@ -1,5 +1,6 @@
 package com.aetherlearn.app
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -171,8 +172,9 @@ private fun OptionalVisualSection(store: LocalStore, lessonId: String) {
     val svg = remember(asset.file.absolutePath, asset.file.lastModified()) { runCatching { asset.file.readText(Charsets.UTF_8) }.getOrNull() } ?: return
     val document = remember(svg) { wrappedSvgDocument(svg) }
     LessonSection("See the idea") {
-        Card {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Card(border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text("Diagram", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                 Text(asset.caption, fontWeight = FontWeight.SemiBold)
                 AndroidView(
                     factory = { context ->
@@ -214,7 +216,7 @@ private fun wrappedSvgDocument(svg: String): String {
 
 @Composable
 private fun LessonSection(title: String, content: @Composable () -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
         content()
     }
@@ -274,23 +276,27 @@ private fun MarkdownBody(body: String) {
     }
     if (inCode) blocks += MarkdownBlock.Code(paragraph.toString().trimEnd()) else { flushTable(); flushParagraph() }
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         blocks.forEach { block ->
             when (block) {
                 is MarkdownBlock.Text -> Text(inlineMarkdown(block.value), style = MaterialTheme.typography.bodyLarge)
                 is MarkdownBlock.Table -> Surface(color = MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.small) {
-                    Column(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+                    Column(modifier = Modifier.horizontalScroll(rememberScrollState()).padding(4.dp)) {
                         TableRow(block.header, header = true)
                         block.rows.forEach { row -> TableRow(row, header = false) }
                     }
                 }
                 is MarkdownBlock.Code -> Surface(color = MaterialTheme.colorScheme.surfaceVariant, shape = MaterialTheme.shapes.small) {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
                             Text("Code example", style = MaterialTheme.typography.labelMedium)
                             TextButton(onClick = { clipboard.setText(AnnotatedString(block.value)); copiedCode = block.value }) { Text(if (copiedCode == block.value) "Copied" else "Copy code") }
                         }
-                        Row(modifier = Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 12.dp, vertical = 4.dp)) {
+                        Row(modifier = Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 12.dp)) {
                             Text(block.value, fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodyMedium)
                         }
                     }

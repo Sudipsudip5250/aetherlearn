@@ -1,4 +1,4 @@
-import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=19";
+import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=20";
 
 const CONTENT_MANIFEST = "./content/manifest.json";
 const VISUAL_MANIFEST_URL = "./visuals/visual-foundations/manifest.json";
@@ -359,7 +359,7 @@ function renderOptionalVisuals(lesson) {
   const assets = pack.manifest.assets.filter((asset) => asset.module_id === lesson.id);
   if (!assets.length) return "";
   const reduceMotion = prefersReducedMotion();
-  return `<section class="lesson-section visual-pack-section" aria-labelledby="optional-visuals-title"><h2 id="optional-visuals-title">See the idea</h2><p>This diagram sits with the explanation. It is supplementary; the text equivalent remains complete without it.</p>${assets.map((asset) => `<figure class="visual-figure"><figcaption class="visual-caption">${escapeHtml(asset.caption)}</figcaption><div class="visual-frame"><img src="${escapeHtml(visualAssetUrl(asset))}" alt="${escapeHtml(asset.alt_text)}" loading="lazy" /></div>${reduceMotion && asset.reduced_motion_alternative ? `<p class="visual-reduced-motion">${escapeHtml(asset.reduced_motion_alternative)}</p>` : ""}<details class="visual-text-details"${reduceMotion ? " open" : ""}><summary>In words</summary><p class="visual-text-equivalent">${escapeHtml(asset.text_equivalent)}</p></details><details class="visual-practice"><summary>Try it: trace the idea</summary><p>${escapeHtml(asset.practical.prompt)}</p><ol>${asset.practical.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol><p><strong>Self-check:</strong> ${escapeHtml(asset.practical.success_criteria)}</p></details><small>License: ${escapeHtml(asset.license)} · ${escapeHtml(asset.attribution)}</small></figure>`).join("")}</section>`;
+  return `<section class="lesson-section visual-pack-section" aria-labelledby="optional-visuals-title"><h2 id="optional-visuals-title">See the idea</h2><p>This diagram sits with the explanation. It is supplementary; the text equivalent remains complete without it.</p>${assets.map((asset) => `<figure class="visual-figure"><figcaption class="visual-caption"><span class="visual-kicker">Diagram</span>${escapeHtml(asset.caption)}</figcaption><div class="visual-frame"><img src="${escapeHtml(visualAssetUrl(asset))}" alt="${escapeHtml(asset.alt_text)}" loading="lazy" /></div>${reduceMotion && asset.reduced_motion_alternative ? `<p class="visual-reduced-motion">${escapeHtml(asset.reduced_motion_alternative)}</p>` : ""}<details class="visual-text-details"${reduceMotion ? " open" : ""}><summary>In words</summary><p class="visual-text-equivalent">${escapeHtml(asset.text_equivalent)}</p></details><details class="visual-practice"><summary>Try it: trace the idea</summary><p>${escapeHtml(asset.practical.prompt)}</p><ol>${asset.practical.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol><p><strong>Self-check:</strong> ${escapeHtml(asset.practical.success_criteria)}</p></details><small>License: ${escapeHtml(asset.license)} · ${escapeHtml(asset.attribution)}</small></figure>`).join("")}</section>`;
 }
 
 function renderLessonSection(section) {
@@ -403,7 +403,8 @@ function renderGuidedPath() {
     container.innerHTML = `<div class="guided-card"><div><span class="eyebrow">Guided path</span><h3>Core path complete</h3><p>You can revisit any lesson or use Search and Practice for review.</p></div></div>`;
     return;
   }
-  container.innerHTML = `<div class="guided-card"><div><span class="eyebrow">Guided path</span><h3>${escapeHtml(statusLabel(lesson.id) === "in progress" ? "Continue learning" : "Recommended next")}</h3><p class="guided-title">${escapeHtml(lesson.title)}</p><p>${escapeHtml(recommendationReason(lesson))}</p><div class="card-meta"><span class="pill">${escapeHtml(lesson.strand)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span><span class="pill">${escapeHtml(lesson.availability)}</span><span class="pill">${escapeHtml(state.learning.startingLevel ? "Personalized" : "Open path")}</span></div></div><button class="primary-button purple-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Open lesson</button></div>`;
+  const continuing = statusLabel(lesson.id) === "in progress";
+  container.innerHTML = `<div class="guided-card ${continuing ? "is-continue" : "is-recommended"}"><div><span class="eyebrow">${continuing ? "Continue" : "Next up"}</span><h3>${escapeHtml(continuing ? "Continue learning" : "Recommended next")}</h3><p class="guided-title">${escapeHtml(lesson.title)}</p><p>${escapeHtml(recommendationReason(lesson))}</p><div class="card-meta"><span class="pill">${escapeHtml(lesson.strand)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span><span class="${statusPillClass(statusLabel(lesson.id))}">${escapeHtml(statusLabel(lesson.id))}</span><span class="pill">${escapeHtml(state.learning.startingLevel ? "Personalized" : "Open path")}</span></div></div><button class="primary-button purple-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">${continuing ? "Resume lesson" : "Open lesson"}</button></div>`;
   container.querySelector("[data-open-lesson]")?.addEventListener("click", () => { window.location.hash = `#/lesson/${lesson.id}`; });
 }
 
@@ -443,10 +444,11 @@ function renderLessonList() {
       previousStrand = lesson.strand;
       cards.push(`<h3 class="strand-heading">${escapeHtml(lesson.strand)}</h3>`);
     }
-    cards.push(`<article class="lesson-card">
-      <div class="card-top"><span class="lesson-index">${String(index + 1).padStart(2, "0")}</span><span class="pill">${escapeHtml(lesson.availability)}</span></div>
+    const status = statusLabel(lesson.id);
+    cards.push(`<article class="lesson-card is-${status.replace(/\s+/g, "-")}">
+      <div class="card-top"><span class="lesson-index">${String(index + 1).padStart(2, "0")}</span><span class="${statusPillClass(status)}">${escapeHtml(status)}</span></div>
       <h3>${escapeHtml(lesson.title)}</h3><p>${escapeHtml(preview(lesson))}</p>
-      <div class="card-meta"><span class="pill">${escapeHtml(lesson.strand)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span><span class="${statusPillClass(statusLabel(lesson.id))}">${escapeHtml(statusLabel(lesson.id))}</span><button class="open-card" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Read lesson →</button></div>
+      <div class="card-meta"><span class="pill">${escapeHtml(lesson.strand)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span><span class="pill">${escapeHtml(lesson.availability)}</span><button class="open-card" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Read lesson →</button></div>
     </article>`);
   });
   $("#lesson-list").innerHTML = cards.length ? cards.join("") : `<div class="loading-card"><strong>No lessons match these filters.</strong><span>Clear one or more filters to browse the full catalog.</span></div>`;
@@ -514,12 +516,12 @@ function renderSearchResults(query = "") {
 function renderProgress() {
   if (!$("#progress-list")) return;
   const completed = state.lessons.filter((lesson) => statusLabel(lesson.id) === "completed").length;
-  const bookmarked = state.lessons.filter((lesson) => state.learning.bookmarks[lesson.id]).length;
-  const noted = state.lessons.filter((lesson) => state.learning.notes[lesson.id]).length;
-  $("#progress-summary").innerHTML = `<div class="stat"><strong>${completed}/${state.lessons.length}</strong><span>completed</span></div><div class="stat"><strong>${bookmarked}</strong><span>bookmarked</span></div><div class="stat"><strong>${noted}</strong><span>with notes</span></div>`;
+  const inProgress = state.lessons.filter((lesson) => statusLabel(lesson.id) === "in progress").length;
+  const remaining = Math.max(0, state.lessons.length - completed);
+  $("#progress-summary").innerHTML = `<div class="stat stat-completed"><strong>${completed}</strong><span>completed</span></div><div class="stat stat-in-progress"><strong>${inProgress}</strong><span>in progress</span></div><div class="stat stat-remaining"><strong>${remaining}</strong><span>remaining</span></div>`;
   $("#progress-list").innerHTML = state.lessons.map((lesson) => {
     const status = statusLabel(lesson.id);
-    return `<article class="progress-card"><div><span class="lesson-index">${escapeHtml(lesson.id)}</span><h3>${escapeHtml(lesson.title)}</h3><p><span class="${statusPillClass(status)}">${escapeHtml(displayState(status))}</span>${state.learning.bookmarks[lesson.id] ? ' <span class="pill">bookmarked</span>' : ""}${state.learning.notes[lesson.id] ? ' <span class="pill">note saved</span>' : ""}</p></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Open</button></article>`;
+    return `<article class="progress-card is-${status.replace(/\s+/g, "-")}"><div><span class="lesson-index">${escapeHtml(lesson.id)}</span><h3>${escapeHtml(lesson.title)}</h3><p><span class="${statusPillClass(status)}">${escapeHtml(displayState(status))}</span>${state.learning.bookmarks[lesson.id] ? ' <span class="pill">bookmarked</span>' : ""}${state.learning.notes[lesson.id] ? ' <span class="pill">note saved</span>' : ""}</p></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Open</button></article>`;
   }).join("");
   document.querySelectorAll("#progress-list [data-open-lesson]").forEach((button) => button.addEventListener("click", () => { window.location.hash = `#/lesson/${button.dataset.openLesson}`; }));
 }

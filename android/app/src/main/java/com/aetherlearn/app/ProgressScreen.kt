@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,7 +22,8 @@ internal fun ProgressScreen(
     onDeleteNote: (String) -> Unit,
 ) {
     val completed = progress.values.count { it.state == LearningState.COMPLETED }
-    val started = progress.values.count { it.state != LearningState.NOT_STARTED }
+    val inProgress = progress.values.count { it.state == LearningState.IN_PROGRESS }
+    val remaining = (lessons.size - completed).coerceAtLeast(0)
     val titles = lessons.associateBy { it.id }
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(padding),
@@ -31,7 +33,8 @@ internal fun ProgressScreen(
         item {
             Text("Progress", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
-            Text("$completed completed · $started started · ${lessons.size} total")
+            Text("$completed completed · $inProgress in progress · $remaining remaining")
+            Spacer(modifier = Modifier.height(8.dp))
             LinearProgressIndicator(
                 progress = { if (lessons.isEmpty()) 0f else completed.toFloat() / lessons.size },
                 modifier = Modifier.fillMaxWidth(),
@@ -44,24 +47,24 @@ internal fun ProgressScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onLessonClick(lesson.id) },
+                colors = CardDefaults.cardColors(
+                    containerColor = when (state) {
+                        LearningState.COMPLETED -> MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.45f)
+                        LearningState.IN_PROGRESS -> MaterialTheme.colorScheme.primaryContainer
+                        LearningState.NOT_STARTED -> MaterialTheme.colorScheme.surface
+                    },
+                ),
             ) {
                 Row(
                     modifier = Modifier.padding(16.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(lesson.title, fontWeight = FontWeight.SemiBold)
                         Text(lesson.id, style = MaterialTheme.typography.bodySmall)
                     }
-                    Text(
-                        text = progressLabel(state),
-                        color = when (state) {
-                            LearningState.COMPLETED -> MaterialTheme.colorScheme.secondary
-                            LearningState.IN_PROGRESS -> MaterialTheme.colorScheme.primary
-                            LearningState.NOT_STARTED -> MaterialTheme.colorScheme.onSurfaceVariant
-                        },
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    StatusBadge(state)
                 }
             }
         }

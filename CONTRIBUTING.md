@@ -1,10 +1,10 @@
 # Contributing to AetherLearn
 
-Thank you for helping build AetherLearn. The project is currently in the specification and content-contract stage. Contributions should preserve the project’s core commitments: free access, open source, local-first privacy, offline continuity, phone-first usability, accessibility, and responsible treatment of dual-use topics.
+Thank you for helping build AetherLearn. The project is an implemented privacy-first offline CS learning app: a native Android client and a static Web/PWA fallback, with a frozen 20-lesson MVP baseline plus 17 approved follow-on lessons (37 current). Contributions should preserve the project’s core commitments: free access, open source, local-first privacy, offline continuity, phone-first usability, accessibility, and responsible treatment of dual-use topics.
 
 ## Before opening a contribution
 
-Read [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/CURRICULUM.md`](docs/CURRICULUM.md), [`docs/SAFETY.md`](docs/SAFETY.md), and [`docs/TODO.md`](docs/TODO.md). Do not expand the 20-module MVP curriculum, add a backend, add accounts or analytics, or introduce arbitrary command execution without an approved decision-log entry.
+Read [`docs/PRODUCT_SPEC.md`](docs/PRODUCT_SPEC.md), [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/CURRICULUM.md`](docs/CURRICULUM.md), [`docs/SAFETY.md`](docs/SAFETY.md), and [`docs/TODO.md`](docs/TODO.md). Do not add Stage 6 or other new curriculum tracks, a backend, accounts or analytics, or arbitrary command execution without an approved decision-log entry. The 20-lesson MVP baseline remains frozen; keep existing lesson IDs and learner-state keys stable.
 
 Use a focused branch and keep a pull request small enough to review. Explain the problem, the intended behavior, the files changed, the validation performed, and any remaining limitations. Never commit credentials, private keys, personal learning data, generated caches, build artifacts, or local device state.
 
