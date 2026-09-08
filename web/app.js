@@ -1,4 +1,4 @@
-import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=20";
+import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=21";
 
 const CONTENT_MANIFEST = "./content/manifest.json";
 const VISUAL_MANIFEST_URL = "./visuals/visual-foundations/manifest.json";
@@ -451,7 +451,7 @@ function renderLessonList() {
       <div class="card-meta"><span class="pill">${escapeHtml(lesson.strand)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span><span class="pill">${escapeHtml(lesson.availability)}</span><button class="open-card" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Read lesson →</button></div>
     </article>`);
   });
-  $("#lesson-list").innerHTML = cards.length ? cards.join("") : `<div class="loading-card"><strong>No lessons match these filters.</strong><span>Clear one or more filters to browse the full catalog.</span></div>`;
+  $("#lesson-list").innerHTML = (cards.length ? cards.join("") : `<aside class="empty-note"><strong>No lessons match these filters.</strong><span>Clear one or more filters to browse the full catalog. Filtering stays in this browser.</span></aside>`);
   document.querySelectorAll("#lesson-list [data-open-lesson]").forEach((button) => button.addEventListener("click", () => { window.location.hash = `#/lesson/${button.dataset.openLesson}`; }));
   renderGuidedPath();
 }
@@ -469,7 +469,7 @@ function renderReader(lesson) {
   const termuxNote = lesson.availability === "termux-optional" ? `<aside class="termux-note"><strong>Termux is Android-only.</strong><span>This browser fallback includes the lesson and offline practice, but not the native terminal handoff.</span></aside>` : "";
   const bookmarkText = state.learning.bookmarks[lesson.id] ? "Bookmarked" : "Bookmark lesson";
   const objectivesHtml = objectives.length ? `<section class="lesson-section objectives-section"><h2>Objectives</h2><ul>${objectives.map((objective) => `<li>${escapeHtml(objective)}</li>`).join("")}</ul></section>` : "";
-  const quizHtml = questions.length ? `<section class="lesson-section quiz-section"><div class="section-heading"><div><h2>Knowledge check</h2><p>Answer locally for feedback. Your best result is kept in this browser.</p></div><span class="module-count">${quizState.attempts} attempt${quizState.attempts === 1 ? "" : "s"} · best ${quizState.best}%</span></div><form id="quiz-form">${questions.map((question, index) => `<label class="quiz-question" for="quiz-${index}"><span>${index + 1}. ${escapeHtml(question.question)}</span><input id="quiz-${index}" name="quiz-${index}" autocomplete="off" required /></label>`).join("")}<button class="primary-button purple-button" type="submit">Check answers</button><div id="quiz-feedback" class="feedback" aria-live="polite"></div><div id="quiz-review" class="quiz-review" aria-live="polite"></div></form></section>` : "";
+  const quizHtml = questions.length ? `<section class="lesson-section quiz-section"><div class="section-heading"><div><h2>Knowledge check</h2><p>Answer locally for feedback. Your best result is kept in this browser.</p></div><span class="module-count">${quizState.attempts} attempt${quizState.attempts === 1 ? "" : "s"} · best ${quizState.best}%</span></div><form id="quiz-form">${questions.map((question, index) => `<label class="quiz-question" for="quiz-${index}"><span>${index + 1}. ${escapeHtml(question.question)}</span><input id="quiz-${index}" name="quiz-${index}" autocomplete="off" required /></label>`).join("")}<div class="tool-row"><button class="primary-button purple-button" type="submit">Check answers</button><button class="secondary-button" id="quiz-retry" type="button" hidden>Try again</button></div><div id="quiz-feedback" class="feedback" aria-live="polite"></div><div id="quiz-review" class="quiz-review" aria-live="polite"></div></form></section>` : "";
   const localTools = `<section class="lesson-section local-tools"><div class="section-heading"><div><h2>Your local study tools</h2><p>Notes and bookmarks stay in this browser and are never synced.</p></div><button id="bookmark-toggle" class="secondary-button" type="button">${bookmarkText}</button></div><label class="search-label" for="lesson-note">Private note</label><textarea id="lesson-note" rows="5" placeholder="Write a note about this lesson…">${escapeHtml(state.learning.notes[lesson.id] || "")}</textarea><div class="tool-row"><button id="save-note" class="secondary-button" type="button">Save note</button><button id="complete-lesson" class="primary-button purple-button" type="button">${statusLabel(lesson.id) === "completed" ? "Completed" : "Mark lesson complete"}</button></div><div id="note-status" class="module-count" role="status" aria-live="polite"></div></section>`;
   const header = `<div class="reader-kicker">${escapeHtml(lesson.strand)} · ${escapeHtml(lesson.level)}</div><h1 id="reader-title">${escapeHtml(lesson.title)}</h1><p class="reader-summary">${escapeHtml(preview(lesson))}</p><div class="reader-meta"><span class="pill">${escapeHtml(lesson.availability)}</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} minutes</span><span class="pill">${escapeHtml(lesson.risk_tier)}</span><span class="${statusPillClass(statusLabel(lesson.id))}">${escapeHtml(statusLabel(lesson.id))}</span><span class="pill">Completion: explicit learner choice</span></div>`;
   $("#reader-content").innerHTML = [header, objectivesHtml, termuxNote, beforeExplanation, optionalVisuals, afterExplanation, quizHtml, localTools].join("");
@@ -480,7 +480,36 @@ function attachReaderEvents(lesson, questions) {
   $("#bookmark-toggle")?.addEventListener("click", () => { state.learning.bookmarks[lesson.id] = !state.learning.bookmarks[lesson.id]; persistLearning(); renderReader(lesson); renderProgress(); });
   $("#save-note")?.addEventListener("click", () => { state.learning.notes[lesson.id] = $("#lesson-note").value.trim(); persistLearning(); $("#note-status").textContent = "Saved locally in this browser."; renderProgress(); });
   $("#complete-lesson")?.addEventListener("click", () => { updateProgress(lesson.id, "completed"); renderReader(lesson); });
-  $("#quiz-form")?.addEventListener("submit", (event) => { event.preventDefault(); const answers = questions.map((_, index) => $(`#quiz-${index}`).value); const correct = questions.reduce((total, question, index) => total + (isAnswerCorrect(answers[index], question) ? 1 : 0), 0); const score = Math.round((correct / questions.length) * 100); const previous = state.learning.quiz[lesson.id] || { attempts: 0, best: 0 }; state.learning.quiz[lesson.id] = { attempts: previous.attempts + 1, best: Math.max(previous.best, score), last: score, lastAt: new Date().toISOString() }; persistLearning(); const feedback = $("#quiz-feedback"); feedback.className = `feedback ${score === 100 ? "feedback-pass" : "feedback-review"}`; feedback.innerHTML = `<strong>${score}% — ${correct} of ${questions.length} correct.</strong> ${score === 100 ? "Excellent work." : "Review the explanations in the lesson and try again."}<br /><span>Best result is stored locally; quiz score does not block lesson completion.</span>`; $("#quiz-review").innerHTML = questions.map((question, index) => `<p><strong>${index + 1}. ${isAnswerCorrect(answers[index], question) ? "Correct" : "Review"}</strong>${isAnswerCorrect(answers[index], question) ? "" : ` Expected key answer: ${escapeHtml(question.answer)}.`} ${escapeHtml(question.explanation || "Use the lesson explanation to check your reasoning.")}</p>`).join(""); renderProgress(); });
+  $("#quiz-form")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const answers = questions.map((_, index) => $(`#quiz-${index}`).value);
+    const correct = questions.reduce((total, question, index) => total + (isAnswerCorrect(answers[index], question) ? 1 : 0), 0);
+    const score = Math.round((correct / questions.length) * 100);
+    const previous = state.learning.quiz[lesson.id] || { attempts: 0, best: 0 };
+    state.learning.quiz[lesson.id] = { attempts: previous.attempts + 1, best: Math.max(previous.best, score), last: score, lastAt: new Date().toISOString() };
+    persistLearning();
+    const passed = score === 100;
+    const feedback = $("#quiz-feedback");
+    feedback.className = `feedback ${passed ? "feedback-pass" : "feedback-review"}`;
+    feedback.innerHTML = `<strong>${passed ? "All correct" : "Review and retry"} — ${correct} of ${questions.length} (${score}%).</strong> ${passed ? "Excellent work." : "Read the notes below, then try again."}<br /><span>Best result is stored locally; quiz score does not block lesson completion.</span>`;
+    $("#quiz-review").innerHTML = questions.map((question, index) => {
+      const ok = isAnswerCorrect(answers[index], question);
+      return `<p class="${ok ? "quiz-item-pass" : "quiz-item-review"}"><strong>${index + 1}. ${ok ? "Correct" : "Review this one"}</strong>${ok ? "" : ` Expected key answer: ${escapeHtml(question.answer)}.`} ${escapeHtml(question.explanation || "Use the lesson explanation to check your reasoning.")}</p>`;
+    }).join("");
+    const retry = $("#quiz-retry");
+    if (retry) retry.hidden = false;
+    renderProgress();
+  });
+  $("#quiz-retry")?.addEventListener("click", () => {
+    questions.forEach((_, index) => { const input = $(`#quiz-${index}`); if (input) input.value = ""; });
+    const feedback = $("#quiz-feedback");
+    if (feedback) { feedback.className = "feedback"; feedback.innerHTML = ""; }
+    const review = $("#quiz-review");
+    if (review) review.innerHTML = "";
+    const retry = $("#quiz-retry");
+    if (retry) retry.hidden = true;
+    $(`#quiz-0`)?.focus();
+  });
   document.querySelectorAll("[data-copy-code]").forEach((button) => button.addEventListener("click", async () => { const value = button.dataset.copyCode || ""; try { await navigator.clipboard.writeText(value); button.textContent = "Copied"; } catch { button.textContent = "Copy unavailable"; } }));
 }
 
@@ -495,13 +524,20 @@ function cssId(value) { return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").r
 function displayState(value) { return value === "in progress" ? "In progress" : value.replace(/^./, (letter) => letter.toUpperCase()); }
 
 function renderPractice() {
+  if (!state.lessons.length) {
+    $("#practice-list").innerHTML = `<aside class="empty-note"><strong>No practice is loaded yet.</strong><span>Cache the core lessons from Learn. Practice stays in this browser and never requires an account.</span></aside>`;
+    return;
+  }
+  const noneStarted = state.lessons.every((lesson) => statusLabel(lesson.id) === "not started");
+  const intro = noneStarted ? `<aside class="empty-note"><strong>No checks attempted yet.</strong><span>Open any lesson to try its knowledge check. Results stay in this browser and do not block completion.</span></aside>` : "";
   const corePractice = state.lessons.map((lesson) => {
     const section = lesson.sections.find((candidate) => candidate.title.toLowerCase() === "offline practice");
     const questionCount = lessonQuiz(lesson).length;
-    return `<article class="practice-card"><div><span class="lesson-index">${escapeHtml(lesson.id)}</span><h3>${escapeHtml(lesson.title)}</h3><div>${renderMarkdown(section?.body || "Practice content is included in the reader.")}</div><div class="card-meta"><span class="pill">short-answer-v1</span><span class="pill">${questionCount} checks</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span><span class="pill">${escapeHtml(lesson.availability)}</span><span class="${statusPillClass(statusLabel(lesson.id))}">${escapeHtml(statusLabel(lesson.id))}</span></div></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Open lesson</button></article>`;
+    const status = statusLabel(lesson.id);
+    return `<article class="practice-card is-${status.replace(/\s+/g, "-")}"><div><span class="lesson-index">${escapeHtml(lesson.id)}</span><h3>${escapeHtml(lesson.title)}</h3><div>${renderMarkdown(section?.body || "Practice content is included in the reader.")}</div><div class="card-meta"><span class="${statusPillClass(status)}">${escapeHtml(status)}</span><span class="pill">short-answer-v1</span><span class="pill">${questionCount} checks</span><span class="pill">${escapeHtml(String(lesson.estimated_minutes))} min</span></div></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Open lesson</button></article>`;
   }).join("");
-  const visualPractice = state.visualPack ? `<section class="visual-practice-index" aria-labelledby="visual-practice-title"><div class="section-heading"><div><p class="eyebrow">Optional visual practice</p><h3 id="visual-practice-title">Trace the idea</h3></div><span class="module-count">${state.visualPack.manifest.assets.length} local activities</span></div>${state.visualPack.manifest.assets.map((asset) => { const lesson = state.lessons.find((candidate) => candidate.id === asset.module_id); return `<article class="practice-card visual-practice-card"><div><span class="lesson-index">${escapeHtml(asset.module_id)}</span><h3>${escapeHtml(lesson?.title || asset.module_id)}</h3><p>${escapeHtml(asset.practical.prompt)}</p><div class="card-meta"><span class="pill">visual trace</span><span class="pill">${asset.practical.steps.length} steps</span><span class="pill">optional</span></div></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(asset.module_id)}">Open visual aid</button></article>`; }).join("")}</section>` : `<aside class="loading-card visual-practice-empty"><strong>Optional visual practice is not installed.</strong><span>Install it from About when you want diagrams and trace prompts. Core practice remains available here.</span></aside>`;
-  $("#practice-list").innerHTML = corePractice + visualPractice;
+  const visualPractice = state.visualPack ? `<section class="visual-practice-index" aria-labelledby="visual-practice-title"><div class="section-heading"><div><p class="eyebrow">Optional visual practice</p><h3 id="visual-practice-title">Trace the idea</h3></div><span class="module-count">${state.visualPack.manifest.assets.length} local activities</span></div>${state.visualPack.manifest.assets.map((asset) => { const lesson = state.lessons.find((candidate) => candidate.id === asset.module_id); return `<article class="practice-card visual-practice-card"><div><span class="lesson-index">${escapeHtml(asset.module_id)}</span><h3>${escapeHtml(lesson?.title || asset.module_id)}</h3><p>${escapeHtml(asset.practical.prompt)}</p><div class="card-meta"><span class="pill">visual trace</span><span class="pill">${asset.practical.steps.length} steps</span><span class="pill">optional</span></div></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(asset.module_id)}">Open visual aid</button></article>`; }).join("")}</section>` : `<aside class="empty-note visual-practice-empty"><strong>Optional visual practice is not installed.</strong><span>Install it from About when you want diagrams and trace prompts. Core practice remains available here.</span></aside>`;
+  $("#practice-list").innerHTML = intro + corePractice + visualPractice;
   document.querySelectorAll("#practice-list [data-open-lesson]").forEach((button) => button.addEventListener("click", () => { window.location.hash = `#/lesson/${button.dataset.openLesson}`; }));
 }
 
@@ -509,7 +545,7 @@ function renderSearchResults(query = "") {
   const normalized = normalizeText(query);
   const matches = normalized ? state.lessons.filter((lesson) => lesson.searchText.includes(normalized)) : [];
   $("#search-count").textContent = normalized ? `${matches.length} match${matches.length === 1 ? "" : "es"}` : "";
-  $("#search-results").innerHTML = normalized ? (matches.length ? matches.map((lesson) => `<article class="search-result"><span class="lesson-index">${escapeHtml(lesson.strand)}</span><h3>${escapeHtml(lesson.title)}</h3><p>${escapeHtml(preview(lesson))}</p><button class="open-card" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Read lesson →</button></article>`).join("") : `<div class="loading-card">No lessons match “${escapeHtml(query)}”.</div>`) : `<div class="loading-card">Search the cached lesson titles and bodies.</div>`;
+  $("#search-results").innerHTML = normalized ? (matches.length ? matches.map((lesson) => `<article class="search-result"><span class="lesson-index">${escapeHtml(lesson.strand)}</span><h3>${escapeHtml(lesson.title)}</h3><p>${escapeHtml(preview(lesson))}</p><button class="open-card" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Read lesson →</button></article>`).join("") : `<aside class="empty-note"><strong>No lessons match “${escapeHtml(query)}”.</strong><span>Try a broader term. Search only uses the cached lessons in this browser.</span></aside>`) : `<aside class="empty-note"><strong>Search stays in this browser.</strong><span>Type a word to look through cached lesson titles and bodies. Nothing is sent to a server.</span></aside>`;
   document.querySelectorAll("#search-results [data-open-lesson]").forEach((button) => button.addEventListener("click", () => { window.location.hash = `#/lesson/${button.dataset.openLesson}`; }));
 }
 
@@ -519,7 +555,8 @@ function renderProgress() {
   const inProgress = state.lessons.filter((lesson) => statusLabel(lesson.id) === "in progress").length;
   const remaining = Math.max(0, state.lessons.length - completed);
   $("#progress-summary").innerHTML = `<div class="stat stat-completed"><strong>${completed}</strong><span>completed</span></div><div class="stat stat-in-progress"><strong>${inProgress}</strong><span>in progress</span></div><div class="stat stat-remaining"><strong>${remaining}</strong><span>remaining</span></div>`;
-  $("#progress-list").innerHTML = state.lessons.map((lesson) => {
+  const empty = completed === 0 && inProgress === 0 ? `<aside class="empty-note"><strong>No progress yet.</strong><span>Open a lesson when you are ready. Completion, bookmarks, and notes stay in this browser and are never synced.</span></aside>` : "";
+  $("#progress-list").innerHTML = empty + state.lessons.map((lesson) => {
     const status = statusLabel(lesson.id);
     return `<article class="progress-card is-${status.replace(/\s+/g, "-")}"><div><span class="lesson-index">${escapeHtml(lesson.id)}</span><h3>${escapeHtml(lesson.title)}</h3><p><span class="${statusPillClass(status)}">${escapeHtml(displayState(status))}</span>${state.learning.bookmarks[lesson.id] ? ' <span class="pill">bookmarked</span>' : ""}${state.learning.notes[lesson.id] ? ' <span class="pill">note saved</span>' : ""}</p></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Open</button></article>`;
   }).join("");

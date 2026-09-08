@@ -172,7 +172,10 @@ private fun OptionalVisualSection(store: LocalStore, lessonId: String) {
     val svg = remember(asset.file.absolutePath, asset.file.lastModified()) { runCatching { asset.file.readText(Charsets.UTF_8) }.getOrNull() } ?: return
     val document = remember(svg) { wrappedSvgDocument(svg) }
     LessonSection("See the idea") {
-        Card(border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
+        Card(
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+            modifier = Modifier.semantics(mergeDescendants = true) { contentDescription = "Diagram: ${asset.caption}. ${asset.altText}" },
+        ) {
             Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text("Diagram", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                 Text(asset.caption, fontWeight = FontWeight.SemiBold)
@@ -372,12 +375,20 @@ private fun QuizSection(
             )
             if (result != null) {
                 val correct = matchesExpected(answers.getOrElse(index) { "" }, question)
-                Text(
-                    text = if (correct) "Correct" else "Review: ${question.expectedAnswer}",
-                    fontWeight = FontWeight.SemiBold,
-                    color = if (correct) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.error,
-                )
-                if (question.explanation.isNotBlank()) Text(question.explanation)
+                Surface(
+                    color = if (correct) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer,
+                    shape = MaterialTheme.shapes.small,
+                ) {
+                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Text(
+                            text = if (correct) "Correct" else "Review this one",
+                            fontWeight = FontWeight.SemiBold,
+                            color = if (correct) MaterialTheme.colorScheme.onSecondaryContainer else MaterialTheme.colorScheme.onErrorContainer,
+                        )
+                        if (!correct) Text("Expected key answer: ${question.expectedAnswer}")
+                        if (question.explanation.isNotBlank()) Text(question.explanation)
+                    }
+                }
             }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -385,7 +396,27 @@ private fun QuizSection(
             if (result != null) Button(onClick = onRetry, modifier = Modifier.weight(1f)) { Text("Retry") }
         }
         result?.let { (score, total) ->
-            Text("Result: $score/$total", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            val passed = score == total
+            Surface(
+                color = if (passed) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.errorContainer,
+                shape = MaterialTheme.shapes.small,
+                modifier = Modifier.semantics {
+                    contentDescription = if (passed) {
+                        "All correct, $score of $total. This check does not block completion."
+                    } else {
+                        "Review and retry, $score of $total. This check does not block completion."
+                    }
+                },
+            ) {
+                Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = if (passed) "All correct · $score/$total" else "Review and retry · $score/$total",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text("This check is local feedback and does not block lesson completion.")
+                }
+            }
         }
     }
 }
