@@ -35,13 +35,15 @@ fun AetherLearnApp() {
     val localStore = remember { LocalStore(context.applicationContext) }
     var firstRunComplete by remember { mutableStateOf(localStore.isFirstRunComplete()) }
     var themeMode by remember { mutableStateOf(localStore.getThemeMode()) }
+    var readingTheme by remember { mutableStateOf(localStore.getReadingTheme()) }
+    var remindersOptIn by remember { mutableStateOf(localStore.remindersOptIn()) }
     var startingLevel by remember { mutableStateOf(localStore.getStartingLevel()) }
 
     DisposableEffect(localStore) {
         onDispose { localStore.close() }
     }
 
-    AetherLearnTheme(themeMode = themeMode) {
+    AetherLearnTheme(themeMode = themeMode, readingTheme = readingTheme) {
         if (!firstRunComplete) {
             PrivacyWelcomeScreen(
                 onContinue = { level ->
@@ -55,6 +57,8 @@ fun AetherLearnApp() {
             AppShell(
                 localStore = localStore,
                 themeMode = themeMode,
+                readingTheme = readingTheme,
+                remindersOptIn = remindersOptIn,
                 startingLevel = startingLevel,
                 onStartingLevelChanged = { level ->
                     localStore.setStartingLevel(level)
@@ -63,6 +67,14 @@ fun AetherLearnApp() {
                 onThemeModeChanged = { mode ->
                     localStore.setThemeMode(mode)
                     themeMode = mode
+                },
+                onReadingThemeChanged = { theme ->
+                    localStore.setReadingTheme(theme)
+                    readingTheme = theme
+                },
+                onRemindersOptInChanged = { enabled ->
+                    localStore.setRemindersOptIn(enabled)
+                    remindersOptIn = enabled
                 },
             )
         }
@@ -74,9 +86,13 @@ fun AetherLearnApp() {
 private fun AppShell(
     localStore: LocalStore,
     themeMode: ThemeMode,
+    readingTheme: ReadingTheme,
+    remindersOptIn: Boolean,
     startingLevel: StartingLevel?,
     onStartingLevelChanged: (StartingLevel?) -> Unit,
     onThemeModeChanged: (ThemeMode) -> Unit,
+    onReadingThemeChanged: (ReadingTheme) -> Unit,
+    onRemindersOptInChanged: (Boolean) -> Unit,
 ) {
     val context = LocalContext.current
     var contentRevision by remember { mutableIntStateOf(0) }
@@ -109,9 +125,13 @@ private fun AppShell(
             store = localStore,
             lessons = lessons,
             themeMode = themeMode,
+            readingTheme = readingTheme,
             startingLevel = startingLevel,
+            remindersOptIn = remindersOptIn,
             onStartingLevelChanged = onStartingLevelChanged,
             onThemeModeChanged = onThemeModeChanged,
+            onReadingThemeChanged = onReadingThemeChanged,
+            onRemindersOptInChanged = onRemindersOptInChanged,
             onContentChanged = { contentRevision++; refreshToken++ },
             onBack = { settingsOpen = false },
         )
@@ -207,7 +227,23 @@ private fun AppShell(
                     progress = progress,
                     bookmarks = bookmarks,
                     notes = localStore.getNotes(),
+                    goals = localStore.getGoals(),
+                    remindersOptIn = remindersOptIn,
                     onDeleteNote = { lessonId -> localStore.deleteNote(lessonId); refreshToken++ },
+                    onAddGoal = { title, lessonId, remind ->
+                        val remindAt = if (remind) System.currentTimeMillis() + 24L * 60L * 60L * 1000L else null
+                        val id = localStore.addGoal(title, lessonId, remindAt)
+                        if (remindersOptIn && remindAt != null) {
+                            localStore.getGoals().firstOrNull { it.id == id }?.let { GoalReminders.schedule(context, it) }
+                        }
+                        refreshToken++
+                    },
+                    onToggleGoal = { goal -> localStore.setGoalDone(goal.id, !goal.done); refreshToken++ },
+                    onDeleteGoal = { goal ->
+                        GoalReminders.cancel(context, goal.id)
+                        localStore.deleteGoal(goal.id)
+                        refreshToken++
+                    },
                     onLessonClick = { lessonId ->
                         localStore.markInProgress(lessonId)
                         refreshToken++

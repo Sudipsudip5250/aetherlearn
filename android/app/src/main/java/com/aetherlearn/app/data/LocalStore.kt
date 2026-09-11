@@ -27,7 +27,10 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         putValue(db, KEY_SCHEMA_VERSION, DATABASE_VERSION.toString())
         putValue(db, KEY_FIRST_RUN_COMPLETE, "false")
         putValue(db, KEY_THEME_MODE, ThemeMode.SYSTEM.name)
+        putValue(db, KEY_READING_THEME, ReadingTheme.DEFAULT.name)
         putValue(db, KEY_STARTING_LEVEL, "")
+        putValue(db, KEY_REMINDERS_OPT_IN, "false")
+        createGoalTable(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -35,6 +38,11 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         if (oldVersion < 3) createPackTable(db)
         if (oldVersion < 4) createExerciseTable(db)
         if (oldVersion < 5) putValue(db, KEY_STARTING_LEVEL, "")
+        if (oldVersion < 6) {
+            putValue(db, KEY_READING_THEME, ReadingTheme.DEFAULT.name)
+            putValue(db, KEY_REMINDERS_OPT_IN, "false")
+            createGoalTable(db)
+        }
         putValue(db, KEY_SCHEMA_VERSION, newVersion.toString())
     }
 
@@ -47,6 +55,16 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
     }.getOrDefault(ThemeMode.SYSTEM)
 
     fun setThemeMode(mode: ThemeMode) = putValue(KEY_THEME_MODE, mode.name)
+
+    fun getReadingTheme(): ReadingTheme = runCatching {
+        ReadingTheme.valueOf(getValue(KEY_READING_THEME) ?: ReadingTheme.DEFAULT.name)
+    }.getOrDefault(ReadingTheme.DEFAULT)
+
+    fun setReadingTheme(theme: ReadingTheme) = putValue(KEY_READING_THEME, theme.name)
+
+    fun remindersOptIn(): Boolean = getValue(KEY_REMINDERS_OPT_IN) == "true"
+
+    fun setRemindersOptIn(enabled: Boolean) = putValue(KEY_REMINDERS_OPT_IN, if (enabled) "true" else "false")
 
     fun getStartingLevel(): StartingLevel? = getValue(KEY_STARTING_LEVEL)?.takeIf { it.isNotBlank() }?.let { value ->
         runCatching { StartingLevel.valueOf(value) }.getOrNull()
@@ -178,6 +196,7 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
             database.delete(TABLE_NOTES, null, null)
             database.delete(TABLE_BOOKMARKS, null, null)
             database.delete(TABLE_EXERCISE_PROGRESS, null, null)
+            database.delete(TABLE_GOALS, null, null)
             database.setTransactionSuccessful()
         } finally {
             database.endTransaction()
@@ -386,6 +405,21 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         )
     }
 
+    private fun createGoalTable(db: SQLiteDatabase) {
+        db.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS learning_goals (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                lesson_id TEXT,
+                done INTEGER NOT NULL DEFAULT 0,
+                remind_at INTEGER,
+                created_at INTEGER NOT NULL
+            )
+            """.trimIndent(),
+        )
+    }
+
     private fun createPackTable(db: SQLiteDatabase) {
         db.execSQL(
             """
@@ -429,11 +463,54 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         installedAt = getLong(7),
     )
 
+    fun getGoals(): List<LearningGoal> = readableDatabase.query(
+        TABLE_GOALS,
+        arrayOf(COLUMN_ID, COLUMN_TITLE, COLUMN_LESSON_ID, COLUMN_DONE, COLUMN_REMIND_AT, COLUMN_CREATED_AT),
+        null,
+        null,
+        null,
+        null,
+        "$COLUMN_DONE ASC, $COLUMN_CREATED_AT DESC",
+    ).use { cursor -> buildList { while (cursor.moveToNext()) add(cursor.toGoal()) } }
+
+    fun addGoal(title: String, lessonId: String?, remindAt: Long?): Long {
+        val values = ContentValues().apply {
+            put(COLUMN_TITLE, title.trim())
+            if (lessonId.isNullOrBlank()) putNull(COLUMN_LESSON_ID) else put(COLUMN_LESSON_ID, lessonId)
+            put(COLUMN_DONE, 0)
+            if (remindAt == null) putNull(COLUMN_REMIND_AT) else put(COLUMN_REMIND_AT, remindAt)
+            put(COLUMN_CREATED_AT, now())
+        }
+        return writableDatabase.insert(TABLE_GOALS, null, values)
+    }
+
+    fun setGoalDone(id: Long, done: Boolean) {
+        writableDatabase.update(
+            TABLE_GOALS,
+            ContentValues().apply { put(COLUMN_DONE, if (done) 1 else 0) },
+            "$COLUMN_ID = ?",
+            arrayOf(id.toString()),
+        )
+    }
+
+    fun deleteGoal(id: Long) {
+        writableDatabase.delete(TABLE_GOALS, "$COLUMN_ID = ?", arrayOf(id.toString()))
+    }
+
+    private fun android.database.Cursor.toGoal(): LearningGoal = LearningGoal(
+        id = getLong(getColumnIndexOrThrow(COLUMN_ID)),
+        title = getString(getColumnIndexOrThrow(COLUMN_TITLE)),
+        lessonId = if (isNull(getColumnIndexOrThrow(COLUMN_LESSON_ID))) null else getString(getColumnIndexOrThrow(COLUMN_LESSON_ID)),
+        done = getInt(getColumnIndexOrThrow(COLUMN_DONE)) == 1,
+        remindAt = if (isNull(getColumnIndexOrThrow(COLUMN_REMIND_AT))) null else getLong(getColumnIndexOrThrow(COLUMN_REMIND_AT)),
+        createdAt = getLong(getColumnIndexOrThrow(COLUMN_CREATED_AT)),
+    )
+
     private fun now(): Long = System.currentTimeMillis()
 
     companion object {
         private const val DATABASE_NAME = "aetherlearn_local.db"
-        private const val DATABASE_VERSION = 5
+        private const val DATABASE_VERSION = 6
         private const val TABLE_METADATA = "app_metadata"
         private const val TABLE_PROGRESS = "module_progress"
         private const val TABLE_QUIZ_ATTEMPTS = "quiz_attempts"
@@ -441,6 +518,7 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         private const val TABLE_BOOKMARKS = "bookmarks"
         private const val TABLE_PACKS = "content_packs"
         private const val TABLE_EXERCISE_PROGRESS = "exercise_progress"
+        private const val TABLE_GOALS = "learning_goals"
         private const val COLUMN_KEY = "key"
         private const val COLUMN_VALUE = "value"
         private const val COLUMN_MODULE_ID = "module_id"
@@ -464,9 +542,16 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
         private const val COLUMN_WRAPPER_ID = "wrapper_id"
         private const val COLUMN_CONTRACT_VERSION = "contract_version"
         private const val COLUMN_COMPLETED_AT = "completed_at"
+        private const val COLUMN_ID = "id"
+        private const val COLUMN_TITLE = "title"
+        private const val COLUMN_LESSON_ID = "lesson_id"
+        private const val COLUMN_DONE = "done"
+        private const val COLUMN_REMIND_AT = "remind_at"
         private const val KEY_SCHEMA_VERSION = "schema_version"
         private const val KEY_FIRST_RUN_COMPLETE = "first_run_complete"
         private const val KEY_THEME_MODE = "theme_mode"
+        private const val KEY_READING_THEME = "reading_theme"
+        private const val KEY_REMINDERS_OPT_IN = "reminders_opt_in"
         private const val KEY_STARTING_LEVEL = "starting_level"
         private val PROGRESS_COLUMNS = arrayOf(COLUMN_MODULE_ID, COLUMN_STATE, COLUMN_UPDATED_AT, COLUMN_BEST_SCORE, COLUMN_ATTEMPT_COUNT)
         private val PACK_COLUMNS = arrayOf(COLUMN_PACK_ID, COLUMN_VERSION, COLUMN_NAME, COLUMN_DESCRIPTION, COLUMN_CHECKSUM, COLUMN_SIZE_BYTES, COLUMN_INSTALL_PATH, COLUMN_INSTALLED_AT)
@@ -474,6 +559,23 @@ class LocalStore(context: Context) : SQLiteOpenHelper(
 }
 
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
+
+enum class ReadingTheme {
+    DEFAULT,
+    WARM_PAPER,
+    COOL,
+    HIGH_CONTRAST,
+    SOFT_PATTERN,
+}
+
+data class LearningGoal(
+    val id: Long,
+    val title: String,
+    val lessonId: String?,
+    val done: Boolean,
+    val remindAt: Long?,
+    val createdAt: Long,
+)
 
 data class QuizAttemptSummary(
     val moduleId: String,

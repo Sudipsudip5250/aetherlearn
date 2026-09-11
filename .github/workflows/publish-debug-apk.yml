@@ -1,0 +1,77 @@
+name: Publish debug APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Prerelease tag (debug-YYYYMMDD or debug-<sha>)"
+        required: true
+        default: debug-latest
+  push:
+    tags:
+      - "debug-*"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Build debug APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleDebug
+
+      - name: Flatten APK and checksum
+        run: |
+          mkdir -p dist
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist/AetherLearn-debug.apk
+          (
+            cd dist
+            sha256sum AetherLearn-debug.apk > AetherLearn-debug.apk.SHA256SUMS
+            python ../scripts/check_release_artifact.py AetherLearn-debug.apk AetherLearn-debug.apk.SHA256SUMS
+          )
+          cat dist/AetherLearn-debug.apk.SHA256SUMS
+
+      - name: Publish GitHub prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          SHA="${GITHUB_SHA}"
+          SHORT="${SHA:0:7}"
+          printf '%s\n' \
+            '# AetherLearn debug APK (testing only)' \
+            '' \
+            "This is a **debug/testing** build from \`${SHORT}\`." \
+            '' \
+            '- **Not production-signed.** It uses the Android debug keystore from GitHub Actions, not a release identity.' \
+            '- Install only on a device you control via **Install unknown apps**, at your own risk. Turn that permission off again after install.' \
+            '- Verify `AetherLearn-debug.apk.SHA256SUMS` before installing. A checksum confirms file-transfer integrity, not publisher identity.' \
+            '- Do not treat this as a Play Store or production release. There is no automatic updater.' \
+            '' \
+            "Commit: \`${SHA}\`" > /tmp/release-notes.md
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release delete "$TAG" --yes --cleanup-tag
+          fi
+          git fetch origin "$SHA"
+          gh release create "$TAG" \
+            dist/AetherLearn-debug.apk \
+            dist/AetherLearn-debug.apk.SHA256SUMS \
+            --target "$SHA" \
+            --prerelease \
+            --latest=false \
+            --title "Debug APK ${TAG}" \
+            --notes-file /tmp/release-notes.md

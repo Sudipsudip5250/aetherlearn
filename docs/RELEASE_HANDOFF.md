@@ -6,6 +6,25 @@
 
 ## 1. Build or obtain an APK
 
+**Preferred for testers:** download a **flat** debug APK from GitHub Releases. Do not start from nested Actions artifact zips unless you are debugging CI itself.
+
+Current testing prerelease:
+
+- Release: https://github.com/Sudipsudip5250/aetherlearn-mvp-spec/releases/tag/debug-58ecbce
+- File: `AetherLearn-debug.apk`
+- Checksum sidecar: `AetherLearn-debug.apk.SHA256SUMS`
+- Direct APK: https://github.com/Sudipsudip5250/aetherlearn-mvp-spec/releases/download/debug-58ecbce/AetherLearn-debug.apk
+
+This is a **debug/testing** build. It is **not production-signed**. Install via unknown sources only on a device you control, at your own risk. A checksum confirms file-transfer integrity, not publisher identity.
+
+After download:
+
+```bash
+sha256sum -c AetherLearn-debug.apk.SHA256SUMS
+```
+
+Future debug prereleases are published by the `Publish debug APK` workflow (manual `workflow_dispatch` or a `debug-*` tag). That workflow copies the Gradle debug APK to a top-level `AetherLearn-debug.apk` plus sidecar and attaches both to a GitHub prerelease. No release keystore is stored in the repository or in CI.
+
 Prerequisites for a local build are Android Studio or Android command-line tools, JDK 17 or newer, Android SDK Platform 37, Android SDK Build Tools 36.0.0 or newer, and a cloned repository checkout.
 
 From the repository root:
@@ -30,9 +49,9 @@ sha256sum android/app/build/outputs/apk/debug/app-debug.apk
 sha256sum android/app/build/outputs/apk/release/app-release-unsigned.apk
 ```
 
-### Download from CI
+### Download from CI (nested artifact; last resort)
 
-Open the repository’s **Actions** tab, select the **Quality** workflow, open a successful run for the exact commit under test, and download the `aetherlearn-apks` artifact from the run summary. Confirm the run’s commit SHA and both job conclusions before downloading. Extract it without renaming its internal directories. It contains the debug APK, the unsigned release APK, and their `.SHA256SUMS` sidecars. Do not use an artifact from an untrusted fork, an unknown workflow, or an unrelated commit.
+Open the repository’s **Actions** tab, select the **Quality** workflow, open a successful run for the exact commit under test, and download the `aetherlearn-apks` artifact from the run summary. Confirm the run’s commit SHA and both job conclusions before downloading. GitHub wraps that artifact as a zip with deep nested paths (`android/app/build/outputs/apk/debug/app-debug.apk`). Prefer the flat GitHub Release file `AetherLearn-debug.apk` above. Do not use an artifact from an untrusted fork, an unknown workflow, or an unrelated commit.
 
 From the extracted artifact directory, verify the sidecars before installation:
 

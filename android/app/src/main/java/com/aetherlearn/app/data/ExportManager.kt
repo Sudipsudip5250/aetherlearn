@@ -47,6 +47,20 @@ object ExportManager {
                 appendLine("- ${title.escapeHeading()}: ${attempt.score}/${attempt.total}")
             }
         }
+        appendLine("## Local goals")
+        appendLine()
+        val goals = store.getGoals()
+        if (goals.isEmpty()) {
+            appendLine("No local goals were saved.")
+        } else {
+            goals.forEach { goal ->
+                val status = if (goal.done) "done" else "open"
+                val lesson = goal.lessonId ?: "unlinked"
+                appendLine("- ${goal.title.escapeHeading()} ($status, lesson: $lesson)")
+            }
+        }
+        appendLine()
+        appendLine("Local goals and reminders never leave this device unless you export them here.")
     }
 
     fun json(store: LocalStore, lessons: List<LessonDocument>): String {
@@ -54,6 +68,7 @@ object ExportManager {
             .put("format", "aetherlearn-learning-export")
             .put("format_version", 1)
             .put("contains_personal_notes", store.getNotes().isNotEmpty())
+            .put("contains_local_goals", store.getGoals().isNotEmpty())
             .put("starting_level", store.getStartingLevel()?.name ?: JSONObject.NULL)
         val modules = JSONArray()
         val bookmarks = store.getBookmarkedIds()
@@ -83,6 +98,18 @@ object ExportManager {
                         .put("score", attempt.score)
                         .put("total", attempt.total)
                         .put("attempted_at", attempt.attemptedAt),
+                )
+            }
+        })
+        root.put("local_goals", JSONArray().also { goals ->
+            store.getGoals().forEach { goal ->
+                goals.put(
+                    JSONObject()
+                        .put("title", goal.title)
+                        .put("lesson_id", goal.lessonId ?: JSONObject.NULL)
+                        .put("done", goal.done)
+                        .put("remind_at", goal.remindAt ?: JSONObject.NULL)
+                        .put("created_at", goal.createdAt),
                 )
             }
         })

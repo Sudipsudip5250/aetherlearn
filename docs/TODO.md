@@ -212,6 +212,16 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Light code-only accessibility: status badge descriptions, Practice/Progress/Search card labels, diagram card description. TalkBack not claimed.
 - [ ] Device/TalkBack/large-text review of Practice, quiz banners, and empty notes remain human-only.
 
+## 2026-09-10 — APK distribution, reading themes, local dashboard
+
+- [x] Publish a flat debug APK prerelease from `main` `58ecbce`: https://github.com/Sudipsudip5250/aetherlearn-mvp-spec/releases/tag/debug-58ecbce (`AetherLearn-debug.apk` + SHA256SUMS). Debug-signed, not production-signed.
+- [x] Add `Publish debug APK` workflow (`workflow_dispatch` / `debug-*` tags) that flattens the Gradle debug APK and attaches it to a GitHub prerelease without storing a keystore.
+- [x] Document Releases-first install in `docs/RELEASE_HANDOFF.md`, `android/README.md`, and README.
+- [x] Add local reading palettes (Default, Soft paper, Cool contrast, High contrast, Soft pattern) on Android and Web, persisted in existing local settings storage, offline-only.
+- [x] Reorganize Settings into Appearance, Learning data, Content packs, and About; keep pack checksum/HTTPS/atomic activation; document that GitHub Release pack URLs must be pasted, never crawled.
+- [x] Add a local Progress dashboard (weekly activity from existing timestamps), on-device learning goals, and optional Android notification reminders with explicit opt-in. No accounts, analytics, or cloud push.
+- [ ] Human phone verification: download `AetherLearn-debug.apk` from the prerelease, verify checksum, install via unknown sources, then check themes, Settings groups, pack status, dashboard/goals, and reminder opt-in. TalkBack/large-text not claimed.
+
 ## Deferred backlog
 
 - [ ] Portable encrypted backup with tested key ownership and recovery.
