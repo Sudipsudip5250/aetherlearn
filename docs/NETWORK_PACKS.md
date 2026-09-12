@@ -1,6 +1,6 @@
 # Network content packs
 
-AetherLearn’s core learning path remains bundled and offline-first. Network packs are optional and are downloaded only after the learner opens **Settings → Storage & content packs**, enters a source URL, and taps **Download pack**. Progress, notes, bookmarks, quiz attempts, search queries, and Termux commands are never sent with a pack request.
+AetherLearn’s core learning path remains bundled and offline-first. Network packs are optional and are downloaded only after the learner opens **Settings → Content packs**, enters a source URL, and taps **Download pack**. Progress, notes, bookmarks, quiz attempts, search queries, and Termux commands are never sent with a pack request.
 
 ## Pack format
 
@@ -12,7 +12,7 @@ The repository’s deterministic local example is created with:
 python scripts/build_pack.py --content-dir content/core --output-dir build/core-pack
 ```
 
-The resulting ZIP is a test artifact, not an approved public distribution URL. This repository does not currently publish a public pack host, so the URL field is intentionally user-provided rather than silently pointed at an unreviewed server.
+The resulting ZIP is a test artifact, not an approved public distribution URL. This repository does not currently publish a public pack host, so the URL field is intentionally user-provided rather than silently pointed at an unreviewed server. A GitHub Release asset URL is allowed only when the learner pastes that exact HTTPS URL; the app never crawls releases or discovers packs automatically.
 
 ## Separate visual-pack proof of concept
 

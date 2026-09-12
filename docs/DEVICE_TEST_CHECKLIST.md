@@ -22,7 +22,7 @@ Create one test record before starting. Do not include real passwords, personal 
 | Termux installed | Yes / No / Not applicable |
 | Result owner |  |
 
-Before testing, obtain the unsigned debug APK or an authorized signed build, its checksum sidecar, and the test pack materials from the release owner. Verify the checksum before installation. Do not install an artifact whose checksum does not match. The repository’s release build is currently unsigned; it must not be presented as a production-signed release until an authorized release operator signs it.
+Before testing, obtain `AetherLearn-debug.apk` and `AetherLearn-debug.apk.SHA256SUMS` from the GitHub prerelease when possible (see [`RELEASE_HANDOFF.md`](RELEASE_HANDOFF.md)). Verify the checksum before installation. Do not install an artifact whose checksum does not match. The current tester build is **debug-signed, not production-signed**. The unsigned release APK must not be presented as a production-signed release until an authorized release operator signs it.
 
 Prepare two fictional lesson values for testing: `Offline functions` and `Review algorithms`. Use the fictional note `Practice return values tomorrow.` Do not use a real person’s name, credential, account number, contact, or private location.
 
@@ -38,6 +38,16 @@ Prepare two fictional lesson values for testing: `Offline functions` and `Review
 8. Close and reopen the app. The privacy welcome screen should not appear again for this test installation.
 
 **Pass evidence:** privacy wording is visible, no account or network is required for the core path, and the shell opens offline. **Fail or stop:** a login, unexplained permission, automatic upload, or required network appears.
+
+## 2.1 Appearance, Settings groups, and local dashboard
+
+1. Open **Settings**. Confirm groups: Appearance, Learning data, Content packs, About / open-source.
+2. Keep Follow system / Light / Dark working. Switch reading palettes (Default, Soft paper, Cool contrast, High contrast, Soft pattern). Lessons and code blocks remain readable. No wallpaper download occurs.
+3. Open **Progress**. Confirm completed / in progress / remaining, a 7-day local activity line, and a local goals form. Add a fictional goal, mark it done, delete it.
+4. If testing reminders, opt in explicitly. Decline remains valid. Notifications, if shown, must not imply a cloud account.
+5. On Web, About → Reading palette and Progress goals stay in this browser after reload.
+
+**Pass evidence:** themes persist locally, Settings groups are clear, goals never prompt for an account. **Not tested** until a phone confirms it.
 
 ## 3. Android navigation and 37-lesson discovery
 

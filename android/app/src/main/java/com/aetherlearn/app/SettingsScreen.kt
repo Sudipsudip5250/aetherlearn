@@ -17,6 +17,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import android.Manifest
+import android.os.Build
 import com.aetherlearn.app.data.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,9 +27,13 @@ internal fun SettingsScreen(
     store: LocalStore,
     lessons: List<LessonDocument>,
     themeMode: ThemeMode,
+    readingTheme: ReadingTheme,
     startingLevel: StartingLevel?,
+    remindersOptIn: Boolean,
     onStartingLevelChanged: (StartingLevel?) -> Unit,
     onThemeModeChanged: (ThemeMode) -> Unit,
+    onReadingThemeChanged: (ReadingTheme) -> Unit,
+    onRemindersOptInChanged: (Boolean) -> Unit,
     onContentChanged: () -> Unit,
     onBack: () -> Unit,
 ) {
@@ -35,6 +41,7 @@ internal fun SettingsScreen(
     val packManager = remember { PackManager(context.applicationContext, store) }
     var installedPacks by remember { mutableStateOf(packManager.installedPacks()) }
     var packMessage by remember { mutableStateOf<String?>(null) }
+    var packStatusNotes by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
     var exportWarning by rememberSaveable { mutableStateOf<String?>(null) }
     var exportMessage by remember { mutableStateOf<String?>(null) }
     var clearDataWarning by rememberSaveable { mutableStateOf(false) }
@@ -45,6 +52,10 @@ internal fun SettingsScreen(
     var networkHandle by remember { mutableStateOf<NetworkDownloadHandle?>(null) }
     val networkInstaller = remember { NetworkPackInstaller(context.applicationContext, store) }
     val latestNetworkHandle by rememberUpdatedState(networkHandle)
+    val reminderPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        onRemindersOptInChanged(granted)
+        if (granted) GoalReminders.ensureChannel(context)
+    }
     DisposableEffect(Unit) {
         onDispose { latestNetworkHandle?.cancel() }
     }
@@ -84,7 +95,7 @@ internal fun SettingsScreen(
         AlertDialog(
             onDismissRequest = { clearDataWarning = false },
             title = { Text("Delete local learning data?") },
-            text = { Text("This removes progress, quiz attempts, notes, bookmarks, and Termux exercise completion from this device. It does not remove the bundled or installed content packs, your theme, or the first-run privacy setting. This cannot be undone unless you have an export.") },
+            text = { Text("This removes progress, quiz attempts, notes, bookmarks, Termux exercise completion, and local learning goals from this device. It does not remove the bundled or installed content packs, your theme, or the first-run privacy setting. This cannot be undone unless you have an export.") },
             confirmButton = {
                 TextButton(onClick = {
                     store.clearLearningData()
@@ -129,52 +140,57 @@ internal fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text("Appearance", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
-            Text("Choose whether AetherLearn follows the device or uses a fixed theme.")
+            Text("Light and dark stay local. Reading palettes only change colors and a subtle on-device pattern; nothing is downloaded.")
             ThemeMode.entries.forEach { mode ->
                 ThemeOptionRow(mode, mode == themeMode) { onThemeModeChanged(mode) }
             }
-            Text("Learning path", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+            Text("Reading palette", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            ReadingTheme.entries.forEach { theme ->
+                ReadingThemeRow(theme, theme == readingTheme) { onReadingThemeChanged(theme) }
+            }
+            Text("Learning path", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Text("This optional choice changes the recommended next lesson only. It never locks content or records identity.")
             StartingLevel.entries.forEach { level ->
                 StartingLevelOptionRow(level, level == startingLevel) { onStartingLevelChanged(level) }
             }
             TextButton(onClick = { onStartingLevelChanged(null) }, modifier = Modifier.fillMaxWidth()) { Text("Clear starting-point choice") }
             HorizontalDivider()
-            Text("Export", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
-            Text("Export your progress, quiz attempts, notes, and bookmarks offline. You choose the destination with the Android file picker.")
+            Text("Learning data", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+            Text("Export your progress, quiz attempts, notes, bookmarks, and local goals. You choose the destination with the Android file picker. Nothing is uploaded.")
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = { exportWarning = "markdown" }, modifier = Modifier.weight(1f)) { Text("Markdown") }
                 Button(onClick = { exportWarning = "json" }, modifier = Modifier.weight(1f)) { Text("JSON") }
             }
             exportMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
-            HorizontalDivider()
-            Text("Local data controls", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
             Text("Learning records stay in app-private storage. Export first if you may want to restore them later; plain exports are not encrypted backups.")
             OutlinedButton(onClick = { clearNotesWarning = true }, modifier = Modifier.fillMaxWidth()) { Text("Delete all notes") }
             OutlinedButton(onClick = { clearDataWarning = true }, modifier = Modifier.fillMaxWidth()) { Text("Delete all local learning data") }
             dataMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
             HorizontalDivider()
-            Text("Storage & content packs", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+            Text("Content packs", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
             Text("Core pack: ${ModuleCatalog(context).loadLessons().size} lessons, ${formatBytes(packManager.coreSizeBytes())}, always available offline and protected from deletion.")
             Text("Learning data and installed optional packs: approximately ${formatBytes(packManager.learningDataSizeBytes())}.")
             packManager.availablePacks().forEach { available ->
                 OptionalPackCard(
                     available = available,
                     installed = installedPacks.firstOrNull { it.id == available.id },
+                    statusNote = packStatusNotes[available.id],
                     onInstall = {
                         val result = packManager.installPack(available.id)
                         packMessage = result.message
                         installedPacks = packManager.installedPacks()
+                        packStatusNotes = packStatusNotes + (available.id to packOutcomeLabel(result))
                     },
                     onDelete = {
                         val result = packManager.deletePack(available.id)
                         packMessage = result.message
                         installedPacks = packManager.installedPacks()
+                        packStatusNotes = packStatusNotes + (available.id to if (result.success) "Available locally" else "Failed")
                     },
                 )
             }
             Text("Network content pack", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-            Text("Network required · user initiated. Enter an HTTPS URL to an AetherLearn ZIP pack. The core path stays available offline.")
+            Text("Network required · user initiated. Paste an HTTPS URL you trust, such as a GitHub Release asset for an AetherLearn ZIP. The app does not crawl releases. Core lessons stay available if a pack fails.")
             OutlinedTextField(
                 value = networkUrl,
                 onValueChange = { networkUrl = it },
@@ -227,6 +243,7 @@ internal fun SettingsScreen(
                                                     message = result.message,
                                                 )
                                                 networkHandle = null
+                                                packStatusNotes = packStatusNotes + ("network" to packOutcomeLabel(result))
                                             },
                                         )
                                     }
@@ -238,10 +255,33 @@ internal fun SettingsScreen(
                 }
             }
             packMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
+            packStatusNotes["network"]?.let { Text("Network pack status: $it", style = MaterialTheme.typography.bodySmall) }
             HorizontalDivider()
-            Text("Privacy", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
-            Text("Progress, quiz attempts, notes, bookmarks, preferences, and pack status are stored in app-private SQLite storage.")
+            Text("About / open-source", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+            Text("Progress, quiz attempts, notes, bookmarks, goals, preferences, and pack status are stored in app-private SQLite storage.")
             Text("Network downloads are explicit and limited to the HTTPS URL you provide. The app sends no learning data, credentials, cookies, or analytics.")
+            Text("Optional local reminders use on-device notifications only. They require your opt-in and never use a cloud push service.")
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Local goal reminders", fontWeight = FontWeight.SemiBold)
+                    Text("Opt in to on-device notifications for goals you create.", style = MaterialTheme.typography.bodySmall)
+                }
+                Switch(
+                    checked = remindersOptIn,
+                    onCheckedChange = { enabled ->
+                        if (enabled && Build.VERSION.SDK_INT >= 33 && !GoalReminders.canNotify(context)) {
+                            reminderPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        } else {
+                            onRemindersOptInChanged(enabled)
+                            if (enabled) GoalReminders.ensureChannel(context)
+                        }
+                    },
+                )
+            }
         }
     }
 }
@@ -250,6 +290,7 @@ internal fun SettingsScreen(
 private fun OptionalPackCard(
     available: AvailablePack,
     installed: InstalledPack?,
+    statusNote: String?,
     onInstall: () -> Unit,
     onDelete: () -> Unit,
 ) {
@@ -257,7 +298,7 @@ private fun OptionalPackCard(
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(available.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Text(available.description)
-            Text("Version ${available.version} · ${formatBytes(available.sizeBytes)} · ${if (installed == null) "Available locally" else "Installed and verified"}")
+            Text("Version ${available.version} · ${formatBytes(available.sizeBytes)} · ${statusNote ?: packStatusLabel(installed)}")
             if (installed == null) {
                 Button(onClick = onInstall, modifier = Modifier.fillMaxWidth()) { Text("Install local pack") }
             } else {
@@ -272,6 +313,16 @@ private fun formatBytes(bytes: Long): String = when {
     bytes < 1024L -> "$bytes B"
     bytes < 1024L * 1024L -> "${bytes / 1024L} KB"
     else -> "${bytes / (1024L * 1024L)} MB"
+}
+
+private fun packStatusLabel(installed: InstalledPack?): String =
+    if (installed == null) "Available locally" else "Installed and verified"
+
+private fun packOutcomeLabel(result: PackResult): String = when {
+    result.success -> "Installed and verified"
+    result.cancelled -> "Cancelled; previous pack kept"
+    result.message.contains("rollback", ignoreCase = true) -> "Failed; rolled back to last good pack"
+    else -> "Failed; core lessons kept"
 }
 
 @Composable
@@ -308,5 +359,30 @@ private fun ThemeOptionRow(mode: ThemeMode, selected: Boolean, onSelected: () ->
     ) {
         RadioButton(selected = selected, onClick = null)
         Text(label, modifier = Modifier.padding(start = 12.dp))
+    }
+}
+
+@Composable
+private fun ReadingThemeRow(theme: ReadingTheme, selected: Boolean, onSelected: () -> Unit) {
+    val (label, detail) = when (theme) {
+        ReadingTheme.DEFAULT -> "Default" to "Current AetherLearn colors"
+        ReadingTheme.WARM_PAPER -> "Soft paper" to "Warm cream page for longer reading"
+        ReadingTheme.COOL -> "Cool contrast" to "Blue-gray page with cooler ink"
+        ReadingTheme.HIGH_CONTRAST -> "High contrast" to "Stronger borders and black/white type"
+        ReadingTheme.SOFT_PATTERN -> "Soft pattern" to "Subtle local dots; no download"
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .selectable(selected = selected, role = Role.RadioButton, onClick = onSelected)
+            .padding(vertical = 4.dp)
+            .semantics { contentDescription = "Reading palette: $label. $detail" },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RadioButton(selected = selected, onClick = null)
+        Column(modifier = Modifier.padding(start = 12.dp)) {
+            Text(label, fontWeight = FontWeight.SemiBold)
+            Text(detail, style = MaterialTheme.typography.bodySmall)
+        }
     }
 }

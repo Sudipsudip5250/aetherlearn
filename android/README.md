@@ -4,7 +4,7 @@ This directory contains the native Android client for AetherLearn. It uses Kotli
 
 ## UI structure
 
-The Android UI is organized by responsibility while sharing the existing app-shell state and data contracts. `MainActivity.kt` owns the activity, first-run root, navigation state, and `AppShell`; `LearnScreen.kt`, `PracticeScreen.kt`, `SearchScreen.kt`, and `ProgressScreen.kt` own the four destinations; `LessonReaderScreen.kt` owns lesson rendering and quiz/study controls; `SettingsScreen.kt` owns theme, export, and content-pack surfaces; `TermuxExerciseCard.kt` owns the optional Termux confirmation/fallback surface; and `PrivacyWelcomeScreen.kt` owns the first-run privacy screen. This is a source-organization refactor only: persistence, callbacks, local-first guarantees, and user-visible behavior remain unchanged.
+The Android UI is organized by responsibility while sharing the existing app-shell state and data contracts. `MainActivity.kt` owns the activity, first-run root, navigation state, and `AppShell`; `LearnScreen.kt`, `PracticeScreen.kt`, `SearchScreen.kt`, and `ProgressScreen.kt` own the four destinations; `LessonReaderScreen.kt` owns lesson rendering and quiz/study controls; `SettingsScreen.kt` owns appearance (light/dark plus local reading palettes), export, content-pack, and about surfaces; `TermuxExerciseCard.kt` owns the optional Termux confirmation/fallback surface; and `PrivacyWelcomeScreen.kt` owns the first-run privacy screen. Progress also shows a local dashboard and on-device goals. Persistence remains app-private SQLite with no accounts or analytics.
 
 ## Requirements
 
@@ -12,7 +12,7 @@ Install Android Studio or the Android command-line tools, JDK 17 or newer, Andro
 
 ## Build
 
-For the complete build/install, CI-artifact, sample-pack, network-pack, and human-test handoff, see [`../docs/RELEASE_HANDOFF.md`](../docs/RELEASE_HANDOFF.md). Signing is intentionally human-operated and documented separately in [`../docs/SIGNING.md`](../docs/SIGNING.md); no keystore or signing secret belongs in this repository.
+For the complete build/install, GitHub Release APK, CI-artifact, sample-pack, network-pack, and human-test handoff, see [`../docs/RELEASE_HANDOFF.md`](../docs/RELEASE_HANDOFF.md). Testers should download the flat `AetherLearn-debug.apk` from [the debug prerelease](https://github.com/Sudipsudip5250/aetherlearn-mvp-spec/releases/tag/debug-58ecbce) rather than a nested Actions zip. Signing is intentionally human-operated and documented separately in [`../docs/SIGNING.md`](../docs/SIGNING.md); no keystore or signing secret belongs in this repository.
 
 From this directory, run:
 

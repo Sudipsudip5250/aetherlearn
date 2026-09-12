@@ -1,10 +1,10 @@
-import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=21";
+import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=22";
 
 const CONTENT_MANIFEST = "./content/manifest.json";
 const VISUAL_MANIFEST_URL = "./visuals/visual-foundations/manifest.json";
 const VISUAL_CACHE_PREFIX = "aetherlearn-visuals-v1-";
 const VISUAL_ACTIVE_KEY = "aetherlearn-visual-active";
-const DEFAULT_STATE = { version: 2, progress: {}, notes: {}, bookmarks: {}, quiz: {}, startingLevel: null, startingLevelDismissed: false };
+const DEFAULT_STATE = { version: 2, progress: {}, notes: {}, bookmarks: {}, quiz: {}, startingLevel: null, startingLevelDismissed: false, goals: [] };
 const state = { lessons: [], learning: { ...DEFAULT_STATE }, activePack: null, visualPack: null };
 
 const $ = (selector) => document.querySelector(selector);
@@ -113,7 +113,12 @@ function normalizeLearningState(value) {
     quiz: { ...(value?.quiz || {}) },
     startingLevel: ["NEW_TO_COMPUTING", "DIGITAL_BASICS", "TRIED_PROGRAMMING"].includes(value?.startingLevel) ? value.startingLevel : null,
     startingLevelDismissed: value?.startingLevelDismissed === true,
+    goals: Array.isArray(value?.goals) ? value.goals.filter(validGoal).slice(0, 50) : [],
   };
+}
+
+function validGoal(goal) {
+  return goal && typeof goal.title === "string" && goal.title.trim() && goal.title.length <= 160 && (goal.lessonId == null || typeof goal.lessonId === "string") && typeof goal.done === "boolean";
 }
 
 function persistLearning() {
@@ -555,7 +560,28 @@ function renderProgress() {
   const inProgress = state.lessons.filter((lesson) => statusLabel(lesson.id) === "in progress").length;
   const remaining = Math.max(0, state.lessons.length - completed);
   $("#progress-summary").innerHTML = `<div class="stat stat-completed"><strong>${completed}</strong><span>completed</span></div><div class="stat stat-in-progress"><strong>${inProgress}</strong><span>in progress</span></div><div class="stat stat-remaining"><strong>${remaining}</strong><span>remaining</span></div>`;
-  const empty = completed === 0 && inProgress === 0 ? `<aside class="empty-note"><strong>No progress yet.</strong><span>Open a lesson when you are ready. Completion, bookmarks, and notes stay in this browser and are never synced.</span></aside>` : "";
+  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const weekly = Object.values(state.learning.quiz).filter((item) => item.lastAt && Date.parse(item.lastAt) >= weekAgo).length;
+  const openGoals = (state.learning.goals || []).filter((goal) => !goal.done).length;
+  const dashboard = $("#local-dashboard");
+  if (dashboard) dashboard.innerHTML = `<strong>Local dashboard.</strong><span>${weekly} knowledge-check update${weekly === 1 ? "" : "s"} in the last 7 days · ${openGoals} open goal${openGoals === 1 ? "" : "s"}. This stays in this browser.</span>`;
+  const goalList = $("#goal-list");
+  if (goalList) {
+    const goals = state.learning.goals || [];
+    goalList.innerHTML = goals.length ? goals.map((goal, index) => `<article class="goal-card"><input type="checkbox" data-goal-toggle="${index}" ${goal.done ? "checked" : ""} /><div><strong>${escapeHtml(goal.title)}</strong>${goal.lessonId ? `<p><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(goal.lessonId)}">Open linked lesson</button></p>` : ""}<button class="secondary-button" type="button" data-goal-delete="${index}">Delete</button></div></article>`).join("") : `<aside class="empty-note"><strong>No goals yet.</strong><span>Add a private task above. It never leaves this browser unless you export it.</span></aside>`;
+    goalList.querySelectorAll("[data-goal-toggle]").forEach((input) => input.addEventListener("change", () => {
+      const index = Number(input.dataset.goalToggle);
+      if (state.learning.goals[index]) { state.learning.goals[index].done = input.checked; persistLearning(); renderProgress(); }
+    }));
+    goalList.querySelectorAll("[data-goal-delete]").forEach((button) => button.addEventListener("click", () => {
+      const index = Number(button.dataset.goalDelete);
+      state.learning.goals.splice(index, 1);
+      persistLearning();
+      renderProgress();
+    }));
+    goalList.querySelectorAll("[data-open-lesson]").forEach((button) => button.addEventListener("click", () => { window.location.hash = `#/lesson/${button.dataset.openLesson}`; }));
+  }
+  const empty = completed === 0 && inProgress === 0 ? `<aside class="empty-note"><strong>No progress yet.</strong><span>Open a lesson when you are ready. Completion, bookmarks, notes, and goals stay in this browser and are never synced.</span></aside>` : "";
   $("#progress-list").innerHTML = empty + state.lessons.map((lesson) => {
     const status = statusLabel(lesson.id);
     return `<article class="progress-card is-${status.replace(/\s+/g, "-")}"><div><span class="lesson-index">${escapeHtml(lesson.id)}</span><h3>${escapeHtml(lesson.title)}</h3><p><span class="${statusPillClass(status)}">${escapeHtml(displayState(status))}</span>${state.learning.bookmarks[lesson.id] ? ' <span class="pill">bookmarked</span>' : ""}${state.learning.notes[lesson.id] ? ' <span class="pill">note saved</span>' : ""}</p></div><button class="secondary-button" type="button" data-open-lesson="${escapeHtml(lesson.id)}">Open</button></article>`;
@@ -671,6 +697,9 @@ function validateImportedLearningState(payload) {
   if (Object.values(candidate.notes).some((value) => typeof value !== "string" || value.length > 20000)) throw new Error("A note is invalid or too large.");
   if (Object.values(candidate.bookmarks).some((value) => value !== true && value !== false)) throw new Error("Bookmarks contain an invalid value.");
   if (Object.values(candidate.quiz).some((value) => !value || !Number.isInteger(value.attempts) || value.attempts < 0 || !Number.isFinite(value.best) || value.best < 0 || value.best > 100 || (value.last !== undefined && (!Number.isFinite(value.last) || value.last < 0 || value.last > 100)))) throw new Error("Quiz history contains an invalid result.");
+  candidate.goals.forEach((goal) => {
+    if (goal.lessonId && !knownIds.has(goal.lessonId)) throw new Error("A goal links an unknown lesson ID.");
+  });
   return candidate;
 }
 
@@ -713,7 +742,21 @@ async function clearBrowserLearning() {
 function setupTheme() {
   const saved = localStorage.getItem("aetherlearn-web-theme");
   if (saved === "dark") document.documentElement.dataset.theme = "dark";
-  $("#theme-toggle").addEventListener("click", () => { const dark = document.documentElement.dataset.theme === "dark"; if (dark) delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = "dark"; localStorage.setItem("aetherlearn-web-theme", dark ? "light" : "dark"); });
+  const reading = localStorage.getItem("aetherlearn-web-reading-theme") || "default";
+  document.documentElement.dataset.reading = reading;
+  const select = $("#reading-theme");
+  if (select) select.value = reading;
+  $("#theme-toggle").addEventListener("click", () => {
+    const dark = document.documentElement.dataset.theme === "dark";
+    if (dark) delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme = "dark";
+    localStorage.setItem("aetherlearn-web-theme", dark ? "light" : "dark");
+  });
+  select?.addEventListener("change", () => {
+    const value = select.value || "default";
+    document.documentElement.dataset.reading = value;
+    localStorage.setItem("aetherlearn-web-reading-theme", value);
+  });
 }
 
 async function cacheCorePack() {
@@ -764,6 +807,17 @@ async function start() {
   $("#delete-visual-pack")?.addEventListener("click", () => { deleteVisualPack().catch((error) => { setVisualPackStatus(`Could not delete visual pack: ${error.message}`); }); });
   $("#reader-back")?.addEventListener("click", () => { window.location.hash = "#/learn"; });
   $("#search-input")?.addEventListener("input", (event) => renderSearchResults(event.target.value));
+  $("#goal-form")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const input = $("#goal-title");
+    const title = input?.value.trim();
+    if (!title) return;
+    state.learning.goals = state.learning.goals || [];
+    state.learning.goals.unshift({ title, lessonId: null, done: false, createdAt: new Date().toISOString() });
+    persistLearning();
+    input.value = "";
+    renderProgress();
+  });
   window.addEventListener("hashchange", () => { renderRoute(); requestAnimationFrame(() => focusRouteHeading(readRoute())); });
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js").catch((error) => console.warn("Service worker unavailable", error));
   try {
