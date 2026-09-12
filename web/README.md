@@ -14,6 +14,8 @@ python3 -m http.server 4173 --directory web
 
 Then open <http://localhost:4173/>. No build step, package installation, backend, or account is required.
 
+Brand assets live with the client: `favicon.svg`, `icons/icon.svg`, `icons/icon-192.png`, `icons/icon-512.png`, `icons/apple-touch-icon.png`, and `og.jpg`. They are same-origin only and listed in the PWA manifest.
+
 ## Offline use
 
 Open the app while the 37 current core lessons are available, then select **Cache core content**. The client downloads the manifest and all 37 Markdown files, validates the manifest-to-lesson IDs and titles, and writes the complete `core` pack to IndexedDB. The web manifest is versioned as `1.7.0` for the approved Stage 5 history/career batch.

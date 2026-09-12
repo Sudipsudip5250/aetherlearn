@@ -6,6 +6,7 @@ This directory is organized by purpose. **Start with the current documents** bel
 
 | Document | Use it for |
 |---|---|
+| [`KNOWLEDGE_GRAPH.md`](KNOWLEDGE_GRAPH.md) | **Session resume:** current SHA, invariants, code map, remaining queue. Read this before a full-tree scan |
 | [`PRODUCT_SPEC.md`](PRODUCT_SPEC.md) | Product boundary, audience, journeys, acceptance criteria, and non-goals |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Android/Web architecture, local storage, packs, Termux boundary, and threat model |
 | [`CURRICULUM.md`](CURRICULUM.md) | Immutable `mvp-20` baseline, approved expansions, prerequisites, and lesson catalog |

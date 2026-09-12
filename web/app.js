@@ -1,4 +1,4 @@
-import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=22";
+import { clearActivePack, clearLearningState, readActivePack, readLearningState, replaceActivePack, writeLearningState } from "./idb.js?v=23";
 
 const CONTENT_MANIFEST = "./content/manifest.json";
 const VISUAL_MANIFEST_URL = "./visuals/visual-foundations/manifest.json";

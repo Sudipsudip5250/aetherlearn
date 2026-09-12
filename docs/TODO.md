@@ -4,7 +4,7 @@ This file is the recoverable task list. A task is complete only when its checkbo
 
 ## How to resume
 
-At the start of each work session, read `PLAN.md`, inspect the first unchecked P0 task, check the repository state, and run the smallest relevant validation command. Do not begin a later milestone while a required earlier checkpoint is incomplete. If a task is blocked, record the blocker and next action in the session notes or issue tracker rather than silently skipping it.
+At the start of each work session, read [`KNOWLEDGE_GRAPH.md`](KNOWLEDGE_GRAPH.md) (current SHA, invariants, code map, remaining queue), then this file’s first unchecked P0/human gate. Check `git log` and open PRs. Run the smallest relevant validation command. Do not begin a later milestone while a required earlier checkpoint is incomplete. If a task is blocked, record the blocker here rather than silently skipping it.
 
 ## M0 — Repository and governance
 
@@ -221,6 +221,13 @@ At the start of each work session, read `PLAN.md`, inspect the first unchecked P
 - [x] Reorganize Settings into Appearance, Learning data, Content packs, and About; keep pack checksum/HTTPS/atomic activation; document that GitHub Release pack URLs must be pasted, never crawled.
 - [x] Add a local Progress dashboard (weekly activity from existing timestamps), on-device learning goals, and optional Android notification reminders with explicit opt-in. No accounts, analytics, or cloud push.
 - [ ] Human phone verification: download `AetherLearn-debug.apk` from the prerelease, verify checksum, install via unknown sources, then check themes, Settings groups, pack status, dashboard/goals, and reminder opt-in. TalkBack/large-text not claimed.
+
+## 2026-09-12 — knowledge graph and brand icons
+
+- [x] Merge PR #5 onto `main` (`52e8789`); Quality validate + android + GitGuardian were green.
+- [x] Add `docs/KNOWLEDGE_GRAPH.md` as the session-resume map (invariants, code map, remaining queue) so a later continue does not require a full-tree reread.
+- [x] Add local brand assets: SVG favicon, 192/512/apple-touch icons, OG card, Android adaptive + density launcher icons. No network icon fetch.
+- [ ] Device check that the launcher icon, PWA icon, and OG card look correct on a phone/home screen. Not claimed from this sandbox.
 
 ## Deferred backlog
 

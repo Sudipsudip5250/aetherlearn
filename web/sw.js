@@ -1,12 +1,16 @@
-const CACHE_NAME = "aetherlearn-shell-v22";
+const CACHE_NAME = "aetherlearn-shell-v23";
 const SHELL_ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
-  "./app.js?v=22",
-  "./idb.js?v=22",
+  "./app.js?v=23",
+  "./idb.js?v=23",
   "./manifest.webmanifest",
   "./content/manifest.json",
+  "./favicon.svg",
+  "./icons/icon.svg",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png",
 ];
 
 self.addEventListener("install", (event) => {
