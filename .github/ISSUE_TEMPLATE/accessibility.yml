@@ -1,0 +1,36 @@
+name: Accessibility issue
+description: Report an accessibility barrier or propose an accessibility improvement.
+title: "[Accessibility] "
+labels:
+  - accessibility
+body:
+  - type: input
+    id: surface
+    attributes:
+      label: Surface
+      placeholder: "e.g. lesson reader, quiz, search, documentation"
+    validations:
+      required: true
+  - type: textarea
+    id: barrier
+    attributes:
+      label: What barrier did you encounter?
+      description: Describe the task that could not be completed or was unnecessarily difficult.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: input
+    id: assistive-tech
+    attributes:
+      label: Assistive technology or settings
+      placeholder: "e.g. TalkBack, keyboard navigation, 200% text size, reduced motion"
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "Android version, device, browser, or app commit"

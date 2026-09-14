@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#4F46E5" />
+    <meta name="description" content="AetherLearn offline web reader for the 37-lesson core learning catalog." />
+    <meta name="referrer" content="no-referrer" />
+    <meta property="og:title" content="AetherLearn — Offline learning" />
+    <meta property="og:description" content="A free, privacy-first, offline computer-science learning app. No accounts, no analytics." />
+    <meta property="og:image" content="./og.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; worker-src 'self'; manifest-src 'self'" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>AetherLearn — Offline learning</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#/learn" aria-label="AetherLearn home"><img class="brand-mark" src="./favicon.svg" width="30" height="30" alt="" /><span><strong>AetherLearn</strong><small>learn locally</small></span></a>
+        <nav class="primary-nav" aria-label="Primary navigation">
+          <a href="#/learn" data-route="learn">Learn</a>
+          <a href="#/practice" data-route="practice">Practice</a>
+          <a href="#/search" data-route="search">Search</a>
+          <a href="#/progress" data-route="progress">Progress</a>
+          <a href="#/about" data-route="about">About</a>
+        </nav>
+        <button class="icon-button" id="theme-toggle" type="button" aria-label="Toggle light or dark" title="Toggle light or dark">◐</button>
+      </div>
+    </header>
+
+    <main id="main-content" tabindex="-1">
+      <div class="shell-grid">
+        <section class="hero-panel" aria-labelledby="page-title">
+          <p class="eyebrow">Private by default · 37 current lessons · MVP baseline 20</p>
+          <h1 id="page-title">Understand systems.<br /><em>Build with care.</em></h1>
+          <p class="hero-copy">A small, focused learning path for digital literacy, Python, algorithms, and developer foundations. Cache the current core pack once, then keep learning without a network.</p>
+          <div class="status-row" role="status" aria-live="polite"><span class="status-dot" id="cache-dot"></span><span id="cache-status">Checking local cache…</span></div>
+          <div class="tool-row"><button class="primary-button" id="cache-button" type="button">Cache core content <span aria-hidden="true">↓</span></button><button class="secondary-button" id="starting-level-button" type="button">Choose starting point</button></div>
+        </section>
+        <aside class="privacy-card" aria-labelledby="privacy-title"><span class="privacy-icon" aria-hidden="true">⌁</span><h2 id="privacy-title">Your learning stays here.</h2><p>This client stores the core pack and learning state in this browser. There are no accounts, analytics, or tracking pixels.</p><p class="small-note">Termux integration is available only in the native Android app.</p></aside>
+      </div>
+
+      <section class="content-section route-section" data-section="learn" aria-labelledby="learn-heading">
+        <div class="section-heading"><div><p class="eyebrow">The core path</p><h2 id="learn-heading">Places to begin</h2></div><span class="module-count" id="module-count">Loading…</span></div>
+        <div class="catalog-filters" aria-labelledby="catalog-filters-title"><h3 id="catalog-filters-title">Browse and filter</h3><div class="filter-grid"><label>Strand<select id="filter-strand"><option value="">All strands</option></select></label><label>Level<select id="filter-level"><option value="">All levels</option></select></label><label>Status<select id="filter-status"><option value="">All statuses</option><option value="not started">Not started</option><option value="in progress">In progress</option><option value="completed">Completed</option></select></label><label>Availability<select id="filter-availability"><option value="">All availability</option></select></label></div><button class="secondary-button" id="clear-filters" type="button">Clear filters</button></div>
+        <div id="guided-path" class="guided-path" aria-live="polite"></div><div id="lesson-list" class="lesson-list" aria-live="polite"><div class="loading-card"><span class="loader" aria-hidden="true"></span><span>Loading the local lesson catalog…</span></div></div>
+      </section>
+
+      <section id="practice-view" class="route-view route-section" data-section="practice" hidden aria-labelledby="practice-title"><div class="section-heading"><div><p class="eyebrow">Offline practice</p><h2 id="practice-title">Try a small step</h2></div><span class="module-count">Local only</span></div><div id="practice-list" class="practice-list"></div></section>
+      <section id="search-view" class="route-view route-section" data-section="search" hidden aria-labelledby="search-title"><p class="eyebrow">Find a concept</p><h2 id="search-title">Search the core pack</h2><label class="search-label" for="search-input">Search lesson titles and bodies</label><div class="search-row"><input id="search-input" type="search" autocomplete="off" placeholder="Try “algorithm” or “password”" /><span id="search-count" class="module-count" aria-live="polite"></span></div><div id="search-results" class="search-results"></div></section>
+      <section id="progress-view" class="route-view route-section" data-section="progress" hidden aria-labelledby="progress-title"><div class="section-heading"><div><p class="eyebrow">Your local record</p><h2 id="progress-title">Progress</h2></div><span class="module-count">Stored in this browser</span></div><div id="progress-summary" class="progress-summary"></div><div id="local-dashboard" class="empty-note"></div><form id="goal-form" class="goal-form"><label class="search-label" for="goal-title">Local goal</label><input id="goal-title" maxlength="160" placeholder="Finish a knowledge check" /><button class="secondary-button" type="submit">Save goal locally</button></form><div id="goal-list"></div><div id="progress-list" class="progress-list"></div></section>
+      <section id="reader-view" class="reader-view route-view" hidden aria-labelledby="reader-title"><a class="back-link" id="reader-back" href="#/learn">← Back to lessons</a><article id="reader-content" class="lesson-reader"></article></section>
+      <section id="about-view" class="about-view route-view" hidden aria-labelledby="about-title"><p class="eyebrow">About this fallback</p><h2 id="about-title">A quieter way to learn.</h2><p>AetherLearn is a local-first learning project. This browser client shares the same Markdown lesson files as the native Android app, and keeps the web experience intentionally smaller.</p><section class="data-controls" aria-labelledby="appearance-title"><h3 id="appearance-title">Appearance</h3><p>Light/dark and reading palettes stay in this browser. They do not require a network and do not upload a preference.</p><div class="reading-theme-row"><label for="reading-theme">Reading palette</label><select id="reading-theme"><option value="default">Default</option><option value="warm">Soft paper</option><option value="cool">Cool contrast</option><option value="high-contrast">High contrast</option><option value="ambient">Soft pattern</option></select></div></section><div class="about-grid"><div><strong>Offline-ready</strong><span>Cache the 37 current lessons, then keep reading without a network.</span></div><div><strong>Local-only</strong><span>Progress, notes, bookmarks, and quiz attempts remain in this browser.</span></div><div><strong>Android bridge</strong><span>Termux exercises are not available on the web and remain Android-only.</span></div></div><section class="data-controls" aria-labelledby="data-controls-title"><h3 id="data-controls-title">Browser data controls</h3><p>These actions affect this browser origin only. Export creates a plain JSON copy; it is not an encrypted backup. Import validates the file and asks before replacing current learning data.</p><div class="tool-row"><button id="export-browser-learning" class="secondary-button" type="button">Export learning data</button><button id="import-browser-learning" class="secondary-button" type="button">Import learning data</button><input id="import-learning-file" type="file" accept="application/json,.json" hidden /><button id="clear-browser-cache" class="secondary-button" type="button">Clear cached content</button><button id="clear-browser-learning" class="secondary-button" type="button">Delete learning data</button></div><div id="browser-data-status" class="module-count" role="status" aria-live="polite"></div></section><section class="data-controls" aria-labelledby="visual-pack-title"><h3 id="visual-pack-title">Optional visual pack</h3><p>Thirty-seven small accessible diagrams and trace prompts are available as an optional local pack, one for each current lesson. Core lessons remain complete without them. This proof of concept stores the SVGs in this browser’s Cache Storage; browser quotas and eviction still apply.</p><div class="tool-row"><button id="install-visual-pack" class="secondary-button" type="button">Install visual diagrams</button><button id="delete-visual-pack" class="secondary-button" type="button">Delete visual diagrams</button></div><div id="visual-pack-status" class="module-count" role="status" aria-live="polite"></div></section></section>
+    </main>
+
+    <dialog id="starting-level-dialog" class="onboarding-dialog" aria-labelledby="starting-level-title"><form method="dialog" id="starting-level-form"><p class="eyebrow">Optional local preference</p><h2 id="starting-level-title">Where would you like to begin?</h2><p>This changes recommendations only. All 37 lessons remain available, and the choice stays in this browser.</p><fieldset><legend>Starting point</legend><label class="choice-row"><input type="radio" name="starting-level" value="NEW_TO_COMPUTING" /> <span><strong>New to computing</strong><small>Start with everyday digital concepts and build confidence.</small></span></label><label class="choice-row"><input type="radio" name="starting-level" value="DIGITAL_BASICS" /> <span><strong>Familiar with basic digital concepts</strong><small>Begin with digital foundations, then move into programming.</small></span></label><label class="choice-row"><input type="radio" name="starting-level" value="TRIED_PROGRAMMING" /> <span><strong>I have tried programming before</strong><small>Start with the Python path while keeping every lesson available.</small></span></label></fieldset><div class="tool-row"><button class="primary-button purple-button" id="save-starting-level" value="default" type="submit">Save choice</button><button class="secondary-button" id="skip-starting-level" value="cancel" type="submit">Skip for now</button></div></form></dialog>
+
+    <footer class="site-footer"><span>AetherLearn · open learning, kept local</span><a href="../docs/SAFETY.md">Safety policy</a></footer>
+    <script type="module" src="app.js?v=24"></script>
+  </body>
+</html>

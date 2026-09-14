@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "pack_id": "core",
+  "pack_version": "1.7.0",
+  "lessons": [
+    {
+      "id": "dl-01-digital-information",
+      "title": "How digital devices represent information",
+      "path": "content/core/dl-01-digital-information.md"
+    },
+    {
+      "id": "dl-02-files-folders-storage-backups",
+      "title": "Files, folders, storage, and backups",
+      "path": "content/core/dl-02-files-folders-storage-backups.md"
+    },
+    {
+      "id": "dl-03-android-settings-permissions-apps",
+      "title": "Android phone settings, permissions, and apps",
+      "path": "content/core/dl-03-android-settings-permissions-apps.md"
+    },
+    {
+      "id": "dl-04-internet-browsers-urls-search",
+      "title": "Internet basics, browsers, URLs, and search",
+      "path": "content/core/dl-04-internet-browsers-urls-search.md"
+    },
+    {
+      "id": "dl-05-privacy-passwords-phishing",
+      "title": "Privacy, passwords, phishing awareness, and safe updates",
+      "path": "content/core/dl-05-privacy-passwords-phishing.md"
+    },
+    {
+      "id": "dl-06-computing-language-history",
+      "title": "How programming languages reflect constraints",
+      "path": "content/core/dl-06-computing-language-history.md"
+    },
+    {
+      "id": "dl-07-how-programs-run",
+      "title": "How a computer runs a program",
+      "path": "content/core/dl-07-how-programs-run.md"
+    },
+    {
+      "id": "dl-08-networks-web-concepts",
+      "title": "Networks and the Web: requests, responses, and resources",
+      "path": "content/core/dl-08-networks-web-concepts.md"
+    },
+    {
+      "id": "py-01-problems-algorithms-instructions",
+      "title": "Problems, algorithms, and precise instructions",
+      "path": "content/core/py-01-problems-algorithms-instructions.md"
+    },
+    {
+      "id": "py-02-python-setup-expressions-values",
+      "title": "Python setup, expressions, and values",
+      "path": "content/core/py-02-python-setup-expressions-values.md"
+    },
+    {
+      "id": "py-03-variables-types-input-output",
+      "title": "Variables, types, input, and output",
+      "path": "content/core/py-03-variables-types-input-output.md"
+    },
+    {
+      "id": "py-04-conditions-boolean-logic",
+      "title": "Conditions and Boolean logic",
+      "path": "content/core/py-04-conditions-boolean-logic.md"
+    },
+    {
+      "id": "py-05-loops-repetition-tracing",
+      "title": "Loops, repetition, and tracing",
+      "path": "content/core/py-05-loops-repetition-tracing.md"
+    },
+    {
+      "id": "py-06-functions-scope-reusable-code",
+      "title": "Functions, scope, and reusable code",
+      "path": "content/core/py-06-functions-scope-reusable-code.md"
+    },
+    {
+      "id": "py-07-lists-dictionaries-strings-data",
+      "title": "Lists, dictionaries, strings, and simple data processing",
+      "path": "content/core/py-07-lists-dictionaries-strings-data.md"
+    },
+    {
+      "id": "al-01-data-structures",
+      "title": "What makes a good data structure?",
+      "path": "content/core/al-01-data-structures.md"
+    },
+    {
+      "id": "al-02-arrays-lists-stacks-queues",
+      "title": "Arrays, lists, stacks, and queues",
+      "path": "content/core/al-02-arrays-lists-stacks-queues.md"
+    },
+    {
+      "id": "al-03-searching-sorting",
+      "title": "Searching and sorting by example",
+      "path": "content/core/al-03-searching-sorting.md"
+    },
+    {
+      "id": "al-04-complexity-growth",
+      "title": "Complexity intuition and growth rates",
+      "path": "content/core/al-04-complexity-growth.md"
+    },
+    {
+      "id": "al-05-recursion-trees-graphs",
+      "title": "Recursion, trees, and graph vocabulary",
+      "path": "content/core/al-05-recursion-trees-graphs.md"
+    },
+    {
+      "id": "dev-01-terminal-command-line",
+      "title": "The terminal and command-line mental model",
+      "path": "content/core/dev-01-terminal-command-line.md"
+    },
+    {
+      "id": "dev-02-git-local-repositories-history",
+      "title": "Git concepts, local repositories, and useful history",
+      "path": "content/core/dev-02-git-local-repositories-history.md"
+    },
+    {
+      "id": "dev-03-debugging-error-messages",
+      "title": "Debugging, error messages, and minimal reproduction",
+      "path": "content/core/dev-03-debugging-error-messages.md"
+    },
+    {
+      "id": "dev-04-testing-pure-functions",
+      "title": "Testing small programs with examples and expected results",
+      "path": "content/core/dev-04-testing-pure-functions.md"
+    },
+    {
+      "id": "dev-05-code-review-issue-reports",
+      "title": "Code review and useful issue reports",
+      "path": "content/core/dev-05-code-review-issue-reports.md"
+    },
+    {
+      "id": "dev-06-dependency-provenance-builds",
+      "title": "Dependencies, provenance, and reproducible builds",
+      "path": "content/core/dev-06-dependency-provenance-builds.md"
+    },
+    {
+      "id": "dev-07-open-source-accessibility",
+      "title": "Open-source contribution and accessibility review",
+      "path": "content/core/dev-07-open-source-accessibility.md"
+    },
+    {
+      "id": "sec-01-ethics-scope-and-harm",
+      "title": "Ethics, scope, and harm minimization",
+      "path": "content/core/sec-01-ethics-scope-and-harm.md"
+    },
+    {
+      "id": "sec-02-threat-modeling-defensive-controls",
+      "title": "Threat models and defensive controls",
+      "path": "content/core/sec-02-threat-modeling-defensive-controls.md"
+    },
+    {
+      "id": "sec-03-coordinated-disclosure",
+      "title": "Coordinated vulnerability disclosure",
+      "path": "content/core/sec-03-coordinated-disclosure.md"
+    },
+    {
+      "id": "sec-04-security-organizations-and-roles",
+      "title": "Security organizations, roles, and evidence",
+      "path": "content/core/sec-04-security-organizations-and-roles.md"
+    },
+    {
+      "id": "web-01-semantic-html-accessibility",
+      "title": "Semantic HTML and accessible structure",
+      "path": "content/core/web-01-semantic-html-accessibility.md"
+    },
+    {
+      "id": "web-02-css-layout-responsive-design",
+      "title": "CSS layout and responsive presentation",
+      "path": "content/core/web-02-css-layout-responsive-design.md"
+    },
+    {
+      "id": "web-03-javascript-events-and-state",
+      "title": "JavaScript events and local state",
+      "path": "content/core/web-03-javascript-events-and-state.md"
+    },
+    {
+      "id": "web-04-data-modeling-and-json",
+      "title": "Data modeling and JSON fixtures",
+      "path": "content/core/web-04-data-modeling-and-json.md"
+    },
+    {
+      "id": "sec-05-morris-worm-history-and-response",
+      "title": "Morris worm: history, impact, and response",
+      "path": "content/core/sec-05-morris-worm-history-and-response.md"
+    },
+    {
+      "id": "sec-06-cybersecurity-career-role-families",
+      "title": "Cybersecurity role families and learning paths",
+      "path": "content/core/sec-06-cybersecurity-career-role-families.md"
+    }
+  ]
+}

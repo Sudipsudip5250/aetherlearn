@@ -1,0 +1,268 @@
+# AetherLearn MVP TODO
+
+This file is the recoverable task list. A task is complete only when its checkbox is checked, the listed evidence exists, and any decision or risk update has been recorded in `PLAN.md`.
+
+## How to resume
+
+At the start of each work session, read [`KNOWLEDGE_GRAPH.md`](KNOWLEDGE_GRAPH.md) (current SHA, invariants, code map, remaining queue), then this file’s first unchecked P0/human gate. Check `git log` and open PRs. Run the smallest relevant validation command. Do not begin a later milestone while a required earlier checkpoint is incomplete. If a task is blocked, record the blocker here rather than silently skipping it.
+
+## M0 — Repository and governance
+
+- [x] Create the repository with the selected open-source license; MIT is now committed in `LICENSE`.
+- [x] Add the planning documents under `docs/` and keep the repository root focused on project entry points and governance.
+- [x] Add `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, and content-review instructions.
+- [x] Add issue templates for code, content, accessibility, and safety plus a pull-request template.
+- [x] Add GitHub Actions checks for local Markdown links, secret patterns, content frontmatter, stable IDs, prerequisites, sizes, checksums, deterministic pack builds, and unit tests.
+- [x] **Checkpoint M0:** A new contributor can understand the project, run the repository checks, and submit a safe sample contribution.
+
+## M1 — Content contract and sample pack
+
+- [x] Define the lesson frontmatter schema and required body sections in `content/README.md`.
+- [x] Define stable module IDs, the canonical 20-module registry, prerequisites, availability labels, risk tiers, and asset-size rules.
+- [x] Implement `scripts/validate_content.py` and `scripts/build_pack.py`.
+- [x] Implement deterministic manifest versioning, per-file SHA-256 checksums, total-size reporting, and pack metadata.
+- [x] Author five representative modules: DL-01, DL-05, PY-01, PY-02, and DEV-01.
+- [x] Add knowledge-check content with explanations for every answer in the five sample modules.
+- [x] Add content QA and review-status rules to `content/README.md` and `CONTRIBUTING.md`.
+- [x] **Checkpoint M1:** The five-module sample pack builds deterministically, validates cleanly, and has unit coverage for unknown prerequisites, cycles, broken links, tampered manifests, and the valid pack path.
+
+## M2 — Android shell
+
+- [x] Create the native Android/Kotlin/Jetpack Compose application under `android/` with API 26 minimum support.
+- [x] Implement exactly four bottom destinations: Learn, Practice, Search, and Progress, with Settings accessible from the shell.
+- [x] Implement light/dark theme, system text scaling, visible focus semantics, and accessible labels/content descriptions.
+- [x] Implement app-private SQLite storage abstraction with schema-versioned metadata, separated from content assets.
+- [x] Add a first-run privacy screen explaining no-account use, on-device progress, and data not collected.
+- [x] Verify that the manifest requests no network permission and that no analytics, advertising, account, or backend dependency enters the core app.
+- [x] Add local asset readiness for the five M1 modules and document Android build/run steps in `android/README.md`.
+- [ ] **Checkpoint M2:** Debug APK builds successfully; fresh-install device/emulator smoke testing for launch, navigation, lifecycle, and privacy persistence remains to be completed.
+
+## M3 — Offline learning loop
+
+- [x] Load and parse all current bundled core lesson assets offline; the catalog now contains 37 lessons.
+- [x] Render title, objectives, prerequisites, availability, explanation, worked example, common mistakes, offline practice, knowledge check, project, accessibility, safety, further reading, and change log sections.
+- [x] Implement versioned SQLite tables for module progress, quiz attempts, notes, and bookmarks without breaking M2 metadata.
+- [x] Implement not-started, in-progress, and completed states with Learn and Progress indicators.
+- [x] Implement knowledge checks with answer feedback, explanations, retry behavior, attempt counts, and best scores.
+- [x] Implement private local notes and lesson bookmarks, surfaced in Progress.
+- [x] Implement offline title/body search over all 37 current lessons.
+- [x] Implement a simple offline Practice tab listing each lesson’s exercise.
+- [ ] **Checkpoint M3:** Device/emulator smoke testing must confirm the complete offline journey, persistence after restart, and accessibility behavior; static build, test, lint, and repository checks pass.
+
+## M4 — Exports and optional packs
+
+- [x] Implement user-initiated Markdown and JSON export through the Android file picker.
+- [x] Add a clear personal-notes warning and confirm that no export is automatic or uploaded.
+- [x] Implement a local, pre-bundled optional-pack listing and install/delete lifecycle.
+- [x] Validate optional-pack checksum, schema version, manifest ID, version, and name before activation.
+- [x] Implement staging, atomic activation, and last-known-good rollback for local optional packs.
+- [x] Protect the bundled core pack and preserve learning data when an optional pack is deleted.
+- [x] Add Settings storage accounting and core/optional-pack status UI.
+- [x] Implement real user-initiated HTTPS network download, pause, resume, retry, cancellation, and re-download flows in the Android Settings surface.
+- [x] Stream downloads into app-private partial storage, resume with HTTP Range when supported, reject cleartext/credentialed URLs, cap transfer sizes, validate ZIP paths/manifest/lesson hashes, and activate atomically with last-known-good rollback.
+- [ ] **Checkpoint M4:** Device/emulator smoke testing must confirm file-picker export, restart persistence, optional-pack install/delete, interrupted transfer recovery, rollback behavior, and core-content protection; static build, test, lint, and repository checks pass.
+
+## M5 — Termux pilot
+
+- [x] Define the versioned exercise-wrapper contract and strict allowlist in [`TERMUX_WRAPPERS.md`](TERMUX_WRAPPERS.md) and `TermuxWrappers.kt`.
+- [x] Select four benign local exercises: `py-02-local-expressions`, `py-03-local-variables-output`, `py-05-local-loop-trace`, and `dev-01-safe-navigation`. All are fixed, local-only, learner-confirmed exercises with in-app fallbacks.
+- [x] Implement Termux package detection and clear setup guidance without automatic permission changes.
+- [x] Implement explicit confirmation showing wrapper ID, path, arguments, working directory, prerequisites, expected effects, and fallback.
+- [x] Implement the native RUN_COMMAND handoff with only fixed, validated arguments and no arbitrary shell text.
+- [x] Add a manual/in-app fallback path that keeps the lesson completable without Termux.
+- [x] Use learner-confirmed completion for the pilot; no process callback or terminal output is trusted as proof.
+- [x] Add focused negative tests for unknown IDs, altered arguments, altered executable/path, and contract-version tampering.
+- [x] Add code-level handling for missing Termux, denied permission, and unsupported/misconfigured service paths.
+- [ ] Run device/emulator runtime tests for missing Termux, denied permission, misconfiguration, and successful handoff; no device/emulator is available in this environment.
+- [ ] **Checkpoint M5:** Device/emulator evidence must confirm Termux present/absent, denied-permission, misconfigured, fallback, and successful paths without executing an unallowlisted command.
+
+## M6 — Web/PWA fallback
+
+- [x] Build the initial static web shell under `web/` with responsive, keyboard-accessible HTML/CSS/JavaScript.
+- [x] Reuse all 37 canonical Markdown lessons through `web/content/manifest.json` and the shared frontmatter/section parser; `scripts/check_web_content.py` prevents payload drift.
+- [x] Add the initial lesson list and full reader route with objectives, metadata, sections, safe inline Markdown rendering, and external-link handling.
+- [x] Add a clear privacy note and message that full native Termux integration is Android-only in the MVP.
+- [x] Add service-worker caching for the app shell and explicit IndexedDB storage for cached content packs; updates stage before activating the new pack.
+- [x] Implement offline lesson reading, one practice flow, and local-only progress/notes/bookmarks in the browser.
+- [x] Implement simple local search over the 37 current modules.
+- [x] Test cached use in a Chromium desktop browser with the local server stopped: catalog, reader, practice, search, progress, quiz, note, bookmark, completion, and reload persistence all worked offline.
+- [ ] Repeat the cached offline smoke test in an Android browser; no Android browser or device is attached to this environment.
+- [x] **Checkpoint M6:** After explicitly caching the core pack, core reading and practice remained usable offline in the verified desktop browser; the Android-browser runtime evidence gate remains open.
+
+## Content expansion — batch 1
+
+- [x] Author and validate DL-02, DL-03, DL-04, PY-03, PY-04, and PY-05 against the existing lesson contract.
+- [x] Synchronize all eleven canonical Markdown lessons into Android assets and the web payload; preserve byte-parity checks.
+- [x] Update Android catalog discovery and web manifest/runtime discovery without changing the lesson schema or existing learning-state keys.
+- [x] Add only the narrowly required safe local wrappers for the new `termux-optional` lessons and retain manual fallbacks.
+- [x] Correct stale five-module wording and align `docs/CURRICULUM.md` with the effective `mvp-20` registry.
+- [x] Content expansion batch 2: author PY-06, PY-07, AL-01, AL-02, AL-03, AL-04, AL-05, DEV-02, and DEV-03 against the existing lesson contract.
+- [x] Synchronize all twenty canonical Markdown lessons into Android assets and the web payload; preserve exact byte-parity checks.
+- [x] Add only fixed, local-only Termux wrappers for PY-06, PY-07, and DEV-02; retain written fallbacks and learner-confirmed completion.
+- [x] **Checkpoint content expansion batch 2:** all twenty frozen MVP modules now exist and validate in the canonical source tree and both client payloads.
+- [x] Stage 1: add and validate `dl-06`, `dl-07`, and `dl-08`, synchronize Android/Web payloads, and preserve the stable `mvp-20` baseline.
+- [x] Stage 1: record the source matrix, update schema-v2 registry governance, run parity and hosted Quality checks, and push commit `ed18406`.
+- [x] Record the exact Stage 2 scope and source matrix for `dev-04` through `dev-07` in decision D-032 and `docs/references/STAGE_EVIDENCE.md`.
+- [x] Draft and register the four Stage 2 lessons; initial canonical validation and Android/Web parity pass.
+- [x] Complete the Stage 2 full static/pack/hosted-CI checkpoint, content-review update, commit/push, and browser reader/cache smoke; human technical/pedagogical/accessibility/supply-chain review remains open.
+- [x] Stage 3: record D-034, add the four source-backed security-ethics lessons, extend the validator to the explicit `sec-` strand, and synchronize canonical/Android/Web content.
+- [x] Stage 3: complete the automated 31-lesson pack/parity/CI gate, hosted Quality checkpoint, browser smoke, documentation, commit, and push; human safety, source, pedagogical, and accessibility review remains open.
+- [x] Open Stage 4 only after the Stage 3 automated checkpoint, with exact scope and source matrix recorded in D-036; keep Stage 5 gated until Stage 4 is validated, documented, committed, and pushed.
+- [x] Close the Stage 4 automated checkpoint with commit `0542ac9`, hosted Quality workflow `32979503787`, browser evidence, and D-037; human Web/data review remains open.
+- [x] Authorize Stage 5 under D-038 for exactly `sec-05-morris-worm-history-and-response` and `sec-06-cybersecurity-career-role-families`; record the source/cultural/safety matrix before authoring.
+
+## M7 — Release hardening
+
+- [ ] Run the Android device matrix, including a low-memory or aggressive-battery device; use [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) and record each result.
+- [x] Complete the repository content-consistency pass for the current 37 lessons; record the DL-04 clarification, Stage 1 and Stage 2 source review, Stage 3 defensive-security draft audit, and Stage 4 Web/data and Stage 5 historical/career draft audits in [`docs/CONTENT_REVIEW.md`](CONTENT_REVIEW.md).
+- [x] Implement web accessibility hardening for text scaling/reflow, focus restoration, semantic labels/live regions, touch targets, forced colors, reduced motion, restrictive CSP, and safe external links; manual screen-reader and Android-browser checks remain open.
+- [x] Implement the privacy/network boundary: explicit HTTPS-only pack requests, no cookies or credentials, no learning-data request fields, cleartext denial, no broad external-storage permissions, and no analytics path. Physical network inspection remains open.
+- [ ] Run final pedagogical, accessibility, source, safety, privacy, historical/cultural, and career-framing review for all 37 authored modules; the consistency audit and automated contract/S0 checks pass, but human review remains open. Stage 3 requires explicit safety review, and Stage 5 requires historical/cultural and career-framing review before release.
+- [x] Create the non-expert Android, Android-browser, desktop-browser, Termux, network-pack, persistence, export, and accessibility procedure in [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md).
+- [x] Add dependency/build/release-artifact gates, including Android debug/release build, unit tests, lint, manifest boundary checks, and APK SHA-256 sidecars.
+- [x] Prepare release notes, installation instructions, content-pack recovery instructions, and contributor handoff in `docs/RELEASE_HANDOFF.md`, `docs/NETWORK_PACKS.md`, and `docs/SIGNING.md`.
+- [x] Create the human tester handoff in [`docs/RELEASE_HANDOFF.md`](RELEASE_HANDOFF.md), including local/CI APK acquisition, ADB/file-transfer installation, safe unknown-source handling, sample-pack hosting limits, and exact network-pack controls.
+- [x] Generate and checksum the deterministic 37-lesson sample core ZIP at `docs/sample-pack/`; document that its protected `pack_id: core` is suitable for transport/rejection testing, not optional-pack activation.
+- [x] Consolidate the Stage 5 content, source, historical/cultural, career-framing, safety, accessibility, device, privacy, signing, distribution, and final decision gates into [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md).
+- [x] Create the human-operated signing guide in [`docs/SIGNING.md`](SIGNING.md) without creating or storing a keystore, password, or private key.
+- [ ] Publish signed release metadata; unsigned release artifacts and checksums are verified, but no authorized signing key or public pack host is configured.
+- [ ] **Checkpoint M7:** Static and CI gates pass; the exact remaining human-only and operational gates are the device/emulator matrix, Android-browser matrix, manual assistive-technology review, final pedagogical/safety approval, authorized network inspection for the pack path, authorized signing and signed metadata, and production distribution/pack-host setup. Use [`docs/RELEASE_HANDOFF.md`](RELEASE_HANDOFF.md) and [`docs/DEVICE_TEST_CHECKLIST.md`](DEVICE_TEST_CHECKLIST.md) as the required handoff path.
+
+## Android maintainability refactor
+
+- [x] Split the Android UI into focused composable files for Learn, Practice, Search, Progress, Settings, lesson reading, Termux, and first-run privacy while retaining AppShell state ownership.
+- [x] Preserve existing persistence, callback, privacy, offline, export, pack, and Termux behavior; source-equivalence checks confirm the pre-refactor UI bodies remain present.
+- [x] Verify the refactor with Android JVM unit tests, debug compilation, and lint; no new feature or curriculum scope was added.
+
+## Repository hygiene and future-content planning
+
+- [x] Remove the unreferenced raw requirements transcript `docs/references/revised_requirements.txt`; its maintained requirements are represented in `PRODUCT_SPEC.md`, `ARCHITECTURE.md`, `SAFETY.md`, `PLAN.md`, and `TODO.md`.
+- [x] Retain substantive historical review and evidence notes under `docs/references/` because they support architectural decisions, browser/build evidence, or milestone recovery.
+- [x] Add [`docs/FUTURE_PLAN.md`](FUTURE_PLAN.md) with source-backed planning for historical languages, systems, software engineering, ethical security, organizations, and career orientation.
+- [x] Add [`docs/FUTURE_PLAN.md`](FUTURE_PLAN.md) with staged batches, acceptance criteria, source-maintenance rules, and safety boundaries.
+- [x] Keep the roadmap and implementation plan as governance documents while allowing only decision-approved stage IDs into `content/curriculum.yml`; the original frozen 20-module MVP remains immutable.
+- [x] Record the user-approved Stage 1 transition in decision D-031 with the exact three-lesson scope, schema-v2 registry policy, S0 safety boundary, source requirements, and sequential later-stage gate.
+- [x] Complete Stage 1 implementation, client parity, full automated validation, commit, push, and hosted Quality checkpoint for `dl-06`, `dl-07`, and `dl-08`; human pedagogical/safety review remains open.
+- [x] Begin Stage 2 only after the Stage 1 checkpoint, with its exact four-lesson scope and source matrix recorded in D-032.
+- [x] Begin Stage 3 only after the Stage 2 checkpoint, with its exact four-lesson scope and source/safety matrix recorded in D-034.
+- [x] Begin Stage 4 only after the Stage 3 automated checkpoint, with its exact four-lesson scope and source matrix recorded in D-036; retain bundled-only and offline/privacy boundaries.
+- [x] Complete Stage 4 parity, documentation, deterministic then-current 35-lesson pack refresh, browser smoke, commit/push, and hosted Quality checkpoint; this records the prior Stage 4 artifact, while human Web/data accessibility, pedagogical, source, and privacy review remains open.
+- [x] Complete Stage 5 authoring, parity, documentation, deterministic 37-lesson pack refresh, browser smoke, commit/push, and hosted Quality checkpoint; human historical/cultural, accessibility, source, safety, privacy, and career-framing review remains open.
+- [ ] Approve each later stage only after the preceding stage is validated, reviewed, documented, committed, and pushed; do not treat the user’s sequential authorization as a waiver of per-stage safety or release gates.
+
+## Attached improvement prompt — first safe slice
+
+- [x] Reconcile the prompt with the live 37-lesson repository and preserve the pre-prompt recovery branch.
+- [x] Add deterministic prerequisite-aware Continue/Recommended guidance and strand grouping to Android Learn and the Web Learn route without changing lesson IDs or learner-state keys.
+- [x] Add Android per-note deletion and confirmed deletion of learner records while retaining preferences and content packs.
+- [x] Add separate Web controls for clearing cached content and deleting browser-local learning data, with explicit confirmation and honest export limitations.
+- [x] Add focused recommendation unit coverage and Web startup/cache-version checks; retain human Android, Android-browser, screen-reader, and device evidence gates.
+
+## Attached follow-up prompt — safe local slice
+
+- [x] Add optional first-use starting-level selection and Settings editing on Android, plus the equivalent Web dialog; keep it local, optional, and recommendation-only.
+- [x] Add Learn filters for strand, level, status, and availability while retaining browse-all behavior and clear empty states.
+- [x] Introduce the bounded `short-answer-v1` exercise label and explicit normalized accepted-answer variants in both clients without changing existing quiz-attempt records.
+- [x] Improve both readers with safe emphasis/inline-code/list rendering; add non-executing copy-code actions and bounded Web code blocks.
+- [x] Add Android clear-all-notes as a distinct confirmed action and include starting-level metadata in Android JSON export.
+- [x] Add validated Web JSON export/import with explicit replacement confirmation, 1 MB limit, known-ID validation, allowed state checks, and cached-content isolation.
+- [x] Add the narrowly scoped static visual-pack proof of concept under the separate media decision; it does not alter lesson frontmatter, content registry, or curriculum scope.
+- [ ] Add audio/video or broader media assets only after a separate schema, pack, storage, playback, privacy, source, safety, parity, and human-review decision.
+
+## Attached media architecture prompt — local visual-pack proof of concept
+
+- [x] Define the separate `visual-foundations` schema-1 manifest for 37 optional static SVG diagrams and observe-and-trace activities, one for each approved lesson, including sizes, hashes, accessibility text, text equivalents, reduced-motion text, licensing, attribution, and unsigned-development status.
+- [x] Add strict directory/ZIP validation, deterministic visual-pack building, sample ZIP/checksum, and byte-identical Android/Web mirror checks without changing the 37 canonical lesson triplicates.
+- [x] Add Android app-private visual-pack install/delete with staging/rollback, defensive metadata/path/hash/practice checks, lesson-catalog isolation, restricted local SVG rendering with text equivalent, and per-lesson observe-and-trace steps.
+- [x] Add Web About-route install/delete, digest-named Cache Storage activation, core-state isolation, 37 associated-lesson renderings, Practice-route visual activities, status text, v18 shell cache-busting, and local Chromium evidence.
+- [x] Document the boundary from legacy lesson ZIPs: no visual network downloader, remote catalog, signing, audio/video, streaming, Media3, OBB, or PAD dependency is implemented.
+- [x] Make the deterministic visual builder validate its generated ZIP and emit the adjacent SHA-256 sidecar; extend tests for duplicate paths, absolute paths, unexpected archive entries, oversized assets, missing text/license metadata, and sidecar output.
+- [ ] Run the Android device/emulator visual-pack matrix, including large text, lifecycle, deletion isolation, restricted WebView behavior, and TalkBack/manual accessibility review.
+- [ ] Repeat the visual-pack smoke in an Android browser and complete human visual, source, licensing, privacy, and release-owner review before any public distribution.
+- [ ] Decide separately whether a reviewed native SVG renderer or another platform-safe display path is warranted; do not add a dependency or expand the media scope without a new decision record.
+
+## 2026-09-04 resume — status accuracy
+
+- [x] Confirm `main` `c854c8b` validators, Android/Web parity, visual-pack mirrors, and hosted Quality `33152026294` are green; no CI or content-parity failure to fix.
+- [x] Correct PLAN.md current-status copy that still described the 3-SVG D-041 fixture after D-042 expanded `visual-foundations` 1.1.0 to 37 diagrams.
+- [x] Align README opening and CURRICULUM opening with the implemented 37-lesson product, including Stage 5.
+
+## 2026-09-04 resume — learner UI polish
+
+- [x] Merge PR #1 status-doc correction onto `main` (`ba43093`); hosted Quality for that PR passed validate, android, and GitGuardian.
+- [x] Fix Web header/nav overflow on ~390px: wrap brand/theme on the first row, full-width wrapping nav with 44px targets, `overflow-x: clip` on the document.
+- [x] Place existing visual-foundations diagrams after the explanation in Android and Web readers; keep alt text, text equivalent, local SVG bytes, and no new media system.
+- [x] Clarify Learn continue vs recommended, Progress status color, and quiz pass/review feedback without changing lesson IDs or learner-state keys.
+- [ ] Device/emulator, Android-browser, TalkBack, and large-text review of the visual reader and mobile header remain human-only.
+
+## 2026-09-05 polish — Learn/Progress/reader clarity
+
+- [x] Merge PR #2 UI slice onto `main` (`91f56a0`); hosted Quality for that PR passed validate, android, and GitGuardian.
+- [x] Update CONTRIBUTING.md so it describes the implemented 37-lesson Android + Web app, not a specification-only stage, and forbids Stage 6 / new tracks without a decision log.
+- [x] Strengthen local completion hierarchy (completed / in progress / remaining) and Continue vs Recommended presentation on Android and Web.
+- [x] Tighten reader section rhythm and code-example spacing; keep visual-foundations optional, local, and framed with a Diagram caption.
+- [ ] Device/TalkBack/large-text review of the new status badges, Continue card, and reader spacing remain human-only.
+
+## 2026-09-06 polish — Practice, quiz feedback, empty states
+
+- [x] Merge PR #3 Learn/Progress/reader slice onto `main` (`6764f9b`); hosted Quality for that PR passed validate, android, and GitGuardian.
+- [x] Practice tab: first-run empty note, obvious Open lesson control, and completion state on each Android/Web item without changing scoring or IDs.
+- [x] Knowledge-check pass vs review/retry distinction with readable explanations; retry clears the form only and does not change stored quiz keys.
+- [x] First-run empty notes on Learn, Search, Progress, bookmarks, and notes; all copy is local-only.
+- [x] Light code-only accessibility: status badge descriptions, Practice/Progress/Search card labels, diagram card description. TalkBack not claimed.
+- [ ] Device/TalkBack/large-text review of Practice, quiz banners, and empty notes remain human-only.
+
+## 2026-09-10 — APK distribution, reading themes, local dashboard
+
+- [x] Publish a flat debug APK prerelease from `main` `58ecbce`: https://github.com/Sudipsudip5250/aetherlearn/releases/tag/debug-58ecbce (`AetherLearn-debug.apk` + SHA256SUMS). Debug-signed, not production-signed.
+- [x] Add `Publish debug APK` workflow (`workflow_dispatch` / `debug-*` tags) that flattens the Gradle debug APK and attaches it to a GitHub prerelease without storing a keystore.
+- [x] Document Releases-first install in `docs/RELEASE_HANDOFF.md`, `android/README.md`, and README.
+- [x] Add local reading palettes (Default, Soft paper, Cool contrast, High contrast, Soft pattern) on Android and Web, persisted in existing local settings storage, offline-only.
+- [x] Reorganize Settings into Appearance, Learning data, Content packs, and About; keep pack checksum/HTTPS/atomic activation; document that GitHub Release pack URLs must be pasted, never crawled.
+- [x] Add a local Progress dashboard (weekly activity from existing timestamps), on-device learning goals, and optional Android notification reminders with explicit opt-in. No accounts, analytics, or cloud push.
+- [ ] Human phone verification: download `AetherLearn-debug.apk` from the prerelease, verify checksum, install via unknown sources, then check themes, Settings groups, pack status, dashboard/goals, and reminder opt-in. TalkBack/large-text not claimed.
+
+## 2026-09-12 — knowledge graph and brand icons
+
+- [x] Merge PR #5 onto `main` (`52e8789`); Quality validate + android + GitGuardian were green.
+- [x] Add `docs/KNOWLEDGE_GRAPH.md` as the session-resume map (invariants, code map, remaining queue) so a later continue does not require a full-tree reread.
+- [x] Add local brand assets: SVG favicon, 192/512/apple-touch icons, OG card, Android adaptive + density launcher icons. No network icon fetch.
+- [ ] Device check that the launcher icon, PWA icon, and OG card look correct on a phone/home screen. Not claimed from this sandbox.
+
+## 2026-09-12 — public-ready cleanup
+
+- [x] Merge PR #6 onto `main` (`a24dac7`). No open PRs remain.
+- [x] Delete leftover feature and backup remote branches; `origin/main` is the only branch.
+- [x] Stop Android APK assembly on every push. Quality `validate` stays on push/PR; Android assemble is `workflow_dispatch` or the Publish debug APK workflow.
+- [x] Rename the GitHub repository from `aetherlearn-mvp-spec` to `aetherlearn` and rewrite the README as a public product page (not a spec stub).
+- [x] Publish a `testing` prerelease with APK + visual pack + core pack + checksums.
+- [ ] Human: confirm the public repo, download page, and APK install. TalkBack not claimed. Production signing still human-only.
+
+## 2026-09-14 — motion polish and history cleanup
+
+- [x] Web: local favicon in the brand mark, interruptible button press (`scale(0.96)`), short route/feedback enter, consolidated `prefers-reduced-motion`.
+- [x] Android: short fade between Learn/Practice/Search/Progress; launch window uses the brand mark. No animation framework added.
+- [x] Rewrite `main` to a short history authored as `sudipsudip5250 <sudipsudip5250@gmail.com>` (no AI co-author trailers). Force-push of a public repo; old `testing` tag moved to the new tip.
+
+## Deferred backlog
+
+- [ ] Portable encrypted backup with tested key ownership and recovery.
+- [ ] iOS client.
+- [ ] On-device semantic search.
+- [ ] General-purpose in-app language runtimes.
+- [ ] Advanced network, security, AI, systems, and research tracks.
+- [ ] Community contribution UI.
+- [ ] Optional privacy-preserving sync proposal.
+
+## Session log template
+
+```text
+Date:
+Contributor:
+Milestone/task:
+Evidence produced:
+Validation run:
+Decision or risk update:
+Blocker:
+Next exact action:
+```

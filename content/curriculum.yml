@@ -1,0 +1,219 @@
+schema_version: 2
+curriculum_id: aetherlearn
+curriculum_version: 1.7.0
+mvp_baseline:
+  id: mvp-20
+  module_count: 20
+  modules:
+    - id: dl-01-digital-information
+      title: How digital devices represent information
+    - id: dl-02-files-folders-storage-backups
+      title: Files, folders, storage, and backups
+    - id: dl-03-android-settings-permissions-apps
+      title: Android phone settings, permissions, and apps
+    - id: dl-04-internet-browsers-urls-search
+      title: Internet basics, browsers, URLs, and search
+    - id: dl-05-privacy-passwords-phishing
+      title: Privacy, passwords, phishing awareness, and safe updates
+    - id: py-01-problems-algorithms-instructions
+      title: Problems, algorithms, and precise instructions
+    - id: py-02-python-setup-expressions-values
+      title: Python setup, expressions, and values
+    - id: py-03-variables-types-input-output
+      title: Variables, types, input, and output
+    - id: py-04-conditions-boolean-logic
+      title: Conditions and Boolean logic
+    - id: py-05-loops-repetition-tracing
+      title: Loops, repetition, and tracing
+    - id: py-06-functions-scope-reusable-code
+      title: Functions, scope, and reusable code
+    - id: py-07-lists-dictionaries-strings-data
+      title: Lists, dictionaries, strings, and simple data processing
+    - id: al-01-data-structures
+      title: What makes a good data structure?
+    - id: al-02-arrays-lists-stacks-queues
+      title: Arrays, lists, stacks, and queues
+    - id: al-03-searching-sorting
+      title: Searching and sorting by example
+    - id: al-04-complexity-growth
+      title: Complexity intuition and growth rates
+    - id: al-05-recursion-trees-graphs
+      title: Recursion, trees, and graph vocabulary
+    - id: dev-01-terminal-command-line
+      title: The terminal and command-line mental model
+    - id: dev-02-git-local-repositories-history
+      title: Git concepts, local repositories, and useful history
+    - id: dev-03-debugging-error-messages
+      title: Debugging, error messages, and minimal reproduction
+stages:
+  - id: stage-1
+    title: History and systems vocabulary
+    status: approved
+    module_count: 3
+    modules:
+      - id: dl-06-computing-language-history
+        title: How programming languages reflect constraints
+      - id: dl-07-how-programs-run
+        title: How a computer runs a program
+      - id: dl-08-networks-web-concepts
+        title: "Networks and the Web: requests, responses, and resources"
+  - id: stage-2
+    title: Software engineering and open-source practice
+    status: approved
+    module_count: 4
+    modules:
+      - id: dev-04-testing-pure-functions
+        title: Testing small programs with examples and expected results
+      - id: dev-05-code-review-issue-reports
+        title: Code review and useful issue reports
+      - id: dev-06-dependency-provenance-builds
+        title: Dependencies, provenance, and reproducible builds
+      - id: dev-07-open-source-accessibility
+        title: Open-source contribution and accessibility review
+  - id: stage-3
+    title: Ethics, defensive security, disclosure, and organizations
+    status: approved
+    module_count: 4
+    modules:
+      - id: sec-01-ethics-scope-and-harm
+        title: Ethics, scope, and harm minimization
+      - id: sec-02-threat-modeling-defensive-controls
+        title: Threat models and defensive controls
+      - id: sec-03-coordinated-disclosure
+        title: Coordinated vulnerability disclosure
+      - id: sec-04-security-organizations-and-roles
+        title: Security organizations, roles, and evidence
+  - id: stage-4
+    title: Web and data foundations
+    status: approved
+    module_count: 4
+    modules:
+      - id: web-01-semantic-html-accessibility
+        title: Semantic HTML and accessible structure
+      - id: web-02-css-layout-responsive-design
+        title: CSS layout and responsive presentation
+      - id: web-03-javascript-events-and-state
+        title: JavaScript events and local state
+      - id: web-04-data-modeling-and-json
+        title: Data modeling and JSON fixtures
+  - id: stage-5
+    title: Historical security and career orientation
+    status: approved
+    module_count: 2
+    modules:
+      - id: sec-05-morris-worm-history-and-response
+        title: "Morris worm: history, impact, and response"
+      - id: sec-06-cybersecurity-career-role-families
+        title: Cybersecurity role families and learning paths
+modules:
+  - id: dl-01-digital-information
+    title: How digital devices represent information
+    stage: mvp
+  - id: dl-02-files-folders-storage-backups
+    title: Files, folders, storage, and backups
+    stage: mvp
+  - id: dl-03-android-settings-permissions-apps
+    title: Android phone settings, permissions, and apps
+    stage: mvp
+  - id: dl-04-internet-browsers-urls-search
+    title: Internet basics, browsers, URLs, and search
+    stage: mvp
+  - id: dl-05-privacy-passwords-phishing
+    title: Privacy, passwords, phishing awareness, and safe updates
+    stage: mvp
+  - id: dl-06-computing-language-history
+    title: How programming languages reflect constraints
+    stage: stage-1
+  - id: dl-07-how-programs-run
+    title: How a computer runs a program
+    stage: stage-1
+  - id: dl-08-networks-web-concepts
+    title: "Networks and the Web: requests, responses, and resources"
+    stage: stage-1
+  - id: py-01-problems-algorithms-instructions
+    title: Problems, algorithms, and precise instructions
+    stage: mvp
+  - id: py-02-python-setup-expressions-values
+    title: Python setup, expressions, and values
+    stage: mvp
+  - id: py-03-variables-types-input-output
+    title: Variables, types, input, and output
+    stage: mvp
+  - id: py-04-conditions-boolean-logic
+    title: Conditions and Boolean logic
+    stage: mvp
+  - id: py-05-loops-repetition-tracing
+    title: Loops, repetition, and tracing
+    stage: mvp
+  - id: py-06-functions-scope-reusable-code
+    title: Functions, scope, and reusable code
+    stage: mvp
+  - id: py-07-lists-dictionaries-strings-data
+    title: Lists, dictionaries, strings, and simple data processing
+    stage: mvp
+  - id: al-01-data-structures
+    title: What makes a good data structure?
+    stage: mvp
+  - id: al-02-arrays-lists-stacks-queues
+    title: Arrays, lists, stacks, and queues
+    stage: mvp
+  - id: al-03-searching-sorting
+    title: Searching and sorting by example
+    stage: mvp
+  - id: al-04-complexity-growth
+    title: Complexity intuition and growth rates
+    stage: mvp
+  - id: al-05-recursion-trees-graphs
+    title: Recursion, trees, and graph vocabulary
+    stage: mvp
+  - id: dev-01-terminal-command-line
+    title: The terminal and command-line mental model
+    stage: mvp
+  - id: dev-02-git-local-repositories-history
+    title: Git concepts, local repositories, and useful history
+    stage: mvp
+  - id: dev-03-debugging-error-messages
+    title: Debugging, error messages, and minimal reproduction
+    stage: mvp
+  - id: dev-04-testing-pure-functions
+    title: Testing small programs with examples and expected results
+    stage: stage-2
+  - id: dev-05-code-review-issue-reports
+    title: Code review and useful issue reports
+    stage: stage-2
+  - id: dev-06-dependency-provenance-builds
+    title: Dependencies, provenance, and reproducible builds
+    stage: stage-2
+  - id: dev-07-open-source-accessibility
+    title: Open-source contribution and accessibility review
+    stage: stage-2
+  - id: sec-01-ethics-scope-and-harm
+    title: Ethics, scope, and harm minimization
+    stage: stage-3
+  - id: sec-02-threat-modeling-defensive-controls
+    title: Threat models and defensive controls
+    stage: stage-3
+  - id: sec-03-coordinated-disclosure
+    title: Coordinated vulnerability disclosure
+    stage: stage-3
+  - id: sec-04-security-organizations-and-roles
+    title: Security organizations, roles, and evidence
+    stage: stage-3
+  - id: web-01-semantic-html-accessibility
+    title: Semantic HTML and accessible structure
+    stage: stage-4
+  - id: web-02-css-layout-responsive-design
+    title: CSS layout and responsive presentation
+    stage: stage-4
+  - id: web-03-javascript-events-and-state
+    title: JavaScript events and local state
+    stage: stage-4
+  - id: web-04-data-modeling-and-json
+    title: Data modeling and JSON fixtures
+    stage: stage-4
+  - id: sec-05-morris-worm-history-and-response
+    title: "Morris worm: history, impact, and response"
+    stage: stage-5
+  - id: sec-06-cybersecurity-career-role-families
+    title: Cybersecurity role families and learning paths
+    stage: stage-5

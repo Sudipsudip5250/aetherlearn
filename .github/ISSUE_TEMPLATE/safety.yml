@@ -1,0 +1,49 @@
+name: Safety-sensitive proposal
+description: Propose or report content involving dual-use, security, privacy, or other safety-sensitive behavior.
+title: "[Safety] "
+labels:
+  - safety-review
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include live credentials, exploit kits, malware, public targets, or instructions for unauthorized access. For a vulnerability, use SECURITY.md privately.
+  - type: input
+    id: module
+    attributes:
+      label: Module or component
+      placeholder: "e.g. future security module, Termux wrapper, content parser"
+    validations:
+      required: true
+  - type: dropdown
+    id: risk-tier
+    attributes:
+      label: Proposed risk tier
+      options:
+        - S0 - general safety and digital literacy
+        - S1 - benign programming or local simulation
+        - S2 - controlled defensive or dual-use concept
+        - S3 - restricted or high-risk material
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: objective
+    attributes:
+      label: Learning or product objective
+    validations:
+      required: true
+  - type: textarea
+    id: misuse
+    attributes:
+      label: Misuse cases and safer alternative
+      description: Explain realistic misuse and why a safer abstraction or local simulation is or is not sufficient.
+    validations:
+      required: true
+  - type: textarea
+    id: controls
+    attributes:
+      label: Proposed safeguards
+      description: Include authorization boundaries, lab constraints, synthetic data, offline behavior, and review requirements.
+    validations:
+      required: true

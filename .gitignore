@@ -1,0 +1,23 @@
+# Local editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Build and dependency artifacts
+node_modules/
+build/
+dist/
+.gradle/
+.cxx/
+android/local.properties
+
+# Local runtime, cache, and secret files
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+*.log
+.cache/

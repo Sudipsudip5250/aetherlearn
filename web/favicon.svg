@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="AetherLearn">
+  <rect width="32" height="32" rx="8" fill="#4F46E5"/>
+  <path fill="#FBFCff" fill-rule="evenodd" d="M16 5.6 26 26h-4.1l-1.65-4.05h-8.5L10.1 26H6L16 5.6Zm0 7.4-2.55 6.15h5.1L16 13Z"/>
+  <circle cx="16" cy="19.35" r="1.7" fill="#2CBF9F"/>
+</svg>

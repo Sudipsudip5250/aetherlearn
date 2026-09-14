@@ -1,0 +1,48 @@
+# AetherLearn Android shell
+
+This directory contains the native Android client for AetherLearn. It uses Kotlin, Jetpack Compose, Material 3, and an app-private SQLite storage boundary. The app has four bottom destinations—Learn, Practice, Search, and Progress—plus Settings. It reads the 37 validated bundled lessons from local assets, including the stable 20-module MVP baseline and the approved Stage 1–5 expansions (including security-ethics, Web/data, historical, and career foundations), and supports offline learning state, exports, local optional-pack management, and a safe optional Termux pilot.
+
+## UI structure
+
+The Android UI is organized by responsibility while sharing the existing app-shell state and data contracts. `MainActivity.kt` owns the activity, first-run root, navigation state, and `AppShell`; `LearnScreen.kt`, `PracticeScreen.kt`, `SearchScreen.kt`, and `ProgressScreen.kt` own the four destinations; `LessonReaderScreen.kt` owns lesson rendering and quiz/study controls; `SettingsScreen.kt` owns appearance (light/dark plus local reading palettes), export, content-pack, and about surfaces; `TermuxExerciseCard.kt` owns the optional Termux confirmation/fallback surface; and `PrivacyWelcomeScreen.kt` owns the first-run privacy screen. Progress also shows a local dashboard and on-device goals. Persistence remains app-private SQLite with no accounts or analytics.
+
+## Requirements
+
+Install Android Studio or the Android command-line tools, JDK 17 or newer, Android SDK Platform 37, and Android SDK Build Tools 36.0.0 or newer. The project targets Android API 37 and supports Android API 26 or newer. The Gradle wrapper pins Gradle 9.4.1. These version choices follow the current Android Compose and Android Gradle Plugin documentation; early build observations are summarized in [`../docs/references/ARCHIVE.md`](../docs/references/ARCHIVE.md).
+
+## Build
+
+For the complete build/install, GitHub Release APK, CI-artifact, sample-pack, network-pack, and human-test handoff, see [`../docs/RELEASE_HANDOFF.md`](../docs/RELEASE_HANDOFF.md). Testers should download the flat `AetherLearn-debug.apk` from [the testing prerelease](https://github.com/Sudipsudip5250/aetherlearn/releases/tag/testing) rather than a nested Actions zip. Signing is intentionally human-operated and documented separately in [`../docs/SIGNING.md`](../docs/SIGNING.md); no keystore or signing secret belongs in this repository.
+
+From this directory, run:
+
+```bash
+./gradlew --no-daemon assembleDebug assembleRelease testDebugUnitTest lintDebug
+```
+
+The debug APK is produced at `app/build/outputs/apk/debug/app-debug.apk`. Install it on a connected device or emulator with:
+
+```bash
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
+
+The first launch displays the local privacy screen and an optional starting-level choice: new to computing, familiar with digital basics, or have tried programming. This choice changes recommendations only and can be changed or cleared in Settings. After continuing, the app opens the offline learning shell. Progress, quiz attempts, notes, bookmarks, pack status, first-run state, theme preference, reading palette, local goals, and the starting-level choice are stored in app-private SQLite storage. The metadata schema is migrated non-destructively; existing learner records are retained. The manifest permits only the normal network permissions needed for explicit HTTPS pack downloads plus the Termux RUN_COMMAND permission; no broad external-storage permission is requested, and cleartext traffic is denied. The Termux pilot never grants its integration permission automatically.
+
+The bundled `visual-foundations` pack version 1.1.0 is an optional collection of 37 static SVG diagrams and trace prompts, one for each current lesson. Settings installs it into `filesDir/optional_packs` through the same staging/activation/delete boundary as other local packs; its `assets/` directory is intentionally ignored by `ModuleCatalog`, so it cannot add or replace lessons. The reader displays an associated diagram in a restricted Android WebView with JavaScript, DOM storage, and file access disabled, and also presents its caption, text equivalent, license, attribution, and a short observe-and-trace activity with a self-check. This is not a native SVG renderer and must still be checked on Android devices with large text and TalkBack. Deleting the visual pack does not delete the core lessons or SQLite learning records. The current fixture is unsigned development metadata; remote visual downloads, publisher signing, audio/video, Media3, and Play Asset Delivery are not implemented.
+
+## Checks
+
+From the repository root, the content and repository checks remain:
+
+```bash
+python3 scripts/check_android_manifest.py
+python3 scripts/check_visual_pack_mirrors.py
+python3 scripts/check_secrets.py
+python3 scripts/build_pack.py --content-dir content/core --output-dir build/core-pack
+python3 scripts/validate_content.py --content-dir content/core --manifest build/core-pack/manifest.json
+python3 -m unittest discover -s tests -v
+```
+
+M4 network packs are optional and user-controlled. In Settings, enter an HTTPS URL to a ZIP generated by `scripts/build_pack.py`. The app streams to app-private partial storage, resumes with HTTP Range when supported, and exposes pause, resume, retry, and cancellation. It rejects unsafe URLs, oversized or malformed archives, unapproved lesson IDs, checksum/size mismatches, and missing required sections. Valid packs are staged and atomically activated; any failure keeps the previous active pack. The detailed format and recovery runbook is [`../docs/NETWORK_PACKS.md`](../docs/NETWORK_PACKS.md). Registry expansion does not automatically expand the remote-pack allowlist; the Stage 1, Stage 2, Stage 3, Stage 4, and Stage 5 lessons remain bundled-only; Stage 4 Web/data and Stage 5 historical/career lessons are not implicitly authorized as optional remote packs.
+
+M5 includes the contract, allowlist, package detection, explicit confirmation, fixed-argument `RUN_COMMAND` handoff, learner-confirmed completion, and in-app fallback for seven local-only S1 exercises. Practice labels the current bounded exercise contract as `short-answer-v1`, uses explicit normalized accepted-answer variants, and stores attempts/best results locally. The lesson reader preserves bold text, inline code, lists, safe link labels, and fenced code blocks with a non-executing copy-to-clipboard action. It does not install packages, change Termux settings, use shared storage, accept arbitrary commands, or receive terminal output as completion proof. Network permission is used only by the M4 pack downloader and never for learning data, credentials, analytics, or Termux targets. Settings separates delete-all-notes from delete-all-learning-data. Both actions require confirmation and state exactly what remains. The remaining device/emulator checks are documented in [`../docs/DEVICE_TEST_CHECKLIST.md`](../docs/DEVICE_TEST_CHECKLIST.md) and `docs/TODO.md`; release status, Stage 5 review, and limitations are recorded in [`../docs/RELEASE_HANDOFF.md`](../docs/RELEASE_HANDOFF.md) and [`../docs/DEVICE_TEST_CHECKLIST.md`](../docs/DEVICE_TEST_CHECKLIST.md).
